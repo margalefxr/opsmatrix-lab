@@ -1,0 +1,14 @@
+.env
+*.key
+*.pem
+*.crt
+private/
+secrets/
+*.ova
+*.vmdk
+*.iso
+*.tar.gz
+*.sha256
+*.log
+__pycache__/
+.DS_Store
