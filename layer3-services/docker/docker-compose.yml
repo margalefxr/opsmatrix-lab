@@ -1,0 +1,29 @@
+services:
+  web:
+    image: nginx:alpine
+    container_name: opsmatrix_web
+    restart: always
+    ports:
+      - "80:80"
+    networks:
+      - red_frontend
+      - red_backend
+
+  db:
+    image: mariadb:10.11
+    container_name: opsmatrix_db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-RootPassOps2026!}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-opsmatrix_db}
+      MYSQL_USER: ${MYSQL_USER:-ops_user}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-OpsPass2026!}
+    networks:
+      - red_backend
+
+networks:
+  red_frontend:
+    driver: bridge
+  red_backend:
+    driver: bridge
+    internal: true
