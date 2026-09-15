@@ -100,3 +100,12 @@ opsmatrix-lab/
 - [ ] **Fase 4: Despliegue de IDS Suricata** — Reglas custom (local.rules) e inspección sobre la interfaz del host.
 - [ ] **Fase 5: Línea Base & Pruebas Ofensivas** — Validación con tráfico legítimo y simulación de ataques.
 - [ ] **Fase 6: Informe de Evidencias Final** — Consolidación de documentación y artefactos.
+
+---
+
+## 6. Principios de Automatización & Trazabilidad Continuada (Auditability-as-Code)
+El repositorio implementa un mecanismo de auditoría no intrusiva para garantizar el registro del ciclo de vida del software, decisiones de diseño y resolución de fricciones técnicas:
+
+* **Git Hooks (`.git/hooks/pre-commit`):** Intercepción automatizada en cada commit para registrar archivos impactados y marcas de tiempo ISO 8601 en la bitácora `docs/WORKLOG.md`.
+* **Registro de Fricción Técnica (Troubleshooting Log):** Protocolo estandarizado mediante `./layer1-telemetry/scripts/capture_debug.sh` para auditar errores de entorno, fallos de comandos y sus resoluciones sin perder contexto.
+* **Bootstrapping Desatendido:** Script `deploy.sh` en la raíz para réplica e instanciación determinista del entorno en cualquier host Ubuntu target.
