@@ -184,3 +184,7 @@ vert{}vert{}
 * **Ficheros Modificados:**
 *   - README.md
 *   - docs/adr/0005-automated-auditability-and-friction-logging.md
+
+### [AUTO-AUDIT] Commit registrado: 2026-09-15T11:48:17Z
+* **Ficheros Modificados:**
+*   - test_hook.txt
