@@ -12,3 +12,8 @@ secrets/
 *.log
 __pycache__/
 .DS_Store
+# Criptografía y claves privadas (Seguridad)
+*.key
+*.pem
+ca/private/
+certs/private/
