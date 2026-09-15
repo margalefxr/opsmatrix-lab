@@ -68,3 +68,18 @@ vert{}vert{}
  M docs/WORKLOG.md
 ```
 ---
+
+### Registro Automático: \2026-\09-\15 \11:\36:\53 CEST
+* **Usuario Local:** xaviermargalef
+* **Host:** MacBook-Pro-de-Xavier.local
+* **Rama Git:** main
+vert{}vert{}
+* **Último Commit:** 
+
+#### Estado Actual de Archivos (Git Status):
+```text
+ M docs/WORKLOG.md
+?? docs/adr/0001-database-network-isolation.md
+?? docs/adr/0002-nids-suricata-host-deployment.md
+```
+---
