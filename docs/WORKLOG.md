@@ -83,3 +83,18 @@ vert{}vert{}
 ?? docs/adr/0002-nids-suricata-host-deployment.md
 ```
 ---
+
+### Registro Automático: \2026-\09-\15 \11:\37:\26 CEST
+* **Usuario Local:** xaviermargalef
+* **Host:** MacBook-Pro-de-Xavier.local
+* **Rama Git:** main
+vert{}vert{}
+* **Último Commit:** 
+
+#### Estado Actual de Archivos (Git Status):
+```text
+ M docs/WORKLOG.md
+ M layer3-services/docker/docker-compose.yml
+?? layer3-services/docker/.env.example
+```
+---
