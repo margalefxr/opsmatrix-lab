@@ -1,55 +1,63 @@
-# OpsMatrix Lab — Enterprise Architecture & Compliance Framework
+# OpsMatrix Lab — Enterprise Cyber Security & GRC Operational Framework
 
-## 1. Identificación
-* **Proyecto:** OpsMatrix Lab
-* **Autor:** Xavier Margalef Riestra
-* **Modalidad:** Individual
-* **Alcance:** Infraestructura L3, Automatización Declarativa, Seguridad Perimetral y GRC.
+## 1. Executive Summary & Identification
+* **Project:** OpsMatrix Lab
+* **Author:** Xavier Margalef Riestra
+* **Modality:** Individual
+* **Core Domains:** Defensive Operations, Perimeter Hardening, Network Micro-segmentation, Threat Intelligence, and GRC.
 
-## 2. Descripción del Sistema y Alineamiento GRC
-Infraestructura de producción simulada bajo principios de defensa en profundidad y segmentación estricta. Diseñada para cumplir con los estándares de seguridad de la información (**ISO/IEC 27001**) y el **Esquema Nacional de Seguridad (ENS)**. El sistema gestiona transacciones desacopladas mediante contenedores orquestados con Docker Compose, aplicando aislamiento de bases de datos en redes privadas virtuales, monitorización de tráfico mediante inspección profunda de paquetes (DPI) y trazabilidad completa de cambios bajo el paradigma *Docs as Code*.
+## 2. Threat Modeling & Architectural Scope
+OpsMatrix Lab simulates a hardened, production-grade perimeter infrastructure exposed to hostile external networks. The architecture implements Defense-in-Depth and Zero-Trust Network Access (ZTNA) principles to mitigate direct exploitation vectors, lateral movement, and unauthorized data exfiltration. 
 
-## 3. Arquitectura de Red y Topología de Componentes
+Compliance framework mapping:
+* **ISO/IEC 27001:** Information Security Management Systems.
+* **Esquema Nacional de Seguridad (ENS - RD 311/2022):** Hardening baselines and strict partitioning.
+* **NIST SP 800-53 / CIS Benchmarks:** Least-privilege execution and minimal surface exposure.
 
-     [ EXTERNAL CLIENT ]
-             │ (HTTPS / TLS 1.3)
-             ▼
-     [ UBUNTU SERVER (Edge Node) ]
-             │
-             ├── Management: OpenSSH (Encrypted Control Plane)
-             ├── Telemetry:  Suricata IDS (DPI / Threat Detection)
-             │
-             └── Docker Engine (Container Runtime)
-                   │
-                   ├── frontend_net (Bridge / DMZ Exposta)
-                   │     └── [ proxy: Nginx Alpine ] (Reverse Proxy & Terminus)
-                   │           │
-                   │           └── (Dual-Homed Interface)
-                   │                 │
-                   └── backend_net (Bridge / internal: true - Aisada)
-                         │
-                         ├── [ web: Custom Web Service ]
-                         └── [ db: MariaDB Engine ] (Storage Volumetry)
+## 3. Architecture Topology
 
-## 4. Matriz de Componentes Técnicos
+     [ EXTERNAL THREAT ACTOR / CLIENT ]
+                     │
+                     ▼ (TLS 1.3)
+     [ UBUNTU SERVER (Edge / Host) ]
+                     │
+       ┌─────────────┴─────────────┐
+       │                           │
+  [ OpenSSH ]               [ Suricata IDS ]
+       │                           │
+       └─────────────┬─────────────┘
+                     ▼
+           [ Docker Engine ]
+                     │
+       ┌─────────────┴─────────────┐
+       │                           │
+ [ frontend_net ]            [ backend_net ]
+ (Bridge / DMZ)             (Internal / Isolated)
+       │                           │
+ [ Nginx Alpine ]            [ MariaDB Engine ]
+       │                           │
+       └────────── web ────────────┘
+           (Dual-Homed Container)
 
-| Capa / Subsistema | Tecnología | Especificación Técnica | Función Operativa |
+## 4. Technical Component & Security Matrix
+
+| Subsystem / Layer | Technology | Security Specification | Operational Function |
 | :--- | :--- | :--- | :--- |
-| **Host Node** | Ubuntu Server | Linux Kernel LTS | Entorno base de ejecución y nodo de despliegue principal. |
-| **Control Plane** | OpenSSH | Server Daemon / Ed25519 | Acceso remoto cifrado y administración de infraestructura. |
-| **Orchestration** | Docker Compose | Manifiesto v3.8 / Declarativo | Gestión de ciclos de vida y aislamiento de servicios. |
-| **Perimeter / DMZ** | Nginx Alpine | Proxy Inverso / TLS Termination | Control de tráfico de entrada en `frontend_net`. |
-| **Application Layer** | Nginx / Web | Contenedor Dual-Homed | Conectividad simultánea entre DMZ y red interna aislada. |
-| **Persistence** | MariaDB | Motor Relacional / Bind Mounts | Almacenamiento transaccional aislado en `backend_net`. |
-| **Security / IDS** | Suricata | DPI / Reglas OISF | Monitorización de tramas de red y detección de intrusiones. |
+| **Host Node** | Ubuntu Server | Linux Kernel LTS + AppArmor | Native execution plane and security sandbox. |
+| **Control Plane** | OpenSSH | Hardened daemon, Ed25519 keys | Zero-trust remote administrative access. |
+| **Orchestration** | Docker Compose | Manifiesto v3.8, non-root execution | Declarative infrastructure lifecycle. |
+| **Perimeter / DMZ** | Nginx Alpine | TLS 1.3 enforcement, secure headers | Reverse proxy terminating external traffic. |
+| **Application** | Custom Web | Dual-homed network binding | Controlled transaction processing bridging DMZ. |
+| **Persistence** | MariaDB | Restricted bind mounts, isolated socket | Transactional engine in non-routable network. |
+| **Threat Detection** | Suricata | Deep Packet Inspection (DPI) | Real-time network anomaly detection. |
 
-## 5. Gobernanza, Riesgos y Cumplimiento (GRC)
-* **Network Zoning:** Aislamiento absoluto de la base de datos mediante el flag de Docker `internal: true` en `backend_net`, impidiendo cualquier enrutamiento hacia el exterior.
-* **Least Privilege Access:** Exposición mínima de puertos al host (solo 80/443 en proxy y SSH restringido).
-* **Trazabilidad Operativa:** Versionado estricto de manifiestos y bitácoras técnicas de ingeniería (`docs/WORKLOG.md`, `ARCHITECTURE.md`).
-* **Validación Multi-Entorno:** Pruebas de integración local en macOS/OrbStack con despliegue final validado sobre entornos nativos Linux.
+## 5. Security Engineering & GRC Controls
+* **Network Micro-Segmentation:** Strict division via Docker `internal: true` driver on `backend_net`.
+* **Attack Surface Reduction:** Principle of least privilege enforced across all system components.
+* **Docs as Code:** Complete operational history maintained via version-controlled Markdown (`ARCHITECTURE.md`, `docs/WORKLOG.md`).
+* **Hybrid Validation:** Iterative local testing on macOS containers validated against production Linux nodes.
 
-## 6. Estructura del Repositorio
+## 6. Repository Topology
 
 opsmatrix/
 ├── README.md
@@ -60,6 +68,5 @@ opsmatrix/
 │   └── WORKLOG.md
 ├── docker/
 ├── config/
-│   └── perimeter/
 ├── scripts/
 └── suricata/
