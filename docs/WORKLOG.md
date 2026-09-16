@@ -477,3 +477,23 @@ Content-Length: 48
  5 files changed, 29 insertions(+), 301 deletions(-)
 ```
 ---
+
+---
+
+## [Fase 1 — Formalización de Justificaciones Técnicas (ADR-0007)] — 2026-09-16
+* **Autor:** Xavier Margalef Riestra
+* **Objetivo:** Consolidación de un documento ADR específico para registrar el "por qué" de cada componente, la exclusión de sobreingeniería y las decisiones de arquitectura defensiva.
+* **Evidencia Generada:** Creación del fichero `docs/adr/0007-comprehensive-design-rationales-and-stack-justification.md`.
+
+### [2026-09-16 16:50:25 CEST] - Preservación Autónoma de Evidencias (GRC Engine)
+**Archivos Modificados en Commit:**
+* `docs/WORKLOG.md`
+* `docs/adr/0007-comprehensive-design-rationales-and-stack-justification.md`
+
+**Resumen Estadístico del Cambio:**
+```diff
+ docs/WORKLOG.md                                    |  7 ++++++
+ ...ve-design-rationales-and-stack-justification.md | 25 ++++++++++++++++++++++
+ 2 files changed, 32 insertions(+)
+```
+---
