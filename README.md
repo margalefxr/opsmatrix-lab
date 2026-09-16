@@ -47,14 +47,14 @@ Mapeo normativo de cumplimiento:
 * **Filosofía *Lean* y Cero Sobreingeniería (*No Overengineering*):** Se descartan arquitecturas distribuidas sobredimensionadas (ej. Kubernetes o clústeres de alta disponibilidad innecesarios) en favor de una orquestación determinista con Docker Compose. Esto maximiza la auditabilidad, reduce la superficie de fallo y concentra el esfuerzo en el endurecimiento real y la micro-segmentación.
 * **Driver de Red Interno:** El uso de `internal: true` en `backend_net` elimina por diseño cualquier interfaz de enrutamiento hacia pasarelas externas, neutralizando ataques de falsificación de peticiones (SSRF) y exfiltración directa.
 * **Persistencia por Bind Mounts:** Se opta por volúmenes locales en el host para garantizar durabilidad transaccional sin la complejidad artificial de replicaciones distribuidas en entornos de alcance acotado.
-* **Paradigma de Validación Híbrida:** Prototipado y pruebas iterativas ejecutadas localmente en entornos de alta eficiencia (macOS) mediante contenedores, validadas y desplegadas formalmente sobre nodos de servidor Linux en producción.
+* **Paradigma de Validación Híbrida y Sandbox (OrbStack):** El desarrollo y las pruebas iterativas se ejecutan localmente sobre macOS utilizando **OrbStack** como un motor de contenedores de alto rendimiento y bajo consumo. Este entorno actúa como un *sandbox* seguro para validar despliegues, redes aisladas y cambios de configuración antes de su paso a los nodos de servidor Linux en producción.
 * **Automatización Documental (*Docs as Code*):** Toda modificación de infraestructura queda vinculada a scripts de validación que actualizan de forma automatizada las evidencias en el `WORKLOG.md`.
 
 ## 5. Matriz de Componentes Técnicos y de Seguridad
 
 | Subsistema / Capa | Tecnología | Especificación de Seguridad | Función Operativa |
 | :--- | :--- | :--- | :--- |
-| **Nodo Host** | Ubuntu Server | Linux Kernel LTS + AppArmor | Plano de ejecución nativo y aislamiento de kernel. |
+| **Nodo Host** | Ubuntu Server / OrbStack Sandbox | Linux Kernel LTS / Motor de contenedores optimizado | Plano de ejecución nativo y aislamiento estricto. |
 | **Plano de Control** | OpenSSH | Daemon endurecido, llaves Ed25519 | Acceso administrativo remoto seguro. |
 | **Orquestación** | Docker Compose | Manifiesto v3.8, ejecución sin root | Ciclo de vida declarativo y determinista. |
 | **Perímetro / DMZ** | Nginx Alpine | Cifrado TLS 1.3, cabeceras HTTP | Proxy inverso de filtrado perimetral. |
