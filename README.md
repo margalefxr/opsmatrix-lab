@@ -14,7 +14,8 @@ Mapeo normativo de cumplimiento:
 * **Esquema Nacional de Seguridad (ENS - RD 311/2022):** Líneas base de endurecimiento, monitorización continua y particionamiento estricto de dominios.
 * **NIST SP 800-53 / CIS Benchmarks:** Ejecución bajo privilegios mínimos y reducción de la superficie de ataque.
 
-## 3. Topología de Arquitectura
+## 3. Topología de Arquitectura y Diseño Visual
+* **Esquema de Referencia:** El modelado completo de flujos, zonas de red y componentes perimetrales se encuentra documentado y esquematizado mediante diagrama técnico dedicado (*Excalidraw / Arquitectura Multi-Capa*).
 
 * **Cliente / Perímetro Externo**
   * Canal seguro: Tráfico cifrado TLS 1.3
@@ -29,7 +30,7 @@ Mapeo normativo de cumplimiento:
   * **Enlace Dual-Homed:**
     * Contenedor de Aplicación Web (conecta DMZ con red privada sin exponer la base de datos)
   * **Red Privada (`backend_net` - Aislada / `internal: true`):**
-    * Contenedor de Persistencia: MariaDB Engine (Volumetría restringida, sin salida a internet)
+    * Contenedor de Persistencia: MariaDB Engine (Persistencia garantizada mediante volúmenes dedicados / *bind mounts* locales para respaldo y durabilidad de datos sin complejidad de replicación en clúster).
 
 ## 4. Matriz de Componentes Técnicos y de Seguridad
 
@@ -40,7 +41,7 @@ Mapeo normativo de cumplimiento:
 | **Orquestación** | Docker Compose | Manifiesto v3.8, ejecución sin root | Ciclo de vida declarativo y determinista. |
 | **Perímetro / DMZ** | Nginx Alpine | Cifrado TLS 1.3, cabeceras HTTP | Proxy inverso de filtrado perimetral. |
 | **Capa de Aplicación** | Servicio Web Custom | Enlace a doble red (Dual-Homed) | Procesamiento transaccional controlado. |
-| **Persistencia** | MariaDB | Volúmenes bind limitados, sin socket | Motor transaccional en red privada. |
+| **Persistencia** | MariaDB | Volúmenes *bind mounts* / respaldo local | Motor transaccional aislado con persistencia durable garantizada en host. |
 | **Detección de Amenazas** | Suricata | Inspección Profunda de Paquetes (DPI) | Telemetría de red y detección de anomalías. |
 
 ## 5. Ingeniería de Seguridad y Controles GRC
