@@ -154,3 +154,8 @@ vert{}vert{}
  M docs/WORKLOG.md
 ```
 ---
+
+## [2026-09-16] - Consolidación de Arquitectura Lean y Entorno Sandbox
+* **ADR Registrado:** Justificada la exclusión de una 3ª red DMZ por overengineering (foco en simplicidad, Lean y aislamiento `--internal`).
+* **Entorno Sandbox Validado:** Confirmada la separación de la VM OrbStack `lab-practice` como runtime efímero para pruebas destructivas.
+* **Infraestructura:** Mantenimiento de la topología de 2 subredes (`frontend_net` / `backend_net`) combinada con telemetría perimetral.
