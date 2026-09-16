@@ -130,3 +130,17 @@ El repositorio implementa un mecanismo de auditoría no intrusiva para garantiza
 * **Justificación:**
   * **Inmutabilidad:** Garantiza que `./deploy.sh` es 100% autodetenible en un sistema limpio (clean-slate testing).
   * **Aislamiento:** Permite ejecutar pruebas destructivas o de pentesting sin afectar al host de desarrollo.
+
+---
+
+## 8. Automatización GRC & Tracelogging (Git Hooks)
+
+### ADR-003: Preservación Autónoma de Evidencias (Non-Repudiation Engine)
+* **Estado:** Aceptado / Implementado.
+* **Contexto:** En auditorías de ciberseguridad y operaciones (SOC2 / ISO 27001), documentar manualmente cada cambio genera errores de omisión y falta de sellado temporal.
+* **Decisión:** Implementación de un hook local (`.git/hooks/pre-commit`) acoplado a `scripts/sync.sh`.
+* **Funcionamiento:**
+  1. Intercepta cualquier operación de `commit` en la Workstation.
+  2. Extrae el listado de archivos modificados (`git diff --cached`) y el diff estadístico.
+  3. Formatea la entrada con estampa de tiempo estricta (ISO-8601) y la inyecta automáticamente en `docs/WORKLOG.md` antes de cerrar el commit.
+  4. Garantiza trazabilidad continua sin depender de memoria o intervención humana.
