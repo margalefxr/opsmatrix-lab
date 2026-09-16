@@ -197,3 +197,28 @@ vert{}vert{}
  6 files changed, 131 insertions(+), 57 deletions(-)
 ```
 ---
+
+### [2026-09-16 13:18:17 CEST] - Automated Execution & Evidence Capture
+**Archivos Afectados:**
+* `README.md`
+
+**Diff Resumido de Cambios:**
+```diff
+ README.md       | 10 ++++++++++
+ docs/WORKLOG.md |  7 +++++++
+ 2 files changed, 17 insertions(+)
+```
+---
+
+### [2026-09-16 13:18:17 CEST] - Preservación Autónoma de Evidencias (GRC Engine)
+**Archivos Modificados en Commit:**
+* `README.md`
+* `docs/WORKLOG.md`
+
+**Resumen Estadístico del Cambio:**
+```diff
+ README.md       | 10 ++++++++++
+ docs/WORKLOG.md | 12 ++++++++++++
+ 2 files changed, 22 insertions(+)
+```
+---
