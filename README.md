@@ -109,3 +109,24 @@ El repositorio implementa un mecanismo de auditoría no intrusiva para garantiza
 * **Git Hooks (`.git/hooks/pre-commit`):** Intercepción automatizada en cada commit para registrar archivos impactados y marcas de tiempo ISO 8601 en la bitácora `docs/WORKLOG.md`.
 * **Registro de Fricción Técnica (Troubleshooting Log):** Protocolo estandarizado mediante `./layer1-telemetry/scripts/capture_debug.sh` para auditar errores de entorno, fallos de comandos y sus resoluciones sin perder contexto.
 * **Bootstrapping Desatendido:** Script `deploy.sh` en la raíz para réplica e instanciación determinista del entorno en cualquier host Ubuntu target.
+
+---
+
+## 7. Architecture Decision Records (ADR)
+
+### ADR-001: Justificación de Topología de 2 Capas vs. 3ª Capa (DMZ Estricta)
+* **Estado:** Aceptado / Implementado.
+* **Contexto:** Se evaluó la inclusión de una 3ª subred Docker (`dmz_app_net`) para aislar una capa intermedia de aplicación entre el Gateway HTTP (Nginx) y la Persistencia (MariaDB).
+* **Decisión:** Mantener el modelo estricto de 2 capas (`frontend_net` + `backend_net` con `--internal`).
+* **Justificación:**
+  * **Principio Lean & YAGNI (You Aren't Gonna Need It):** Introducir una subred DMZ sin un servicio de backend dedicado (API) añade complejidad operativa y sobrecoste de enrutamiento en Docker Compose sin aportar un incremento real de la postura de seguridad.
+  * **Suficiencia de Aislamiento:** La red `backend_net` con flag `--internal` garantiza el cumplimiento de Zero Trust al bloquear el tráfico saliente (no-egress) y el mapeo de sockets hacia el host (puerto 3306 inalcanzable externamente).
+  * **Compensación L7 en Host:** La inspección perimetral no se delega a subredes intermedias, sino a la capa del Host mediante el NIDS Suricata en modo promiscuo.
+
+### ADR-002: Separación de Entorno de Ejecución Efímero (OrbStack Sandbox)
+* **Estado:** Aceptado / Implementado.
+* **Contexto:** Necesidad de validar el despliegue determinista del laboratorio sin contaminar la Workstation principal ni arrastrar estado en Git.
+* **Decisión:** Despliegue de un nodo virtualizado Ubuntu Server 24.04 LTS en OrbStack (`lab-practice`).
+* **Justificación:**
+  * **Inmutabilidad:** Garantiza que `./deploy.sh` es 100% autodetenible en un sistema limpio (clean-slate testing).
+  * **Aislamiento:** Permite ejecutar pruebas destructivas o de pentesting sin afectar al host de desarrollo.
