@@ -144,3 +144,13 @@ El repositorio implementa un mecanismo de auditoría no intrusiva para garantiza
   2. Extrae el listado de archivos modificados (`git diff --cached`) y el diff estadístico.
   3. Formatea la entrada con estampa de tiempo estricta (ISO-8601) y la inyecta automáticamente en `docs/WORKLOG.md` antes de cerrar el commit.
   4. Garantiza trazabilidad continua sin depender de memoria o intervención humana.
+
+---
+
+## 9. Modelo de Segmentación por Zonas de Seguridad (CCN-STIC / ISO 27001)
+
+La topología de red de **OpsMatrix-Lab** mapea directamente el modelo estándar de clasificación por zonas de confianza:
+
+* **Zona Naranja (DMZ / Perímetro Expuesto):** Corresponde a la subred `frontend_net` donde reside el Reverse Proxy Nginx (`opsmatrix-web`). Es el único segmento expuesto a tráfico no confiable (TCP 80/443).
+* **Zona Verde (LAN Interna / Persistencia Crítica):** Corresponde a la subred `backend_net` con flag `--internal` donde reside MariaDB (`opsmatrix-db`). Zona de alta confianza sin salida a internet (no-egress) ni exposición de sockets al host.
+* **Zona Azul (Gestión & Telemetría SIEM):** Corresponde al plano de control del Host Ubuntu 24.04 LTS donde opera el sensor Suricata NIDS y se recolectan las trazas de auditoría (`eve.json`, `auth.log`, logs JSON de Nginx) para monitorización y no repudio.
