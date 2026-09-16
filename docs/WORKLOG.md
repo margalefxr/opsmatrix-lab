@@ -305,3 +305,14 @@ Content-Length: 48
  1 file changed, 1 insertion(+), 1 deletion(-)
 ```
 ---
+
+### [2026-09-16 15:51:02 CEST] - Preservación Autónoma de Evidencias (GRC Engine)
+**Archivos Modificados en Commit:**
+* `ARCHITECTURE.md`
+
+**Resumen Estadístico del Cambio:**
+```diff
+ ARCHITECTURE.md | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+```
+---
