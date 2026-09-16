@@ -16,14 +16,37 @@ Mapeo normativo de cumplimiento:
 
 ## 3. Topología de Arquitectura y Esquema Visual
 
+```text
+                 [ CLIENTE / ACTOR EXTERNO ]
+                              │
+                              ▼ (TLS 1.3 / Perímetro Cifrado)
+               [ NODO HOST: UBUNTU SERVER (Edge) ]
+                              │
+         ┌────────────────────┴────────────────────┐
+         │                                         │
+    [ OpenSSH ]                             [ Suricata IDS ]
+  (Plano de Control - Ed25519)            (Telemetría DPI / OISF)
+         │                                         │
+         └────────────────────┬────────────────────┘
+                              ▼
+                     [ Docker Engine ]
+                              │
+         ┌────────────────────┴────────────────────┐
+         │                                         │
+   [ frontend_net ]                          [ backend_net ]
+   (Bridge / DMZ Exposta)                    (Aislada / internal: true)
+         │                                         │
+   [ Nginx Alpine ]                          [ MariaDB Engine ]
+   (Proxy Inverso / WAF)                     (Bind Mounts / Respaldo Local)
+         │                                         ▲
+         └─────────────── web ─────────────────────┘
+                   (Contenedor Dual-Homed)
+```
 
-
-* **Cliente / Perímetro Externo:** Tráfico cifrado mediante TLS 1.3 hacia el nodo perimetral.
-* **Nodo Host (Ubuntu Server - Edge):** Aislamiento a nivel de kernel, gestión por OpenSSH y monitorización de tráfico en tiempo real con Suricata IDS.
-* **Segmentación de Redes:**
-  * ** (DMZ):** Exposición controlada del proxy inverso (Nginx Alpine).
-  * **Enlace Dual-Homed:** Contenedor de aplicación intermediario que puentea las capas sin exponer el backend.
-  * ** (Aislada):** Red privada virtual con el flag , albergando el motor MariaDB con persistencia local asegurada mediante *bind mounts* (*backup* y durabilidad en host sin sobrecoste de replicación clúster).
+* **Desglose Técnico de la Topología:**
+  * **Capa Perimetral y Host:** El acceso de entrada se cifra mediante TLS 1.3 hacia el nodo perimetral basado en Ubuntu Server. La gestión administrativa se aísla mediante OpenSSH con claves Ed25519, mientras que el motor Suricata IDS audita todo el tráfico de red mediante Inspección Profunda de Paquetes (DPI).
+  * **Micro-segmentación de Redes:** El motor de contenedores Docker separa la infraestructura en dos dominios virtuales independientes. La red pública externa (`frontend_net`) aloja exclusivamente el proxy inverso Nginx Alpine para la terminación de conexiones.
+  * **Conectividad Dual-Homed y Backend:** El servicio web actúa como pasarela de control (*dual-homed*) conectando la DMZ con la red privada interna (`backend_net`). Esta última cuenta con el flag estricto `internal: true` de Docker, aislando por completo el motor de base de datos MariaDB y garantizando la persistencia de las transacciones mediante volúmenes de respaldo local (*bind mounts*) en el host sin dependencia de complejos esquemas de replicación.
 
 ## 4. Matriz de Componentes Técnicos y de Seguridad
 
