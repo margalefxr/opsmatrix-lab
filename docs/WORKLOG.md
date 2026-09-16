@@ -142,29 +142,9 @@ vert{}vert{}
 ```
 ---
 
----
-
-## Sesión 4: 15 de Septiembre de 2026 — Validación Forense, Detección NIDS & Auditing de Logs
-* **Operador:** Xavier Margalef Riestra (`xaviermargalef`)
-* **Entorno:** Ubuntu Server 24.04 LTS (SSH Remote Host) / macOS Local
-
-### Acciones & Evidencias Forenses
-1. **Auditoría de Ingesta Web (Nginx STDOUT/JSON):**
-   * Petición de comprobación `curl -i http://localhost/` ejecutada con éxito (`HTTP/1.1 200 OK`).
-   * Verificación de la arquitectura de logs en contenedor `nginx:alpine`: Confirmada redirección de `access.log` y `error.log` hacia `/dev/stdout` y `/dev/stderr`.
-   * Extracción de trazas estructuradas mediante `docker logs opsmatrix-web --tail 2`.
-
-2. **Validación de Telemetría pasiva (Suricata NIDS):**
-   * Inyección de payload de reconocimiento HTTP simulando User-Agent de escáner (`curl -H "User-Agent: Nmap Scripting Engine"`).
-   * Verificación de disparo de firma custom `sid:1000002` en el motor de inspección pasiva sobre la interfaz física del Host.
-
-3. **Certificación de Aislamiento de Red (Zero Trust - Capa DB):**
-   * Escaneo de sockets en puerto local `nc -zv localhost 3306` con resultado `Connection refused`.
-   * Certificación de que MariaDB 11.4 opera exclusivamente en subred puente aislada `docker_backend_net` (`internal: true`) sin exposición al bucle local ni interfaces públicas.
-
-### Registro Automático: \2026-\09-\15 \13:\44:\04 CEST
-* **Usuario Local:** xaviermargalef
-* **Host:** MacBook-Pro-de-Xavier.local
+### Registro Automático: \2026-\09-\15 \11:\42:\10 CEST
+* **Usuario Local:** server
+* **Host:** ubuntuserver
 * **Rama Git:** main
 vert{}vert{}
 * **Último Commit:** 
@@ -172,28 +152,5 @@ vert{}vert{}
 #### Estado Actual de Archivos (Git Status):
 ```text
  M docs/WORKLOG.md
-?? deploy.sh
 ```
 ---
-
-### [AUTO-AUDIT] Commit registrado: 2026-09-15T11:46:22Z
-* **Ficheros Modificados:**
-*   - test_hook.txt
-
-### [AUTO-AUDIT] Commit registrado: 2026-09-15T11:47:40Z
-* **Ficheros Modificados:**
-*   - README.md
-*   - docs/adr/0005-automated-auditability-and-friction-logging.md
-
-### [AUTO-AUDIT] Commit registrado: 2026-09-15T11:48:17Z
-* **Ficheros Modificados:**
-*   - test_hook.txt
-
-### [AUTO-AUDIT] Commit registrado: 2026-09-15T11:48:17Z
-* **Ficheros Modificados:**
-*   - test_hook.txt
-
-### [AUTO-AUDIT] Commit registrado: 2026-09-16T08:03:05Z
-* **Ficheros Modificados:**
-*   - layer1-telemetry/scripts/capture_debug.sh
-*   - sync.sh
