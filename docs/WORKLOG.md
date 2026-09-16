@@ -192,3 +192,8 @@ vert{}vert{}
 ### [AUTO-AUDIT] Commit registrado: 2026-09-15T11:48:17Z
 * **Ficheros Modificados:**
 *   - test_hook.txt
+
+### [AUTO-AUDIT] Commit registrado: 2026-09-16T08:03:05Z
+* **Ficheros Modificados:**
+*   - layer1-telemetry/scripts/capture_debug.sh
+*   - sync.sh
