@@ -16,21 +16,20 @@ Mapeo normativo de cumplimiento:
 
 ## 3. Topología de Arquitectura
 
-[ Actor de Amenaza / Cliente Externo ]
-  │
-  ▼ (TLS 1.3 / Perímetro Cifrado)
-[ Nodo Host: Ubuntu Server (Edge) ]
-  ├── Plano de Control: OpenSSH (Cifrado Ed25519)
-  ├── Plano de Telemetría: Suricata IDS (DPI / Reglas OISF)
-  │
-  └── Motor de Contenedores: Docker Engine
-        ├── Red Pública: frontend_net (Bridge / DMZ)
-        │     └── Proxy Inverso: Nginx Alpine (Terminación TLS / WAF)
-        │           │
-        │           └── Enlace Dual-Homed (Contenedor Web)
-        │                 │
-        └── Red Privada: backend_net (Aislada / internal: true)
-              └── Base de Datos: MariaDB Engine (Volumetría Restringida)
+* **Cliente / Perímetro Externo**
+  * Canal seguro: Tráfico cifrado TLS 1.3
+  * Destino: Nodo Host perimetral
+* **Nodo Host (Ubuntu Server - Edge)**
+  * Plano de Control: OpenSSH (Cifrado Ed25519 y mitigación de fuerza bruta)
+  * Plano de Telemetría: Suricata IDS (Inspección Profunda de Paquetes / Reglas OISF)
+  * Motor de Contenedores: Docker Engine (Runtime segregado)
+* **Segmentación de Redes y Servicios**
+  * **Red Pública (`frontend_net` - Bridge / DMZ):**
+    * Contenedor Proxy Inverso: Nginx Alpine (Terminación TLS / WAF)
+  * **Enlace Dual-Homed:**
+    * Contenedor de Aplicación Web (conecta DMZ con red privada sin exponer la base de datos)
+  * **Red Privada (`backend_net` - Aislada / `internal: true`):**
+    * Contenedor de Persistencia: MariaDB Engine (Volumetría restringida, sin salida a internet)
 
 ## 4. Matriz de Componentes Técnicos y de Seguridad
 
@@ -47,11 +46,12 @@ Mapeo normativo de cumplimiento:
 ## 5. Ingeniería de Seguridad y Controles GRC
 * **Micro-segmentación de Red:** División estricta mediante el flag `internal: true` de Docker en `backend_net`, bloqueando vectores de pivotaje y ataques de falsificación de peticiones (SSRF).
 * **Reducción de Superficie de Ataque:** Principio de mínimo privilegio aplicado en todos los componentes y servicios del sistema.
-* **Trazabilidad por Docs as Code:** Historial operacional y decisiones de arquitectura versionadas en el repositorio (`ARCHITECTURE.md`, `docs/WORKLOG.md`).
+* **Trazabilidad por Docs as Code:** Historial operacional y decisiones de arquitectura versionadas en el repositorio (`ARCHITECTURE.md`, `docs/WORKLOG.md").
 * **Paradigma de Validación Híbrida:** Prototipado local en macOS validado y desplegado sobre nodos Linux en producción.
 
 ## 6. Estructura del Repositorio
 
+```text
 opsmatrix/
 ├── README.md
 ├── .env.example
@@ -64,3 +64,4 @@ opsmatrix/
 │   └── perimeter/
 ├── scripts/
 └── suricata/
+```
