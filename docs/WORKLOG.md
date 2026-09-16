@@ -401,3 +401,14 @@ Content-Length: 48
  1 file changed, 9 insertions(+), 16 deletions(-)
 ```
 ---
+
+### [2026-09-16 16:30:25 CEST] - Preservación Autónoma de Evidencias (GRC Engine)
+**Archivos Modificados en Commit:**
+* `README.md`
+
+**Resumen Estadístico del Cambio:**
+```diff
+ README.md | 37 ++++++++++++++++++++++++++++++-------
+ 1 file changed, 30 insertions(+), 7 deletions(-)
+```
+---
