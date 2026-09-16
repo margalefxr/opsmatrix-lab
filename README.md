@@ -43,10 +43,10 @@ Mapeo normativo de cumplimiento:
                    (Contenedor Dual-Homed)
 ```
 
-* **Desglose Técnico de la Topología:**
-  * **Capa Perimetral y Host:** El acceso de entrada se cifra mediante TLS 1.3 hacia el nodo perimetral basado en Ubuntu Server. La gestión administrativa se aísla mediante OpenSSH con claves Ed25519, mientras que el motor Suricata IDS audita todo el tráfico de red mediante Inspección Profunda de Paquetes (DPI).
-  * **Micro-segmentación de Redes:** El motor de contenedores Docker separa la infraestructura en dos dominios virtuales independientes. La red pública externa (`frontend_net`) aloja exclusivamente el proxy inverso Nginx Alpine para la terminación de conexiones.
-  * **Conectividad Dual-Homed y Backend:** El servicio web actúa como pasarela de control (*dual-homed*) conectando la DMZ con la red privada interna (`backend_net`). Esta última cuenta con el flag estricto `internal: true` de Docker, aislando por completo el motor de base de datos MariaDB y garantizando la persistencia de las transacciones mediante volúmenes de respaldo local (*bind mounts*) en el host sin dependencia de complejos esquemas de replicación.
+* **Justificaciones Técnicas de Diseño (El Porqué):**
+  * **Driver de Red Interno:** El uso de `internal: true` en `backend_net` elimina por diseño cualquier interfaz de enrutamiento hacia pasarelas externas, neutralizando ataques de falsificación de peticiones (SSRF) y exfiltración directa.
+  * **Persistencia por Bind Mounts:** Se prescinde de clústeres de replicación complejos optando por volúmenes locales en el host, garantizando un balance óptimo entre durabilidad transaccional, facilidad de auditoría y simplicidad operativa en L3.
+  * **Automatización Documental (*Docs as Code*):** Toda modificación de infraestructura queda vinculada a scripts de validación que actualizan de forma automatizada las evidencias en el `WORKLOG.md`.
 
 ## 4. Matriz de Componentes Técnicos y de Seguridad
 
@@ -60,11 +60,9 @@ Mapeo normativo de cumplimiento:
 | **Persistencia** | MariaDB | Volúmenes *bind mounts* / respaldo local | Motor transaccional aislado con persistencia durable garantizada en host. |
 | **Detección de Amenazas** | Suricata | Inspección Profunda de Paquetes (DPI) | Telemetría de red y detección de anomalías. |
 
-## 5. Ingeniería de Seguridad y Controles GRC
-* **Micro-segmentación de Red:** División estricta mediante el flag `internal: true` de Docker en `backend_net`, bloqueando vectores de pivotaje y ataques de falsificación de peticiones (SSRF).
-* **Reducción de Superficie de Ataque:** Principio de mínimo privilegio aplicado en todos los componentes y servicios del sistema.
-* **Trazabilidad por Docs as Code:** Historial operacional y decisiones de arquitectura versionadas en el repositorio (`ARCHITECTURE.md`, `docs/WORKLOG.md").
-* **Paradigma de Validación Híbrida:** Prototipado local en macOS validado y desplegado sobre nodos Linux en producción.
+## 5. Automatización Operativa y Trazabilidad
+* **Scripting de Validación (`scripts/sync_ops.sh`):** Automatiza la comprobación del estado de los contenedores, registra marcas de tiempo e inyecta de forma declarativa las evidencias técnicas en el `WORKLOG.md` antes de la sincronización con el repositorio remoto.
+* **Trazabilidad GRC:** Cada cambio se justifica bajo criterios normativos de endurecimiento, cumpliendo con los estándares de auditoría exigidos.
 
 ## 6. Estructura del Repositorio
 
@@ -80,5 +78,6 @@ opsmatrix/
 ├── config/
 │   └── perimeter/
 ├── scripts/
+│   └── sync_ops.sh
 └── suricata/
 ```
