@@ -260,3 +260,37 @@ vert{}vert{}
  2 files changed, 19 insertions(+), 37 deletions(-)
 ```
 ---
+
+## [2026-09-16] Incidencia & Resolucion: Terminacion TLS 1.3 y Ajuste de Volumenes
+
+### Sintomas Detectados
+* Error al consultar puerto 443: curl: (35) Send failure: Broken pipe
+* Fallo interno de Nginx: cannot load certificate /etc/nginx/ssl/server.crt
+
+### Acciones de Diagnostico & Correccion
+1. Inspeccion de listeners: docker exec -it opsmatrix-web ss -tulpn
+2. Generacion de certificados en: layer2-perimeter/nginx/ssl/
+3. Correccion de volumenes en: layer3-services/docker/docker-compose.yml
+4. Validacion sintactica: docker exec -it opsmatrix-web nginx -t (successful)
+
+### Evidencia de Respuesta HTTP 200 OK
+HTTP/1.1 200 OK
+Server: nginx/1.31.5
+Date: Wed, 16 Sep 2026 11:53:36 GMT
+Content-Type: application/json
+Content-Length: 48
+
+{"status":"200 OK", "zone":"Layer2 TLS Active"}
+
+### [2026-09-16 14:27:16 CEST] - Preservación Autónoma de Evidencias (GRC Engine)
+**Archivos Modificados en Commit:**
+* `docs/WORKLOG.md`
+* `docs/adr/0005-layer2-tls-volume-mounting-troubleshooting.md`
+
+**Resumen Estadístico del Cambio:**
+```diff
+ docs/WORKLOG.md                                     | 21 +++++++++++++++++++++
+ ...05-layer2-tls-volume-mounting-troubleshooting.md | 19 +++++++++++++++++++
+ 2 files changed, 40 insertions(+)
+```
+---
