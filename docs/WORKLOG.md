@@ -247,3 +247,16 @@ vert{}vert{}
  2 files changed, 23 insertions(+)
 ```
 ---
+
+### [2026-09-16 13:59:05 CEST] - Preservación Autónoma de Evidencias (GRC Engine)
+**Archivos Modificados en Commit:**
+* `layer2-perimeter/nginx/default.conf`
+* `layer3-services/docker/docker-compose.yml`
+
+**Resumen Estadístico del Cambio:**
+```diff
+ layer2-perimeter/nginx/default.conf       | 17 +++++---------
+ layer3-services/docker/docker-compose.yml | 39 +++++++++++--------------------
+ 2 files changed, 19 insertions(+), 37 deletions(-)
+```
+---
