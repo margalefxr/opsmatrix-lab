@@ -154,3 +154,14 @@ La topología de red de **OpsMatrix-Lab** mapea directamente el modelo estándar
 * **Zona Naranja (DMZ / Perímetro Expuesto):** Corresponde a la subred `frontend_net` donde reside el Reverse Proxy Nginx (`opsmatrix-web`). Es el único segmento expuesto a tráfico no confiable (TCP 80/443).
 * **Zona Verde (LAN Interna / Persistencia Crítica):** Corresponde a la subred `backend_net` con flag `--internal` donde reside MariaDB (`opsmatrix-db`). Zona de alta confianza sin salida a internet (no-egress) ni exposición de sockets al host.
 * **Zona Azul (Gestión & Telemetría SIEM):** Corresponde al plano de control del Host Ubuntu 24.04 LTS donde opera el sensor Suricata NIDS y se recolectan las trazas de auditoría (`eve.json`, `auth.log`, logs JSON de Nginx) para monitorización y no repudio.
+
+---
+
+## 10. Decisiones Arquitectónicas (ADR): Disaster Recovery vs. Overengineering
+
+### Persistencia y Estrategia de Copias de Seguridad (Lean SecOps)
+Se ha evaluado el diseño de la capa de datos (`opsmatrix-db`) bajo los criterios del principio *Keep It Simple*:
+
+* **Descarte de Replicación / Alta Disponibilidad (HA):** Se excluye explícitamente la implementación de arquitecturas Multi-Master o réplicas Master-Slave por considerarse *overengineering* en esta escala. Introduciría consumo innecesario de recursos y mayor superficie de ataque en la `backend_net`.
+* **Persistencia por Volúmenes Lógicos:** Los datos de MariaDB residen en volúmenes lógicos gestionados por el Host, garantizando que el ciclo de vida de los contenedores (destrucción/recreación) no impacte en la integridad de los datos.
+* **Estrategia de Backup (Disaster Recovery):** Implementación de respaldos puntuales/programados mediante volcados lógicos (`mysqldump`) exportados directamente al plano de gestión del Host (Zona Azul), garantizando el cumplimiento de continuidad sin penalizar el rendimiento.
