@@ -458,3 +458,22 @@ Content-Length: 48
  1 file changed, 2 insertions(+), 2 deletions(-)
 ```
 ---
+
+### [2026-09-16 16:47:33 CEST] - Preservación Autónoma de Evidencias (GRC Engine)
+**Archivos Modificados en Commit:**
+* `README.md`
+* `deploy.sh`
+* `docs/adr/0003-adr-decisions-log.md`
+* `docs/estructura_proyecto_final.html`
+* `sync.sh`
+
+**Resumen Estadístico del Cambio:**
+```diff
+ README.md                                          |  46 ++--
+ deploy.sh                                          |   1 -
+ ...-decisions-log.md => 0003-adr-decisions-log.md} |   0
+ docs/estructura_proyecto_final.html                | 282 ---------------------
+ sync.sh                                            |   1 -
+ 5 files changed, 29 insertions(+), 301 deletions(-)
+```
+---

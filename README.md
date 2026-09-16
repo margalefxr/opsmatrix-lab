@@ -44,11 +44,11 @@ Mapeo normativo de cumplimiento:
 ```
 
 ## 4. Justificaciones Técnicas de Diseño (El Porqué)
-* **Filosofía *Lean* y Cero Sobreingeniería (*No Overengineering*):** Se descartan arquitecturas distribuidas sobredimensionadas (ej. Kubernetes o clústeres de alta disponibilidad innecesarios) en favor de una orquestación determinista con Docker Compose. Esto maximiza la auditabilidad, reduce la superficie de fallo y concentra el esfuerzo en el endurecimiento real y la micro-segmentación.
-* **Driver de Red Interno:** El uso de `internal: true` en `backend_net` elimina por diseño cualquier interfaz de enrutamiento hacia pasarelas externas, neutralizando ataques de falsificación de peticiones (SSRF) y exfiltración directa.
-* **Persistencia por Bind Mounts:** Se opta por volúmenes locales en el host para garantizar durabilidad transaccional sin la complejidad artificial de replicaciones distribuidas en entornos de alcance acotado.
-* **Paradigma de Validación Híbrida y Sandbox (OrbStack):** El desarrollo y las pruebas iterativas se ejecutan localmente sobre macOS utilizando **OrbStack** como un motor de contenedores de alto rendimiento y bajo consumo. Este entorno actúa como un *sandbox* seguro para validar despliegues, redes aisladas y cambios de configuración antes de su paso a los nodos de servidor Linux en producción.
-* **Automatización Documental (*Docs as Code*):** Toda modificación de infraestructura queda vinculada a scripts de validación que actualizan de forma automatizada las evidencias en el `WORKLOG.md`.
+* **Filosofía *Lean* y Cero Sobreingeniería (*No Overengineering*):** Se descartan arquitecturas distribuidas sobredimensionadas en favor de una orquestación determinista con Docker Compose, maximizando auditabilidad y reduciendo la superficie de fallo.
+* **Driver de Red Interno:** El uso de `internal: true` en `backend_net` elimina pasarelas externas, neutralizando ataques de SSRF y exfiltración de datos.
+* **Persistencia por Bind Mounts:** Volúmenes locales en el host para garantizar durabilidad transaccional sin la complejidad artificial de clústeres replicados.
+* **Paradigma de Validación Híbrida y Sandbox (OrbStack):** Entorno local en macOS optimizado como *sandbox* de alta eficiencia para validar configuraciones antes de desplegar en nodos Linux de producción.
+* **Automatización Documental (*Docs as Code*):** Trazabilidad absoluta mediante registros ADR y scripts de validación integrados en el `WORKLOG.md`.
 
 ## 5. Matriz de Componentes Técnicos y de Seguridad
 
@@ -63,23 +63,35 @@ Mapeo normativo de cumplimiento:
 | **Detección de Amenazas** | Suricata | Inspección Profunda de Paquetes (DPI) | Telemetría de red y detección de anomalías. |
 
 ## 6. Automatización Operativa y Trazabilidad
-* **Scripting de Validación (`scripts/sync_ops.sh`):** Automatiza la comprobación del estado de los contenedores, registra marcas de tiempo e inyecta de forma declarativa las evidencias técnicas en el `WORKLOG.md` antes de la sincronización con el repositorio remoto.
-* **Trazabilidad GRC:** Cada cambio se justifica bajo criterios normativos de endurecimiento, cumpliendo con los estándares de auditoría exigidos.
+* **Scripting de Validación (`scripts/sync_ops.sh`):** Automatiza la comprobación del estado de los contenedores, registra marcas de tiempo e inyecta de forma declarativa las evidencias técnicas en el `WORKLOG.md` antes de la sincronización.
+* **Trazabilidad GRC:** Justificación normativa continua adaptada a marcos de referencia de ciberseguridad defensiva.
 
 ## 7. Estructura del Repositorio
 
 ```text
-opsmatrix/
-├── README.md
-├── .env.example
-├── docker-compose.yml
+opsmatrix-lab/
 ├── ARCHITECTURE.md
+├── README.md
 ├── docs/
+│   ├── adr/
+│   │   ├── 0001-database-network-isolation.md
+│   │   ├── 0002-nids-suricata-host-deployment.md
+│   │   ├── 0003-adr-decisions-log.md
+│   │   ├── 0004-nids-suricata-rule-engine.md
+│   │   ├── 0005-automated-auditability-and-friction-logging.md
+│   │   └── 0006-layer2-tls-volume-mounting-troubleshooting.md
+│   ├── architecture-schema.md
 │   └── WORKLOG.md
-├── docker/
-├── config/
-│   └── perimeter/
-├── scripts/
-│   └── sync_ops.sh
-└── suricata/
+├── layer1-telemetry/
+│   ├── baseline/check_baseline.sh
+│   ├── scripts/
+│   └── suricata/rules/local.rules
+├── layer2-perimeter/
+│   ├── nginx/
+│   └── pki/
+├── layer3-services/
+│   └── docker/docker-compose.yml
+└── scripts/
+    ├── deploy.sh
+    └── sync_ops.sh
 ```
