@@ -1,167 +1,61 @@
-# OpsMatrix-Lab — Enterprise Telemetry & Infrastructure Hardening Platform
+# OpsMatrix Lab
 
-OpsMatrix-Lab es una arquitectura de referencia diseñada para desplegar, auditar y proteger un entorno SaaS transaccional sobre Ubuntu Server 24.04 LTS. El proyecto implementa un modelo de defensa en profundidad (Defense in Depth) combinado con telemetría pasiva de red (NIDS), emisión de PKI privada para cifrado TLS estricto y segmentación de microservicios en Docker.
+## 1. Identificación
+* **Proyecto:** OpsMatrix Lab
+* **Autor:** Xavier Margalef Riestra
+* **Modalidad:** Individual
+* **Temática:** Infraestructura de Sistemas, Operaciones L3 y Seguridad (SOC/GRC).
 
-## 1. Principios de Arquitectura & Gobierno (GRC)
+## 2. Descripción del Sistema
+OpsMatrix Lab simula una infraestructura de producción endurecida para una plataforma corporativa expuesta a internet. El sistema gestiona un entorno multi-capa segmentado que procesa transacciones de usuarios y registros de bases de datos relacionales bajo políticas de mínimo privilegio. Incorpora monitorización de seguridad perimetral, control estricto de tráfico mediante redes virtuales aisladas y automatización de despliegues declarativos, desacoplando la persistencia de datos del ciclo de vida de los contenedores para garantizar alta disponibilidad y trazabilidad en cumplimiento con normativas de seguridad (GRC).
 
-* **Zero Trust & Least Privilege:** Aislamiento estricto de red. La base de datos opera en una subred interna no enrutable desde el host. Solo los puertos perimetrales necesarios (TCP 80, 443, 22) se exponen al exterior.
-* **Defense in Depth:** Tres capas defensivas independientes:
-  1. Perímetro HTTP/TLS: Terminación de cifrado y proxies inversos.
-  2. Telemetría de Red: Inspección en modo promiscuo sobre la interfaz física del host.
-  3. Aislamiento de Aplicación: Microservicios desacoplados en contenedores con volúmenes de almacenamiento dedicados.
-* **Trazabilidad & Auditabilidad (No Repudio):** Centralización de evidencias con marcas de tiempo (timestamps) sincronizadas entre SSH (`auth.log`), Reverse Proxy (`access.log`), contenedores (`docker logs`) e IDS (`eve.json`).
-* **Preparedness for Grey Box Assessment:** La infraestructura está diseñada con un alto nivel de observabilidad para correlacionar eventos de administración legítima frente a escenarios de auditoría ofensiva / pentesting.
+## 3. Arquitectura del Sistema
 
-## 2. Topología de Red y Arquitectura por Capas
+     CLIENTE (External)
+            │
+            ▼
+   Ubuntu Server (Edge)
+            │
+   ┌────────┴────────┐
+   │                 │
+  SSH             Docker
+                     │
+      ┌──────────────┴──────────────┐
+      │                             │
+frontend_net (DMZ)         backend_net (Isolated)
+      │                             │
+  [ Proxy ]                    [ Database ]
+      │                             │
+      └─────────── web ─────────────┘
+           (Dual-Homed Container)
 
-El sistema se estructura en tres dominios operativos principales:
+## 4. Matriz de Componentes Técnicos
 
-```text
-                     CLIENTE / AUDITOR / PENTESTER
-                                   │
-                                   ▼
-                       Ubuntu Server Host (24.04)
-                                   │
-       ┌───────────────────────────┼───────────────────────────┐
-       │                           │                           │
-    OpenSSH                    Suricata                     Docker
- (Admin TCP :22)             (NIDS Host)                       │
-                                              ┌────────────────┴────────────────┐
-                                              │                                 │
-                                           WEB App                           MariaDB
-                                       (Nginx Proxy)                      (DB TCP :3306)
-                                       (TCP 80 / 443)                   [Internal Network]
-                                                                                │
-                                                                                ▼
-                                                                          [Backup Volume]
-```
-
-### Diagrama de Flujo de Datos (Mermaid)
-
-```mermaid
-graph TD
-    Client[Cliente / Auditor / Pentester] -->|TCP 22: SSH / TCP 443: HTTPS| Host[Ubuntu Server 24.04 LTS]
-    
-    subgraph Host [Host de Infraestructura]
-        SSH[OpenSSH Server]
-        Suricata[Suricata IDS - Mod Promiscuo]
-        
-        subgraph DockerNet [Red Privada Docker - Bridge]
-            Nginx[Nginx Reverse Proxy / Web App]
-            MariaDB[(MariaDB Database)]
-        end
-    end
-
-    Host -->|Inspección de Tráfico| Suricata
-    Nginx -->|TCP 3306 - Internal| MariaDB
-    MariaDB -->|Backup Automático| Vol[Volumen Cifrado Local]
-```
-
-## 3. Especificación de Componentes y Matriz de Red
-
-| Componente | Tecnología | Rol Operativo | Red / Puerto | Visibilidad |
-| :--- | :--- | :--- | :--- | :--- |
-| **Host System** | Ubuntu Server 24.04 | Sistema operativo base hardening | N/A | Host Físico |
-| **Remote Admin** | OpenSSH | Gestión remota mediante claves | TCP 22 | Perímetro (Restringido) |
-| **NIDS Sensor** | Suricata | Análisis de paquetes en tiempo real | Mod Promiscuo | Pasivo (Host) |
-| **Orquestador** | Docker Compose | Despliegue de microservicios | N/A | Interno |
-| **Web Gateway** | Nginx | Reverse Proxy + Terminación TLS | TCP 80 / 443 | Expuesto |
-| **Data Store** | MariaDB | Persistencia transaccional SaaS | TCP 3306 | Aislado (Docker Bridge) |
-| **Backups** | Bash + Cron | Dump de BD y rotación de snapshots | Local Storage | Interno |
-
-## 4. Matriz de Evidencias y Fuentes de Logs
-
-| Vector / Origen | Fichero de Registro | Contenido & Eventos Auditados |
+| Componente | Tecnología | Función Operativa |
 | :--- | :--- | :--- |
-| **Acceso SSH** | `/var/log/auth.log` | Inicios de sesión exitosos/fallidos, IP origen, comandos sudo. |
-| **Tráfico HTTP/S** | `/var/log/nginx/access.log` | Métodos HTTP, rutas solicitadas, código de respuesta, User-Agent. |
-| **Errores Web** | `/var/log/nginx/error.log` | Peticiones anómalas, 403 Forbidden, fallos de backend. |
-| **Base de Datos** | `docker logs opsmatrix-mariadb` | Consultas de estructura, arranque de motor, eventos de conexión. |
-| **Telemetría IDS** | `/var/log/suricata/fast.log` | Alertas de firmas activas (escaneos Nmap, pings ICMP, reglas custom). |
-| **Alertas JSON** | `/var/log/suricata/eve.json` | Metadatos completos en formato JSON estructurado para SIEM. |
+| **Servidor Host** | Ubuntu Server / Linux Kernel | Entorno base de ejecución nativo y pruebas de validación multi-plataforma (OrbStack/Ubuntu). |
+| **Acceso Remoto** | OpenSSH | Gestión segura de infraestructura y administración remota cifrada. |
+| **Orquestación** | Docker / Docker Compose | Despliegue declarativo multi-capa y gestión de contenedores aislados. |
+| **Aplicación / Web** | Nginx / Custom Web | Servicio principal frontend, proxy inverso y terminación de tráfico HTTP/HTTPS. |
+| **Base de Datos** | MariaDB | Persistencia transaccional aislada en red backend sin exposición pública. |
+| **Monitorización / IDS** | Suricata | Inspección profunda de paquetes (DPI), detección de intrusiones y telemetría de red. |
 
-## 5. Estructura del Repositorio
+## 5. Valor Diferencial y Operativa (*Engineering Scope*)
+* **Docs as Code:** Trazabilidad documental integrada en el repositorio (`ARCHITECTURE.md`, `WORKLOG.md`), eliminando la dependencia de documentación estática desactualizada.
+* **Network Zoning:** Segmentación estricta entre la red pública de entrada (`frontend_net`) y el backend de datos (`backend_net` con flag `internal: true`).
+* **Validación Híbrida:** Ciclo de desarrollo iterativo local optimizado en macOS para validación de código, con despliegue y pruebas de estrés nativas sobre infraestructura Ubuntu Server.
+* **Gobernanza y Riesgos (GRC):** Alineamiento con principios de menor privilegio y endurecimiento de superficies de ataque desde la fase inicial de diseño.
 
-```text
-opsmatrix-lab/
-├── .gitignore                      # Exclusión de claves privadas, certificados y secrets
-├── README.md                       # Documentación principal de arquitectura
-├── layer1-telemetry/               # Configuración del sensor IDS y scripts de auditoría
-├── layer2-perimeter/               # Infraestructura PKI, certificados TLS y material criptográfico
-├── layer3-services/                # Orquestación Docker Compose y configuraciones Nginx
-└── docs/                           # Diagramas Excalidraw, arquitectura técnica y WORKLOG.md
-```
+## 6. Estructura del Repositorio
 
-## 6. Roadmap de Implementación
-
-- [x] **Fase 1: Diseños & Definición de Arquitectura** — Diagramación por capas, matriz de logs y estructura de repositorio.
-- [ ] **Fase 2: Infraestructura de Servicios (Docker)** — Despliegue del stack Nginx + MariaDB y redes privadas.
-- [ ] **Fase 3: Hardening & Gestión de Logs** — Centralización y verificación de trazas de auditoría.
-- [ ] **Fase 4: Despliegue de IDS Suricata** — Reglas custom (local.rules) e inspección sobre la interfaz del host.
-- [ ] **Fase 5: Línea Base & Pruebas Ofensivas** — Validación con tráfico legítimo y simulación de ataques.
-- [ ] **Fase 6: Informe de Evidencias Final** — Consolidación de documentación y artefactos.
-
----
-
-## 6. Principios de Automatización & Trazabilidad Continuada (Auditability-as-Code)
-El repositorio implementa un mecanismo de auditoría no intrusiva para garantizar el registro del ciclo de vida del software, decisiones de diseño y resolución de fricciones técnicas:
-
-* **Git Hooks (`.git/hooks/pre-commit`):** Intercepción automatizada en cada commit para registrar archivos impactados y marcas de tiempo ISO 8601 en la bitácora `docs/WORKLOG.md`.
-* **Registro de Fricción Técnica (Troubleshooting Log):** Protocolo estandarizado mediante `./layer1-telemetry/scripts/capture_debug.sh` para auditar errores de entorno, fallos de comandos y sus resoluciones sin perder contexto.
-* **Bootstrapping Desatendido:** Script `deploy.sh` en la raíz para réplica e instanciación determinista del entorno en cualquier host Ubuntu target.
-
----
-
-## 7. Architecture Decision Records (ADR)
-
-### ADR-001: Justificación de Topología de 2 Capas vs. 3ª Capa (DMZ Estricta)
-* **Estado:** Aceptado / Implementado.
-* **Contexto:** Se evaluó la inclusión de una 3ª subred Docker (`dmz_app_net`) para aislar una capa intermedia de aplicación entre el Gateway HTTP (Nginx) y la Persistencia (MariaDB).
-* **Decisión:** Mantener el modelo estricto de 2 capas (`frontend_net` + `backend_net` con `--internal`).
-* **Justificación:**
-  * **Principio Lean & YAGNI (You Aren't Gonna Need It):** Introducir una subred DMZ sin un servicio de backend dedicado (API) añade complejidad operativa y sobrecoste de enrutamiento en Docker Compose sin aportar un incremento real de la postura de seguridad.
-  * **Suficiencia de Aislamiento:** La red `backend_net` con flag `--internal` garantiza el cumplimiento de Zero Trust al bloquear el tráfico saliente (no-egress) y el mapeo de sockets hacia el host (puerto 3306 inalcanzable externamente).
-  * **Compensación L7 en Host:** La inspección perimetral no se delega a subredes intermedias, sino a la capa del Host mediante el NIDS Suricata en modo promiscuo.
-
-### ADR-002: Separación de Entorno de Ejecución Efímero (OrbStack Sandbox)
-* **Estado:** Aceptado / Implementado.
-* **Contexto:** Necesidad de validar el despliegue determinista del laboratorio sin contaminar la Workstation principal ni arrastrar estado en Git.
-* **Decisión:** Despliegue de un nodo virtualizado Ubuntu Server 24.04 LTS en OrbStack (`lab-practice`).
-* **Justificación:**
-  * **Inmutabilidad:** Garantiza que `./deploy.sh` es 100% autodetenible en un sistema limpio (clean-slate testing).
-  * **Aislamiento:** Permite ejecutar pruebas destructivas o de pentesting sin afectar al host de desarrollo.
-
----
-
-## 8. Automatización GRC & Tracelogging (Git Hooks)
-
-### ADR-003: Preservación Autónoma de Evidencias (Non-Repudiation Engine)
-* **Estado:** Aceptado / Implementado.
-* **Contexto:** En auditorías de ciberseguridad y operaciones (SOC2 / ISO 27001), documentar manualmente cada cambio genera errores de omisión y falta de sellado temporal.
-* **Decisión:** Implementación de un hook local (`.git/hooks/pre-commit`) acoplado a `scripts/sync.sh`.
-* **Funcionamiento:**
-  1. Intercepta cualquier operación de `commit` en la Workstation.
-  2. Extrae el listado de archivos modificados (`git diff --cached`) y el diff estadístico.
-  3. Formatea la entrada con estampa de tiempo estricta (ISO-8601) y la inyecta automáticamente en `docs/WORKLOG.md` antes de cerrar el commit.
-  4. Garantiza trazabilidad continua sin depender de memoria o intervención humana.
-
----
-
-## 9. Modelo de Segmentación por Zonas de Seguridad (CCN-STIC / ISO 27001)
-
-La topología de red de **OpsMatrix-Lab** mapea directamente el modelo estándar de clasificación por zonas de confianza:
-
-* **Zona Naranja (DMZ / Perímetro Expuesto):** Corresponde a la subred `frontend_net` donde reside el Reverse Proxy Nginx (`opsmatrix-web`). Es el único segmento expuesto a tráfico no confiable (TCP 80/443).
-* **Zona Verde (LAN Interna / Persistencia Crítica):** Corresponde a la subred `backend_net` con flag `--internal` donde reside MariaDB (`opsmatrix-db`). Zona de alta confianza sin salida a internet (no-egress) ni exposición de sockets al host.
-* **Zona Azul (Gestión & Telemetría SIEM):** Corresponde al plano de control del Host Ubuntu 24.04 LTS donde opera el sensor Suricata NIDS y se recolectan las trazas de auditoría (`eve.json`, `auth.log`, logs JSON de Nginx) para monitorización y no repudio.
-
----
-
-## 10. Decisiones Arquitectónicas (ADR): Disaster Recovery vs. Overengineering
-
-### Persistencia y Estrategia de Copias de Seguridad (Lean SecOps)
-Se ha evaluado el diseño de la capa de datos (`opsmatrix-db`) bajo los criterios del principio *Keep It Simple*:
-
-* **Descarte de Replicación / Alta Disponibilidad (HA):** Se excluye explícitamente la implementación de arquitecturas Multi-Master o réplicas Master-Slave por considerarse *overengineering* en esta escala. Introduciría consumo innecesario de recursos y mayor superficie de ataque en la `backend_net`.
-* **Persistencia por Volúmenes Lógicos:** Los datos de MariaDB residen en volúmenes lógicos gestionados por el Host, garantizando que el ciclo de vida de los contenedores (destrucción/recreación) no impacte en la integridad de los datos.
-* **Estrategia de Backup (Disaster Recovery):** Implementación de respaldos puntuales/programados mediante volcados lógicos (`mysqldump`) exportados directamente al plano de gestión del Host (Zona Azul), garantizando el cumplimiento de continuidad sin penalizar el rendimiento.
+opsmatrix/
+├── README.md
+├── .gitignore
+├── docker-compose.yml
+├── ARCHITECTURE.md
+├── docs/
+│   └── WORKLOG.md
+├── docker/
+├── config/
+├── scripts/
+└── suricata/
