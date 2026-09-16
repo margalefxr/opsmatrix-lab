@@ -1,4 +1,4 @@
-# ADR-005: Correccion de Montaje de Volumenes y Terminacion TLS 1.3 en Nginx
+# ADR-006: Correccion de Montaje de Volumenes y Terminacion TLS 1.3 en Nginx
 
 * Fecha: 2026-09-16
 * Estado: Aceptado
