@@ -14,23 +14,16 @@ Mapeo normativo de cumplimiento:
 * **Esquema Nacional de Seguridad (ENS - RD 311/2022):** Líneas base de endurecimiento, monitorización continua y particionamiento estricto de dominios.
 * **NIST SP 800-53 / CIS Benchmarks:** Ejecución bajo privilegios mínimos y reducción de la superficie de ataque.
 
-## 3. Topología de Arquitectura y Diseño Visual
-* **Esquema de Referencia:** El modelado completo de flujos, zonas de red y componentes perimetrales se encuentra documentado y esquematizado mediante diagrama técnico dedicado (*Excalidraw / Arquitectura Multi-Capa*).
+## 3. Topología de Arquitectura y Esquema Visual
 
-* **Cliente / Perímetro Externo**
-  * Canal seguro: Tráfico cifrado TLS 1.3
-  * Destino: Nodo Host perimetral
-* **Nodo Host (Ubuntu Server - Edge)**
-  * Plano de Control: OpenSSH (Cifrado Ed25519 y mitigación de fuerza bruta)
-  * Plano de Telemetría: Suricata IDS (Inspección Profunda de Paquetes / Reglas OISF)
-  * Motor de Contenedores: Docker Engine (Runtime segregado)
-* **Segmentación de Redes y Servicios**
-  * **Red Pública (`frontend_net` - Bridge / DMZ):**
-    * Contenedor Proxy Inverso: Nginx Alpine (Terminación TLS / WAF)
-  * **Enlace Dual-Homed:**
-    * Contenedor de Aplicación Web (conecta DMZ con red privada sin exponer la base de datos)
-  * **Red Privada (`backend_net` - Aislada / `internal: true`):**
-    * Contenedor de Persistencia: MariaDB Engine (Persistencia garantizada mediante volúmenes dedicados / *bind mounts* locales para respaldo y durabilidad de datos sin complejidad de replicación en clúster).
+
+
+* **Cliente / Perímetro Externo:** Tráfico cifrado mediante TLS 1.3 hacia el nodo perimetral.
+* **Nodo Host (Ubuntu Server - Edge):** Aislamiento a nivel de kernel, gestión por OpenSSH y monitorización de tráfico en tiempo real con Suricata IDS.
+* **Segmentación de Redes:**
+  * ** (DMZ):** Exposición controlada del proxy inverso (Nginx Alpine).
+  * **Enlace Dual-Homed:** Contenedor de aplicación intermediario que puentea las capas sin exponer el backend.
+  * ** (Aislada):** Red privada virtual con el flag , albergando el motor MariaDB con persistencia local asegurada mediante *bind mounts* (*backup* y durabilidad en host sin sobrecoste de replicación clúster).
 
 ## 4. Matriz de Componentes Técnicos y de Seguridad
 
