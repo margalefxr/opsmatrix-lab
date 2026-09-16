@@ -44,8 +44,9 @@ Mapeo normativo de cumplimiento:
 ```
 
 * **Justificaciones Técnicas de Diseño (El Porqué):**
+  * **Filosofía *Lean* y Cero Sobreingeniería (*No Overengineering*):** Se descartan arquitecturas distribuidas sobredimensionadas (ej. Kubernetes o clústeres de alta disponibilidad innecesarios) en favor de una orquestación determinista con Docker Compose. Esto maximiza la auditabilidad, reduce la superficie de fallo y concentra el esfuerzo en el endurecimiento real y la micro-segmentación.
   * **Driver de Red Interno:** El uso de `internal: true` en `backend_net` elimina por diseño cualquier interfaz de enrutamiento hacia pasarelas externas, neutralizando ataques de falsificación de peticiones (SSRF) y exfiltración directa.
-  * **Persistencia por Bind Mounts:** Se prescinde de clústeres de replicación complejos optando por volúmenes locales en el host, garantizando un balance óptimo entre durabilidad transaccional, facilidad de auditoría y simplicidad operativa en L3.
+  * **Persistencia por Bind Mounts:** Se opta por volúmenes locales en el host para garantizar durabilidad transaccional sin la complejidad artificial de replicaciones distribuidas en entornos de alcance acotado.
   * **Automatización Documental (*Docs as Code*):** Toda modificación de infraestructura queda vinculada a scripts de validación que actualizan de forma automatizada las evidencias en el `WORKLOG.md`.
 
 ## 4. Matriz de Componentes Técnicos y de Seguridad
