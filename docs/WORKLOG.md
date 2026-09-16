@@ -294,3 +294,14 @@ Content-Length: 48
  2 files changed, 40 insertions(+)
 ```
 ---
+
+### [2026-09-16 14:29:11 CEST] - Preservación Autónoma de Evidencias (GRC Engine)
+**Archivos Modificados en Commit:**
+* `docs/adr/0006-layer2-tls-volume-mounting-troubleshooting.md`
+
+**Resumen Estadístico del Cambio:**
+```diff
+ ...leshooting.md => 0006-layer2-tls-volume-mounting-troubleshooting.md} | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+```
+---
