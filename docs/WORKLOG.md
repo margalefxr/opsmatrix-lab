@@ -159,3 +159,41 @@ vert{}vert{}
 * **ADR Registrado:** Justificada la exclusión de una 3ª red DMZ por overengineering (foco en simplicidad, Lean y aislamiento `--internal`).
 * **Entorno Sandbox Validado:** Confirmada la separación de la VM OrbStack `lab-practice` como runtime efímero para pruebas destructivas.
 * **Infraestructura:** Mantenimiento de la topología de 2 subredes (`frontend_net` / `backend_net`) combinada con telemetría perimetral.
+
+### [2026-09-16 11:11:42 CEST] - Automated Execution & Evidence Capture
+**Archivos Afectados:**
+* `README.md`
+* `deploy.sh`
+* `sync.sh`
+* `scripts/`
+
+**Diff Resumido de Cambios:**
+```diff
+ README.md       | 14 ++++++++++++++
+ deploy.sh       | 46 +---------------------------------------------
+ docs/WORKLOG.md | 10 ++++++++++
+ sync.sh         | 13 +------------
+ 4 files changed, 26 insertions(+), 57 deletions(-)
+```
+---
+
+### [2026-09-16 11:11:42 CEST] - Preservación Autónoma de Evidencias (GRC Engine)
+**Archivos Modificados en Commit:**
+* `README.md`
+* `deploy.sh`
+* `docs/WORKLOG.md`
+* `scripts/deploy.sh`
+* `scripts/sync.sh`
+* `sync.sh`
+
+**Resumen Estadístico del Cambio:**
+```diff
+ README.md         | 14 ++++++++++++++
+ deploy.sh         | 46 +---------------------------------------------
+ docs/WORKLOG.md   | 17 +++++++++++++++++
+ scripts/deploy.sh | 45 +++++++++++++++++++++++++++++++++++++++++++++
+ scripts/sync.sh   | 53 +++++++++++++++++++++++++++++++++++++++++++++++++++++
+ sync.sh           | 13 +------------
+ 6 files changed, 131 insertions(+), 57 deletions(-)
+```
+---
