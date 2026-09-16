@@ -43,13 +43,14 @@ Mapeo normativo de cumplimiento:
                    (Contenedor Dual-Homed)
 ```
 
-* **Justificaciones Técnicas de Diseño (El Porqué):**
-  * **Filosofía *Lean* y Cero Sobreingeniería (*No Overengineering*):** Se descartan arquitecturas distribuidas sobredimensionadas (ej. Kubernetes o clústeres de alta disponibilidad innecesarios) en favor de una orquestación determinista con Docker Compose. Esto maximiza la auditabilidad, reduce la superficie de fallo y concentra el esfuerzo en el endurecimiento real y la micro-segmentación.
-  * **Driver de Red Interno:** El uso de `internal: true` en `backend_net` elimina por diseño cualquier interfaz de enrutamiento hacia pasarelas externas, neutralizando ataques de falsificación de peticiones (SSRF) y exfiltración directa.
-  * **Persistencia por Bind Mounts:** Se opta por volúmenes locales en el host para garantizar durabilidad transaccional sin la complejidad artificial de replicaciones distribuidas en entornos de alcance acotado.
-  * **Automatización Documental (*Docs as Code*):** Toda modificación de infraestructura queda vinculada a scripts de validación que actualizan de forma automatizada las evidencias en el `WORKLOG.md`.
+## 4. Justificaciones Técnicas de Diseño (El Porqué)
+* **Filosofía *Lean* y Cero Sobreingeniería (*No Overengineering*):** Se descartan arquitecturas distribuidas sobredimensionadas (ej. Kubernetes o clústeres de alta disponibilidad innecesarios) en favor de una orquestación determinista con Docker Compose. Esto maximiza la auditabilidad, reduce la superficie de fallo y concentra el esfuerzo en el endurecimiento real y la micro-segmentación.
+* **Driver de Red Interno:** El uso de `internal: true` en `backend_net` elimina por diseño cualquier interfaz de enrutamiento hacia pasarelas externas, neutralizando ataques de falsificación de peticiones (SSRF) y exfiltración directa.
+* **Persistencia por Bind Mounts:** Se opta por volúmenes locales en el host para garantizar durabilidad transaccional sin la complejidad artificial de replicaciones distribuidas en entornos de alcance acotado.
+* **Paradigma de Validación Híbrida:** Prototipado y pruebas iterativas ejecutadas localmente en entornos de alta eficiencia (macOS) mediante contenedores, validadas y desplegadas formalmente sobre nodos de servidor Linux en producción.
+* **Automatización Documental (*Docs as Code*):** Toda modificación de infraestructura queda vinculada a scripts de validación que actualizan de forma automatizada las evidencias en el `WORKLOG.md`.
 
-## 4. Matriz de Componentes Técnicos y de Seguridad
+## 5. Matriz de Componentes Técnicos y de Seguridad
 
 | Subsistema / Capa | Tecnología | Especificación de Seguridad | Función Operativa |
 | :--- | :--- | :--- | :--- |
@@ -61,11 +62,11 @@ Mapeo normativo de cumplimiento:
 | **Persistencia** | MariaDB | Volúmenes *bind mounts* / respaldo local | Motor transaccional aislado con persistencia durable garantizada en host. |
 | **Detección de Amenazas** | Suricata | Inspección Profunda de Paquetes (DPI) | Telemetría de red y detección de anomalías. |
 
-## 5. Automatización Operativa y Trazabilidad
+## 6. Automatización Operativa y Trazabilidad
 * **Scripting de Validación (`scripts/sync_ops.sh`):** Automatiza la comprobación del estado de los contenedores, registra marcas de tiempo e inyecta de forma declarativa las evidencias técnicas en el `WORKLOG.md` antes de la sincronización con el repositorio remoto.
 * **Trazabilidad GRC:** Cada cambio se justifica bajo criterios normativos de endurecimiento, cumpliendo con los estándares de auditoría exigidos.
 
-## 6. Estructura del Repositorio
+## 7. Estructura del Repositorio
 
 ```text
 opsmatrix/
