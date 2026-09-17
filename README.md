@@ -9,7 +9,7 @@
 * **Dominios Clave:** Operaciones Defensivas (Blue Team), Endurecimiento Perimetral (Hardening), Micro-segmentación de Redes, Inteligencia de Amenazas (IDS) y Gobernanza, Riesgos y Cumplimiento (GRC).
 
 ## Modelado de Amenazas y Filosofia de Arquitectura
-OpsMatrix Lab simula una infraestructura de producción expuesta a redes públicas hostiles bajo principios de **Defensa en Profundidad** y **Zero-Trust**. La arquitectura mitiga vectores directos de explotación, movimiento lateral y exfiltración de datos.
+OpsMatrix Lab es una infraestructura desplegada como Sovereign Workspace y núcleo transaccional para despachos profesionales y asesorías locales, diseñada bajo el paradigma de Defense-in-Depth y cumplimiento normativo automatizado (GRC/RGPD/ENS). El sistema provee un servicio web contenedorizado de portal de cliente para la gestión de activos documentales y trazabilidad operativa. A nivel analítico, gestiona telemetría transaccional simulada, esquemas de identidad y registros de auditoría forense. La función de la aplicación web es operar como edge-gateway y plano frontal de exposición controlada, mientras que el stack subyacente implementa micro-segmentación de red, aislamiento absoluto de persistencia (backend air-gapped) y monitorización perimetral automatizada (NIDS), facilitando la validación de controles de seguridad, análisis de vectores de ataque y endurecimiento continuo (hardening) frente a incidentes de brecha de datos.
 
 ## Mapeo normativo de cumplimiento:
 * **ISO/IEC 27001:** Gestión de seguridad de la información (control de accesos, criptografía y seguridad operacional).
