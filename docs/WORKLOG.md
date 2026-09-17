@@ -510,3 +510,14 @@ Content-Length: 48
 * **Aislamiento y Redes:** Conectividad web-base de datos asegurada mediante red privada con aislamiento perimetral (internal: true).
 * **Persistencia:** Volúmenes locales configurados para garantizar la durabilidad de los datos en el host.
 * **Tabla de Puertos:** Mapeo documentado (SSH expuesto, Web expuesta en 80/443, MariaDB bloqueada a uso exclusivamente interno).
+
+### [2026-09-17 10:29:30 CEST] - Preservación Autónoma de Evidencias (GRC Engine)
+**Archivos Modificados en Commit:**
+* `docs/architecture-master.excalidraw`
+
+**Resumen Estadístico del Cambio:**
+```diff
+ docs/architecture-master.excalidraw | 39 +++++++++++++++++++++++++++++++++++++
+ 1 file changed, 39 insertions(+)
+```
+---
