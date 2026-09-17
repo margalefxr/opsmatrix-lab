@@ -1,6 +1,6 @@
 # OpsMatrix Lab — Framework Operativo de Ciberseguridad y GRC
 
-![Esquema de Arquitectura - OpsMatrix Lab](docs/assets/architecture-schema.png)
+![Esquema de Arquitectura - OpsMatrix Lab](https://raw.githubusercontent.com/margalefxr/opsmatrix-lab/main/docs/assets/architecture-schema.png)
 
 ## 1. Identificación y Resumen Ejecutivo
 * **Proyecto:** OpsMatrix Lab
