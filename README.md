@@ -1,20 +1,22 @@
 # OpsMatrix Lab — Framework Operativo de Ciberseguridad y GRC
 
-## 1. Identificación y Resumen Ejecutivo
+![Esquema de Arquitectura - OpsMatrix Lab](./docs/assets/architecture-schema.png)
+
+## Identificación y Resumen Ejecutivo
 * **Proyecto:** OpsMatrix Lab
 * **Autor:** Xavier Margalef Riestra
 * **Modalidad:** Individual
 * **Dominios Clave:** Operaciones Defensivas (Blue Team), Endurecimiento Perimetral (Hardening), Micro-segmentación de Redes, Inteligencia de Amenazas (IDS) y Gobernanza, Riesgos y Cumplimiento (GRC).
 
-## 2. Modelado de Amenazas y Alcance Arquitectónico
+## Modelado de Amenazas y Alcance Arquitectónico
 OpsMatrix Lab simula una infraestructura de producción expuesta a redes públicas hostiles bajo principios de **Defensa en Profundidad** y **Zero-Trust**. La arquitectura mitiga vectores directos de explotación, movimiento lateral y exfiltración de datos.
 
-Mapeo normativo de cumplimiento:
+## Mapeo normativo de cumplimiento:
 * **ISO/IEC 27001:** Gestión de seguridad de la información (control de accesos, criptografía y seguridad operacional).
 * **Esquema Nacional de Seguridad (ENS - RD 311/2022):** Líneas base de endurecimiento, monitorización continua y particionamiento estricto de dominios.
 * **NIST SP 800-53 / CIS Benchmarks:** Ejecución bajo privilegios mínimos y reducción de la superficie de ataque.
 
-## 3. Topología de Arquitectura y Esquema Visual
+## Topología de Arquitectura y Esquema Visual
 
 ```text
                  [ CLIENTE / ACTOR EXTERNO ]
@@ -42,15 +44,26 @@ Mapeo normativo de cumplimiento:
          └─────────────── web ─────────────────────┘
                    (Contenedor Dual-Homed)
 ```
+### Distribución Operativa de Componentes:
+1. **Capa 1 (`layer1-telemetry`):** Sensor IDS Suricata en modo escucha pasiva sobre la interfaz física del host mediante Inspección Profunda de Paquetes (DPI), garantizando telemetría en tiempo real sin interferir en el tráfico transaccional.
+2. **Capa 2 (`layer2-perimeter`):** Perímetro de seguridad, PKI local con Autoridad Certificadora propia (RSA 4096) y terminación estricta de **TLS 1.3** a través de Nginx Alpine.
+3. **Capa 3 (`layer3-services`):** Microservicios orquestados mediante Docker Compose. Incluye una red pública (`frontend_net`) en DMZ y una red privada aislada (`backend_net` con el flag `internal: true`) para el motor de base de datos MariaDB, garantizando protección absoluta frente a ataques de exfiltración o SSRF.
 
-## 4. Justificaciones Técnicas de Diseño (El Porqué)
+## Matriz de Puertos y Servicios
+| Subsistema / Capa | Puerto Expuesto | Función Operativa |
+| :--- | :--- | :--- |
+| **OpenSSH (Host)** | Sí (`22/TCP`) | Administración remota segura con claves Ed25519. |
+| **Nginx / Aplicación Web** | Sí (`80/TCP`, `443/TCP`) | Proxy inverso, terminación TLS 1.3 y servicio transaccional público. |
+| **MariaDB (Backend)** | No (`3306/TCP` interno) | Motor transaccional aislado en red interna (`internal: true`), sin acceso exterior. |
+
+## Justificaciones Técnicas de Diseño
 * **Filosofía *Lean* y Cero Sobreingeniería (*No Overengineering*):** Se descartan arquitecturas distribuidas sobredimensionadas en favor de una orquestación determinista con Docker Compose, maximizando auditabilidad y reduciendo la superficie de fallo.
 * **Driver de Red Interno:** El uso de `internal: true` en `backend_net` elimina pasarelas externas, neutralizando ataques de SSRF y exfiltración de datos.
 * **Persistencia por Bind Mounts:** Volúmenes locales en el host para garantizar durabilidad transaccional sin la complejidad artificial de clústeres replicados.
 * **Paradigma de Validación Híbrida y Sandbox (OrbStack):** Entorno local en macOS optimizado como *sandbox* de alta eficiencia para validar configuraciones antes de desplegar en nodos Linux de producción.
 * **Automatización Documental (*Docs as Code*):** Trazabilidad absoluta mediante registros ADR y scripts de validación integrados en el `WORKLOG.md`.
 
-## 5. Matriz de Componentes Técnicos y de Seguridad
+## Matriz de Componentes Técnicos y de Seguridad
 
 | Subsistema / Capa | Tecnología | Especificación de Seguridad | Función Operativa |
 | :--- | :--- | :--- | :--- |
@@ -62,11 +75,11 @@ Mapeo normativo de cumplimiento:
 | **Persistencia** | MariaDB | Volúmenes *bind mounts* / respaldo local | Motor transaccional aislado con persistencia durable garantizada en host. |
 | **Detección de Amenazas** | Suricata | Inspección Profunda de Paquetes (DPI) | Telemetría de red y detección de anomalías. |
 
-## 6. Automatización Operativa y Trazabilidad
+## Automatización Operativa y Trazabilidad
 * **Scripting de Validación (`scripts/sync_ops.sh`):** Automatiza la comprobación del estado de los contenedores, registra marcas de tiempo e inyecta de forma declarativa las evidencias técnicas en el `WORKLOG.md` antes de la sincronización.
 * **Trazabilidad GRC:** Justificación normativa continua adaptada a marcos de referencia de ciberseguridad defensiva.
 
-## 7. Estructura del Repositorio
+## Estructura del Repositorio
 
 ```text
 opsmatrix-lab/
