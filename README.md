@@ -8,7 +8,7 @@
 * **Modalidad:** Individual
 * **Dominios Clave:** Operaciones Defensivas (Blue Team), Endurecimiento Perimetral (Hardening), Micro-segmentación de Redes, Inteligencia de Amenazas (IDS) y Gobernanza, Riesgos y Cumplimiento (GRC).
 
-## Modelado de Amenazas y Alcance Arquitectónico
+## Modelado de Amenazas y Filosofia de Arquitectura
 OpsMatrix Lab simula una infraestructura de producción expuesta a redes públicas hostiles bajo principios de **Defensa en Profundidad** y **Zero-Trust**. La arquitectura mitiga vectores directos de explotación, movimiento lateral y exfiltración de datos.
 
 ## Mapeo normativo de cumplimiento:
