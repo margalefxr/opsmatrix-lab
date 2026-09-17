@@ -532,3 +532,14 @@ Content-Length: 48
  1 file changed, 3 insertions(+)
 ```
 ---
+
+### [2026-09-17 16:32:31 CEST] - Preservación Autónoma de Evidencias (GRC Engine)
+**Archivos Modificados en Commit:**
+* `docs/assets/architecture-schema.png`
+
+**Resumen Estadístico del Cambio:**
+```diff
+ docs/assets/architecture-schema.png | Bin 0 -> 147122 bytes
+ 1 file changed, 0 insertions(+), 0 deletions(-)
+```
+---
