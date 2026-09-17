@@ -497,3 +497,16 @@ Content-Length: 48
  2 files changed, 32 insertions(+)
 ```
 ---
+
+---
+
+## [Fase 1 y Fase 2 — Cierre y Validación de Infraestructura Docker] — 2026-09-17
+* **Autor:** Xavier Margalef Riestra
+* **Objetivo:** Verificación y cierre formal de los requisitos de la Fase 2 (Servidor Ubuntu, OpenSSH, Docker Engine, Docker Compose, Web ↔ DB con micro-segmentación y persistencia por bind mounts).
+
+### Evidencias de Validación:
+* **Servidor y Control:** Ubuntu operativo con daemon SSH endurecido.
+* **Orquestación:** Manifiesto declarativo en layer3-services/docker/docker-compose.yml validado.
+* **Aislamiento y Redes:** Conectividad web-base de datos asegurada mediante red privada con aislamiento perimetral (internal: true).
+* **Persistencia:** Volúmenes locales configurados para garantizar la durabilidad de los datos en el host.
+* **Tabla de Puertos:** Mapeo documentado (SSH expuesto, Web expuesta en 80/443, MariaDB bloqueada a uso exclusivamente interno).
