@@ -1,4 +1,4 @@
-# OpsMatrix Lab — Framework Operativo de Ciberseguridad y cumplimiento normativo
+# OpsMatrix Lab — Framework operativo de ciberseguridad y cumplimiento normativo
 
 ![Esquema de Arquitectura - OpsMatrix Lab](https://raw.githubusercontent.com/margalefxr/opsmatrix-lab/main/docs/assets/architecture-schema.png)
 
