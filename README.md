@@ -2,14 +2,24 @@
 
 ![Esquema de Arquitectura - OpsMatrix Lab](./docs/assets/architecture-schema.png)
 
-## Identificación y Resumen Ejecutivo
+## 1. Identificación y Resumen Ejecutivo
 * **Proyecto:** OpsMatrix Lab
 * **Autor:** Xavier Margalef Riestra
 * **Modalidad:** Individual
 * **Dominios Clave:** Operaciones Defensivas (Blue Team), Endurecimiento Perimetral (Hardening), Micro-segmentación de Redes, Inteligencia de Amenazas (IDS) y Gobernanza, Riesgos y Cumplimiento (GRC).
 
-## Modelado de Amenazas y Filosofia de Arquitectura
-OpsMatrix Lab es una infraestructura desplegada como Sovereign Workspace y núcleo transaccional para despachos profesionales y asesorías locales, diseñada bajo el paradigma de Defense-in-Depth y cumplimiento normativo automatizado (GRC/RGPD/ENS). El sistema provee un servicio web contenedorizado de portal de cliente para la gestión de activos documentales y trazabilidad operativa. A nivel analítico, gestiona telemetría transaccional simulada, esquemas de identidad y registros de auditoría forense. La función de la aplicación web es operar como edge-gateway y plano frontal de exposición controlada, mientras que el stack subyacente implementa micro-segmentación de red, aislamiento absoluto de persistencia (backend air-gapped) y monitorización perimetral automatizada (NIDS), facilitando la validación de controles de seguridad, análisis de vectores de ataque y endurecimiento continuo (hardening) frente a incidentes de brecha de datos.
+## Propuesta de Valor y Enfoque de Mercado (El "Por Qué" y "Para Qué")
+* **Segmento Objetivo (Mercado Local B2B):** Diseñado específicamente para despachos profesionales, asesorías fiscales y gestorías locales que manejan información altamente sensible de terceros (datos tributarios, laborales y societarios) y necesitan cumplir rigurosamente con normativas de privacidad sin asumir costes de nubes públicas hiper-escaladas.
+* **Problema de Negocio que Resuelve:** Las PYMES del sector profesional sufren ataques dirigidos de *phishing*, robo de credenciales y brechas de datos que derivan en sanciones legales graves y pérdida de confianza del cliente. Este proyecto resuelve la necesidad de disponer de una infraestructura soberana, auditada y con cumplimiento normativo integrado (*by-design*).
+* **Función de la Aplicación Web:** Actúa como el portal de cliente transaccional donde los usuarios legítimos interactúan con sus expedientes, operando bajo un estricto control de accesos que permite auditar cualquier anomalía comercial o intento de intrusión.
+
+## Arquitectura de Producto y Especificación Técnica (El "Cómo")
+* **Paradigma de Diseño:** Infraestructura simulada bajo los principios de *Defense-in-Depth* y *Zero-Trust*, emulando un entorno de producción expuesto a redes públicas hostiles.
+* **Componentes Clave del Stack:**
+  * **Capa Perimetral (*Edge-Gateway*):** Terminación de cifrado estricto (TLS 1.3) y filtrado mediante Nginx Alpine.
+  * **Aislamiento de Persistencia (*Backend Air-Gapped*):** Red interna con el flag `internal: true` para garantizar que la base de datos MariaDB carezca de pasarelas hacia el exterior, neutralizando vectores de exfiltración o *SSRF*.
+  * **Monitorización Defensiva (*Blue Team*):** Sensor IDS Suricata en modo escucha pasiva sobre la interfaz del host para telemetría de red y detección de anomalías en tiempo real.
+* **Marco de Cumplimiento (*GRC*):** Alineado con **ISO/IEC 27001**, **Esquema Nacional de Seguridad (ENS - RD 311/2022)** y guías **NIST SP 800-53**.
 
 ## Mapeo normativo de cumplimiento:
 * **ISO/IEC 27001:** Gestión de seguridad de la información (control de accesos, criptografía y seguridad operacional).
