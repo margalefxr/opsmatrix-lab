@@ -543,3 +543,8 @@ Content-Length: 48
  1 file changed, 0 insertions(+), 0 deletions(-)
 ```
 ---
+
+## [2026-09-18 07:25:00 UTC] — Estandarización Temporal y Endurecimiento de Sincronización NTP
+* **Acción Técnica:** Fijación del huso horario del nodo host a **UTC** mediante `timedatectl` y verificación de sincronización del demonio **Chrony** frente a fuentes upstream de Ubuntu (Stratum 2, IP: `185.125.190.122`).
+* **Justificación GRC y Forense:** Garantizar la integridad cronológica y la correlación cruzada de eventos sin sesgos de horario de verano. Evita asimetrías horarias entre las alertas de red del NIDS (Suricata), los registros de acceso del plano de control (OpenSSH) y las transacciones del motor de persistencia (MariaDB).
+* **Evidencia de Validación:** `timedatectl status` confirma zona horaria UTC activa y `chrony sources` valida la sincronización estable del reloj del sistema.
