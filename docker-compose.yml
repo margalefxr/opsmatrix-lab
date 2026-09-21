@@ -1,0 +1,36 @@
+version: '3.8'
+services:
+  opsmatrix-web:
+    image: nginx:alpine
+    container_name: opsmatrix-web
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      - frontend_net
+
+  opsmatrix-db:
+    image: mariadb:10.11
+    container_name: opsmatrix-db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - mariadb_data:/var/lib/mysql
+    networks:
+      - backend_net
+
+networks:
+  frontend_net:
+    driver: bridge
+  backend_net:
+    driver: bridge
+    internal: true
+
+volumes:
+  mariadb_data:
+    driver: local
