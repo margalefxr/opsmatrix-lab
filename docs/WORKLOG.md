@@ -548,3 +548,11 @@ Content-Length: 48
 * **Acción Técnica:** Fijación del huso horario del nodo host a **UTC** mediante `timedatectl` y verificación de sincronización del demonio **Chrony** frente a fuentes upstream de Ubuntu (Stratum 2, IP: `185.125.190.122`).
 * **Justificación GRC y Forense:** Garantizar la integridad cronológica y la correlación cruzada de eventos sin sesgos de horario de verano. Evita asimetrías horarias entre las alertas de red del NIDS (Suricata), los registros de acceso del plano de control (OpenSSH) y las transacciones del motor de persistencia (MariaDB).
 * **Evidencia de Validación:** `timedatectl status` confirma zona horaria UTC activa y `chrony sources` valida la sincronización estable del reloj del sistema.
+
+---
+
+## [2026-09-21 15:35:00 UTC] — Consolidación de Evidencias de Auditoría, NIDS y Persistencia
+* **Persistencia BBDD:** Vinculación confirmada del volumen gestionado `opsmatrix-lab_mariadb_data` sobre `/var/lib/mysql` mediante `docker inspect`.
+* **Suricata Engine:** Test de sintaxis superado (`suricata -T`) con `HOME_NET` abarcando direccionamiento privado RFC 1918 (`192.168.0.0/16`, `10.0.0.0/8`, `172.16.0.0/12`).
+* **Detección ICMP (SID 1000001):** Alertas registradas en `/var/log/suricata/fast.log` y `/var/log/suricata/eve.json` tras tráfico simulado desde `172.16.181.1`.
+* **Línea Base de Eventos:** Extraídas evidencias reales de autenticación SSH (`Accepted`/`Failed`) y tráfico web Nginx (`200 OK` / `404 Not Found`).
