@@ -556,3 +556,94 @@ Content-Length: 48
 * **Suricata Engine:** Test de sintaxis superado (`suricata -T`) con `HOME_NET` abarcando direccionamiento privado RFC 1918 (`192.168.0.0/16`, `10.0.0.0/8`, `172.16.0.0/12`).
 * **Detección ICMP (SID 1000001):** Alertas registradas en `/var/log/suricata/fast.log` y `/var/log/suricata/eve.json` tras tráfico simulado desde `172.16.181.1`.
 * **Línea Base de Eventos:** Extraídas evidencias reales de autenticación SSH (`Accepted`/`Failed`) y tráfico web Nginx (`200 OK` / `404 Not Found`).
+
+---
+
+## [2026-09-21 19:30:00 UTC] — Registro Detallado de Evidencias: Auditoría SSH, Nginx, Suricata y Persistencia
+
+### 1. Auditoría de Accesos SSH (Línea Base de Control de Acceso)
+* **Acceso Fallido (Usuario Inexistente):**
+  * **Comando de prueba:** `ssh usuario_prueba@172.16.181.1`
+  * **Traza capturada (`journalctl -u ssh`):**
+    ```text
+    Sep 21 15:31:51 ubuntuserver sshd-session[361032]: Failed password for invalid user usuario_prueba from 172.16.181.1 port 63320 ssh2
+    Sep 21 15:32:01 ubuntuserver sshd-session[361032]: Failed password for invalid user usuario_prueba from 172.16.181.1 port 63320 ssh2
+    ```
+  * **Análisis de auditoría:** El demonio `sshd` rechaza la autenticación de la cuenta inexistente `usuario_prueba` procedente de la IP `172.16.181.1` registrando el evento de fallo de credenciales.
+
+* **Acceso Satisfactorio (Usuario Legítimo):**
+  * **Comando de prueba:** `ssh server@172.16.181.1`
+  * **Traza capturada (`journalctl -u ssh`):**
+    ```text
+    Sep 21 15:19:15 ubuntuserver sshd-session[358665]: Accepted password for server from 172.16.181.1 port 62783 ssh2
+    ```
+  * **Análisis de auditoría:** Autenticación correcta mediante contraseña para la cuenta autorizada `server`, estableciendo sesión interactiva SSH2.
+
+---
+
+### 2. Auditoría del Servidor Web Nginx (Línea Base de Tráfico HTTP)
+* **Petición Normativa (200 OK):**
+  * **Comando de prueba:** `curl -I http://localhost/`
+  * **Traza en `access.log` (`docker logs opsmatrix-web`):**
+    ```text
+    ::1 - - [21/Sep/2026:15:32:43 +0000] "HEAD / HTTP/1.1" 200 0 "-" "curl/8.22.0" "-"
+    ```
+  * **Análisis de auditoría:** Solicitud HTTP `HEAD` sobre la raíz `/` atendida con éxito (código de respuesta `200`).
+
+* **Petición a Recurso Inexistente (404 Not Found):**
+  * **Comando de prueba:** `curl -I http://localhost/no-existe`
+  * **Traza en `error.log` y `access.log` (`docker logs opsmatrix-web`):**
+    ```text
+    2026/09/21 15:32:43 [error] 31#31: *4 open() "/usr/share/nginx/html/no-existe" failed (2: No such file or directory), client: ::1, server: localhost, request: "HEAD /no-existe HTTP/1.1", host: "localhost"
+    ::1 - - [21/Sep/2026:15:32:43 +0000] "HEAD /no-existe HTTP/1.1" 404 0 "-" "curl/8.22.0" "-"
+    ```
+  * **Análisis de auditoría:** La petición fuerza una traza de error en el motor de Nginx al no localizar la ruta `/usr/share/nginx/html/no-existe` en el sistema de archivos del contenedor, retornando al cliente un estado de error `404`.
+
+---
+
+### 3. Validación de Motor NIDS Suricata y Regla ICMP (SID 1000001)
+* **Verificación de Sintaxis y Red `HOME_NET`:**
+  * **Comandos:** `sudo suricata -T -c /etc/suricata/suricata.yaml` y `grep -E "^\s*HOME_NET:" /etc/suricata/suricata.yaml`
+  * **Resultado:**
+    ```text
+    i: suricata: Configuration provided was successfully loaded. Exiting.
+        HOME_NET: "[192.168.0.0/16,10.0.0.0/8,172.16.0.0/12]"
+    ```
+
+* **Captura de Detección en Logs NIDS:**
+  * **Registro Plano (`/var/log/suricata/fast.log`):**
+    ```text
+    09/21/2026-18:52:15.603990 [**] [1:1000001:1] [SEC-ALERT] Traza ICMP Detectada en enp2s0 [**] [Classification: (null)] [Priority: 3] {IPv6-ICMP} fe80:0000:0000:0000:020c:29ff:fe54:2392:133 -> ff02:0000:0000:0000:0000:0000:0000:0002:0
+    ```
+  * **Estructura JSON Parseda (`/var/log/suricata/eve.json`):**
+    ```json
+    {
+      "timestamp": "2026-09-21T18:52:15.603990+0000",
+      "flow_id": 2031168251194469,
+      "in_iface": "enp2s0",
+      "event_type": "alert",
+      "src_ip": "fe80:0000:0000:0000:020c:29ff:fe54:2392",
+      "dest_ip": "ff02:0000:0000:0000:0000:0000:0000:0002",
+      "proto": "IPv6-ICMP",
+      "ip_v": 6,
+      "icmp_type": 133,
+      "icmp_code": 0,
+      "alert": {
+        "action": "allowed",
+        "gid": 1,
+        "signature_id": 1000001,
+        "rev": 1,
+        "signature": "[SEC-ALERT] Traza ICMP Detectada en enp2s0",
+        "severity": 3
+      }
+    }
+    ```
+
+---
+
+### 4. Persistencia de Base de Datos MariaDB
+* **Manifiesto:** Declarado el volumen `mariadb_data:/var/lib/mysql` en `docker-compose.yml`.
+* **Inspección en Caliente:**
+  ```text
+  server@ubuntuserver:~/opsmatrix-lab$ docker inspect opsmatrix-db --format='{{range .Mounts}}{{.Name}} -> {{.Destination}}{{end}}'
+  opsmatrix-lab_mariadb_data -> /var/lib/mysql
