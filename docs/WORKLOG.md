@@ -40,64 +40,13 @@ Este documento recopila la bitácora cronológica de trabajo, comandos ejecutado
 
 ---
 
-## Sesión Actual: Snapshot de Estado
+## Nota sobre el registro automático
 
-### Registro Automático: \2026-\09-\15 \11:\15:\34 CEST
-* **Usuario Local:** xaviermargalef
-* **Host:** MacBook-Pro-de-Xavier.local
-* **Rama Git:** main
-vert{}vert{}
-* **Último Commit:** 
+El script `layer1-telemetry/scripts/log_work.sh` añade aquí, en cada ejecución, un snapshot con usuario, host, rama, último commit y `git status` — útil como traza de auditoría de bajo nivel durante el desarrollo activo, por eso no se revierte su mecanismo, solo se limpian aquí las entradas que un bug de escapado de caracteres dejó corruptas (ver corrección en el propio script).
 
-#### Estado Actual de Archivos (Git Status):
-```text
- M docs/WORKLOG.md
- M layer1-telemetry/scripts/log_work.sh
-```
----
 
-### Registro Automático: \2026-\09-\15 \11:\17:\57 CEST
-* **Usuario Local:** xaviermargalef
-* **Host:** MacBook-Pro-de-Xavier.local
-* **Rama Git:** main
-vert{}vert{}
-* **Último Commit:** 
 
-#### Estado Actual de Archivos (Git Status):
-```text
- M docs/WORKLOG.md
-```
----
 
-### Registro Automático: \2026-\09-\15 \11:\36:\53 CEST
-* **Usuario Local:** xaviermargalef
-* **Host:** MacBook-Pro-de-Xavier.local
-* **Rama Git:** main
-vert{}vert{}
-* **Último Commit:** 
-
-#### Estado Actual de Archivos (Git Status):
-```text
- M docs/WORKLOG.md
-?? docs/adr/0001-database-network-isolation.md
-?? docs/adr/0002-nids-suricata-host-deployment.md
-```
----
-
-### Registro Automático: \2026-\09-\15 \11:\37:\26 CEST
-* **Usuario Local:** xaviermargalef
-* **Host:** MacBook-Pro-de-Xavier.local
-* **Rama Git:** main
-vert{}vert{}
-* **Último Commit:** 
-
-#### Estado Actual de Archivos (Git Status):
-```text
- M docs/WORKLOG.md
- M layer3-services/docker/docker-compose.yml
-?? layer3-services/docker/.env.example
-```
----
 
 ---
 
@@ -127,33 +76,7 @@ Durante el despliegue del stack de contenedores en el servidor Ubuntu se identif
 * **`opsmatrix-db`:** `Up 5 seconds (healthy)` — MariaDB 11.4 aislado en `docker_backend_net`.
 * **`opsmatrix-web`:** `Up (healthy)` — Nginx Alpine expuesto en TCP 80/443.
 
-### Registro Automático: \2026-\09-\15 \11:\44:\19 CEST
-* **Usuario Local:** xaviermargalef
-* **Host:** MacBook-Pro-de-Xavier.local
-* **Rama Git:** main
-vert{}vert{}
-* **Último Commit:** 
 
-#### Estado Actual de Archivos (Git Status):
-```text
- M docs/WORKLOG.md
-?? docs/adr/0004-nids-suricata-rule-engine.md
-?? layer1-telemetry/suricata/rules/local.rules
-```
----
-
-### Registro Automático: \2026-\09-\15 \11:\42:\10 CEST
-* **Usuario Local:** server
-* **Host:** ubuntuserver
-* **Rama Git:** main
-vert{}vert{}
-* **Último Commit:** 
-
-#### Estado Actual de Archivos (Git Status):
-```text
- M docs/WORKLOG.md
-```
----
 
 ## [2026-09-16] - Consolidación de Arquitectura Lean y Entorno Sandbox
 * **ADR Registrado:** Justificada la exclusión de una 3ª red DMZ por overengineering (foco en simplicidad, Lean y aislamiento `--internal`).
