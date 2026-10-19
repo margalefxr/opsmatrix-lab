@@ -32,7 +32,7 @@ flowchart LR
 
         subgraph DOCKER["Docker Compose"]
             subgraph FRONT["frontend_net"]
-                RP["reverse-proxy<br/>nginx:stable-alpine<br/>:80 → 301 · :443 TLS 1.2/1.3"]
+                RP["reverse-proxy<br/>nginx:1.28-alpine<br/>:80 → 301 · :443 TLS 1.2/1.3"]
             end
             APP["app<br/>Python (Flask) :5000<br/>sin puertos publicados"]
             subgraph BACK["backend_net · internal: true"]
