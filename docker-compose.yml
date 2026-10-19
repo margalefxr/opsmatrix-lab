@@ -1,24 +1,53 @@
-version: '3.8'
+# OpsMatrix Lab — MF0489: HTTPS con Nginx como reverse proxy
+# Las credenciales vienen de .env (no se sube a GitHub). Plantilla: .env.example
+
 services:
-  opsmatrix-web:
-    image: nginx:alpine
-    container_name: opsmatrix-web
-    restart: always
+
+  # Única entrada pública: termina TLS y reenvía a la app
+  reverse-proxy:
+    image: nginx:1.28-alpine
+    container_name: opsmatrix-proxy
+    restart: unless-stopped
     ports:
       - "80:80"
       - "443:443"
+    volumes:
+      - ./layer2-perimeter/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+      - /etc/ssl/certs/servidor.crt:/etc/nginx/certs/servidor.crt:ro
+      - /etc/ssl/private/servidor.key:/etc/nginx/certs/servidor.key:ro
     networks:
       - frontend_net
+    depends_on:
+      - app
 
-  opsmatrix-db:
+  # App en Python: habla HTTP por el 5000 solo dentro de Docker
+  app:
+    build: ./layer3-services/app
+    container_name: opsmatrix-app
+    restart: unless-stopped
+    environment:
+      DB_HOST: db
+      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+    expose:
+      - "5000"
+    networks:
+      - frontend_net
+      - backend_net
+    depends_on:
+      - db
+
+  # Base de datos: sin puertos publicados y en una red sin salida a internet
+  db:
     image: mariadb:10.11
     container_name: opsmatrix-db
-    restart: always
+    restart: unless-stopped
     environment:
-      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
-      MYSQL_DATABASE: ${DB_NAME}
-      MYSQL_USER: ${DB_USER}
-      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MARIADB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MARIADB_DATABASE: ${DB_NAME}
+      MARIADB_USER: ${DB_USER}
+      MARIADB_PASSWORD: ${DB_PASSWORD}
     volumes:
       - mariadb_data:/var/lib/mysql
     networks:
@@ -33,4 +62,3 @@ networks:
 
 volumes:
   mariadb_data:
-    driver: local
