@@ -1,0 +1,42 @@
+# WORKLOG — ExP 89 (MF0489)
+
+Rama `mf0489-https`. Trabajo hecho el 19/10/2026 entre el Mac (CA y cliente) y la VM Ubuntu (servidor).
+
+| # | Paso | Resultado |
+|---|---|---|
+| 1 | Fase 1: rediseño de la arquitectura con HTTPS | [fase1-arquitectura.md](fase1-arquitectura.md) |
+| 2 | Fase 2: CA en el Mac, CSR en la VM, firma e instalación en `/etc/ssl/` | `servidor.crt: OK`. [fase2-pki.md](fase2-pki.md) |
+| 3 | Revisión de cómo estaba la VM (Actividad 8) | BBDD en bucle sin `.env`, Nginx por defecto, compose con contraseñas |
+| 4 | Copia del volumen y `docker compose down` (sin `-v`) | Volumen vacío (131 bytes) |
+| 5 | Compose nuevo, Nginx, app Flask y `.env.example`, probados primero en local | `nginx -t` OK, 301, TLS 1.3 |
+| 6 | Paso de la rama a la VM con `git bundle` (sin subir a GitHub) | Rama en la VM |
+| 7 | `.env` con `openssl rand`, `docker compose up -d --build` | Los 3 contenedores `Up` |
+| 8 | Pruebas desde el Mac y reinicio para ver si se guardan los datos | Todo OK. [fase3-https-docker.md](fase3-https-docker.md) |
+| 9 | Revisión completa con `scripts/check-mac.sh` y `scripts/check-vm.sh` | Encontró un `ca.key` viejo en la VM, borrado |
+
+## Dificultades
+
+| # | Fase | Dificultad | Solución |
+|---|---|---|---|
+| 1 | 2 | `Permission denied` al leer `/etc/ssl/mf0489/ca.crt` aunque tenía 644 | La carpeta se creó con 700 por el `umask 077` de la sesión. `sudo chmod 755 /etc/ssl/mf0489` |
+| 2 | 2 | El `.gitignore` viejo no dejaba subir `*.crt` | Lo cambié para excluir solo claves y secretos. Los certificados son públicos |
+| 3 | 2 | Había restos de la PKI del MF0488 en el repo (`ca.srl`, `server.csr`) | Borrados |
+| 4 | 2 | `scp` me pidió contraseña aunque el README dice "solo Ed25519" | Pendiente para la Fase 5 (`PasswordAuthentication no`) |
+| 5 | 3 | La BBDD llevaba semanas reiniciándose | No había `.env` y los nombres de variables no coincidían. Arreglado el `.env.example` y creado el `.env` |
+| 6 | 3 | El Nginx que había cortaba la conexión | Tenía la config por defecto. Lo sustituí por el reverse proxy |
+| 7 | 3 | `pip install` sin internet al construir la app | `docker0` sin IP. `sudo systemctl restart docker` |
+| 8 | 3 | La app no arrancaba: `Permission denied` en `app.py` | `umask 077` → archivo 600 → `nobody` no lo lee. `RUN chmod 644` en el Dockerfile |
+| 9 | 3 | Nginx: `host not found in upstream "app"` | Efecto de la 8. Se arregló solo |
+| 10 | 3 | El puerto 80 enseñaba la versión de Nginx | `server_tokens off` también en el bloque del 80 |
+| 11 | 3 | `ca.key` y `server.key` del MF0488 en la VM | Hash distinto al de la CA nueva y nunca subidos a git. Borrados con `shred -u` para que no acaben en la OVA del CTF |
+| 12 | — | Al copiar comandos se colaba `\;` y alguna vez lancé un bloque en la máquina equivocada | Comandos sin `;` y, al final, scripts en vez de copiar y pegar |
+
+## Pendiente (Fase 4 y 5)
+
+| Qué | Fase |
+|---|---|
+| Logs de Nginx con versión TLS, regla de Suricata para el 443, pruebas TLS y correlación | 4 |
+| SSH solo con clave | 5 |
+| Limpiar `/etc/iptables/rules.v4` (22 reglas viejas) y las 4 redes `docker_*` vacías | 5 |
+| `scripts/deploy.sh` sigue apuntando al compose borrado | 5 |
+| Actualizar el README principal | 5 |
