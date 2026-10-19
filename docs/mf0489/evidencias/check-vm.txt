@@ -1,0 +1,106 @@
+# Salida real de scripts/check-vm.sh (19/10/2026 11:50 UTC).
+# Se ejecutó ANTES de borrar la ca.key antigua del MF0488: por eso sale la ALERTA (ver fase3 §8).
+
+===== 1. SISTEMA =====
+Mon Oct 19 11:50:16 AM UTC 2026
+ubuntuserver
+up 2 days, 47 minutes
+enp2s0           UP             172.16.181.132/24 metric 100 fe80::20c:29ff:fe54:2392/64
+default via 172.16.181.2 dev enp2s0 proto dhcp src 172.16.181.132 metric 100
+
+===== 2. SSH =====
+active
+port 22
+permitrootlogin prohibit-password
+pubkeyauthentication yes
+passwordauthentication yes
+
+===== 3. SURICATA =====
+active
+660:  - interface: enp2s0
+740:  - interface: default
+748:  - interface: default
+
+===== 4. DOCKER =====
+Docker version 29.1.3, build 29.1.3-0ubuntu4.1
+Docker Compose version 2.40.3+ds1-0ubuntu1
+docker0          DOWN           172.17.0.1/16
+
+===== 5. CERTIFICADOS =====
+-rw------- 1 root root 2484 Oct 19 10:26 /etc/ssl/private/servidor.key
+-rw-r--r-- 1 root root 1809 Oct 19 10:26 /etc/ssl/certs/servidor.crt
+-rw-r--r-- 1 root root 1964 Oct 19 10:26 /etc/ssl/mf0489/ca.crt
+/etc/ssl/certs/servidor.crt: OK
+notAfter=Oct 19 10:23:24 2027 GMT
+hash clave:       4a232ee3d9b7e1e49c0713d2566598530dcd71ec005240db559b8c8260172ae4
+hash certificado: 4a232ee3d9b7e1e49c0713d2566598530dcd71ec005240db559b8c8260172ae4
+ca.crt
+servidor.crt
+servidor.csr
+ALERTA: hay un ca.key en la VM
+
+===== 6. REPO Y SECRETOS =====
+mf0489-https
+994b198 MF0489 Fase 3: server_tokens off también en el bloque HTTP
+?? layer2-perimeter/nginx/ssl/
+-rw------- 1 server server 304 Oct 19 10:52 .env
+OK: .env ignorado por git
+OK: ninguna clave ni .env en git
+
+===== 7. COMPOSE =====
+OK: compose válido
+NAME              IMAGE               COMMAND                  SERVICE         CREATED          STATUS          PORTS
+opsmatrix-app     opsmatrix-lab-app   "python app.py"          app             33 minutes ago   Up 33 minutes   5000/tcp
+opsmatrix-db      mariadb:10.11       "docker-entrypoint.s…"   db              33 minutes ago   Up 33 minutes   3306/tcp
+opsmatrix-proxy   nginx:1.28-alpine   "/docker-entrypoint.…"   reverse-proxy   33 minutes ago   Up 33 minutes   0.0.0.0:80->80/tcp, [::]:80->80/tcp, 0.0.0.0:443->443/tcp, [::]:443->443/tcp
+nginx: the configuration file /etc/nginx/nginx.conf syntax is ok
+nginx: configuration file /etc/nginx/nginx.conf test is successful
+
+===== 8. PUERTOS EN EL HOST =====
+tcp   LISTEN 0      4096                 0.0.0.0:80         0.0.0.0:*    users:(("docker-proxy",pid=624253,fd=7))
+tcp   LISTEN 0      4096                 0.0.0.0:22         0.0.0.0:*    users:(("sshd",pid=605107,fd=3),("systemd",pid=1,fd=77))
+tcp   LISTEN 0      4096                 0.0.0.0:443        0.0.0.0:*    users:(("docker-proxy",pid=624277,fd=7))
+tcp   LISTEN 0      4096                    [::]:80            [::]:*    users:(("docker-proxy",pid=624258,fd=7))
+tcp   LISTEN 0      4096                    [::]:22            [::]:*    users:(("sshd",pid=605107,fd=4),("systemd",pid=1,fd=79))
+tcp   LISTEN 0      4096                    [::]:443           [::]:*    users:(("docker-proxy",pid=624283,fd=7))
+
+===== 9. REDES DOCKER =====
+opsmatrix-lab_frontend_net internal=false contenedores: opsmatrix-app opsmatrix-proxy
+opsmatrix-lab_backend_net internal=true contenedores: opsmatrix-db opsmatrix-app
+
+===== 10. AISLAMIENTO ENTRE CONTENEDORES =====
+-- proxy -> app (debe funcionar)
+<h1>Portal OpsMatrix</h1><p>Visitas guardadas en MariaDB: 7</p><p>Has llegado por: http</p>
+-- proxy -> db (no debe ni resolver el nombre)
+OK: el proxy no ve la BBDD
+-- db -> internet (no debe salir)
+OK: la BBDD no sale a internet
+-- usuario de la app
+uid=65534(nobody) gid=65534(nogroup) groups=65534(nogroup)
+
+===== 11. BASE DE DATOS =====
+opsmatrix-lab_mariadb_data /var/lib/docker/volumes/opsmatrix-lab_mariadb_data/_data
+visitas	primera	ultima
+7	2026-10-19 11:14:06	2026-10-19 11:50:17
+
+===== 12. LOGS RECIENTES =====
+opsmatrix-proxy  | 172.16.181.1 - - [19/Oct/2026:11:18:26 +0000] "GET / HTTP/1.1" 200 92 "-" "curl/8.7.1" "-"
+opsmatrix-proxy  | 172.16.181.1 - - [19/Oct/2026:11:18:29 +0000] "HEAD /algo HTTP/1.1" 301 0 "-" "curl/8.7.1" "-"
+opsmatrix-proxy  | 172.16.181.1 - - [19/Oct/2026:11:18:29 +0000] "GET / HTTP/1.1" 200 92 "-" "curl/8.7.1" "-"
+opsmatrix-proxy  | 172.16.181.1 - - [19/Oct/2026:11:38:17 +0000] "HEAD /prueba HTTP/1.1" 301 0 "-" "curl/8.7.1" "-"
+opsmatrix-proxy  | 172.16.181.1 - - [19/Oct/2026:11:38:17 +0000] "GET / HTTP/1.1" 200 92 "-" "curl/8.7.1" "-"
+opsmatrix-app  | 172.23.0.3 - - [19/Oct/2026 11:18:26] "GET / HTTP/1.0" 200 -
+opsmatrix-app  | 172.23.0.3 - - [19/Oct/2026 11:18:29] "GET / HTTP/1.0" 200 -
+opsmatrix-app  | 172.23.0.3 - - [19/Oct/2026 11:38:17] "GET / HTTP/1.0" 200 -
+opsmatrix-app  | 172.23.0.3 - - [19/Oct/2026 11:38:26] "GET / HTTP/1.1" 200 -
+opsmatrix-app  | 172.23.0.3 - - [19/Oct/2026 11:50:17] "GET / HTTP/1.1" 200 -
+
+===== 13. RESTOS PENDIENTES (FASE 5) =====
+docker_backend_net
+docker_frontend_net
+docker_red_backend
+docker_red_frontend
+22
+mariadb_data-2026-10-19.tgz
+
+===== FIN =====

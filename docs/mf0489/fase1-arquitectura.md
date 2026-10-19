@@ -14,7 +14,7 @@ Actualizo el diagrama de OpsMatrix (MF0488) para añadir HTTPS. Nginx pasa a ser
 | **MariaDB** | Base de datos | Guarda los datos; solo la ve la app |
 | **Suricata** | IDS que analiza el tráfico de red | Vigila la interfaz de la VM por donde entra el cliente |
 
-**Por qué este orden:** el cliente nunca habla directamente con la app ni con la BBDD. Pasa por Nginx, que es el único que tiene el certificado y la clave. Así el cifrado, los logs y la exposición se controlan en un solo punto. Es Defense in Depth y mínimo privilegio. Cada capa solo ve lo que necesita.
+**¿Por qué este orden?** El cliente nunca habla directamente con la app ni con la BBDD. Siempre pasa por Nginx, que es el único que tiene el certificado y la clave. Así el cifrado, los logs y lo que está expuesto quedan en un solo sitio, y cada pieza solo ve lo que necesita (mínimo privilegio).
 
 ## Diagrama
 
@@ -26,7 +26,7 @@ flowchart LR
     end
 
     subgraph VM["Ubuntu Server — Entorno B (futura VM CTF) · enp2s0"]
-        SSH["OpenSSH :22<br/>claves Ed25519"]
+        SSH["OpenSSH :22"]
         SUR["Suricata IDS<br/>escucha enp2s0"]
         PKI["/etc/ssl/private/servidor.key (600)<br/>/etc/ssl/certs/servidor.crt (644)<br/>/etc/ssl/mf0489/ca.crt (644)"]
 
@@ -62,7 +62,7 @@ flowchart LR
 | app → MariaDB | MySQL :3306 | `backend_net` (`internal: true`) | ❌ tráfico interno, sin salida a internet |
 | CSR / certificados Mac ↔ VM | scp | red de laboratorio | ✅ SSH |
 
-TLS termina en Nginx. Dentro de Docker el tráfico va en claro porque no sale del host y las redes están separadas. En producción, con datos personales, también se podría cifrar (mTLS entre servicios o TLS hacia MariaDB). Zero Trust pide no fiarse ni de la red interna.
+TLS termina en Nginx. Dentro de Docker el tráfico va sin cifrar porque no sale de la VM y las redes están separadas. Con datos reales de clientes también cifraría estos tramos (TLS hacia MariaDB, por ejemplo), pero para el laboratorio lo dejo así y lo dejo escrito.
 
 ## Certificados y claves
 
