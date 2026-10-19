@@ -1,19 +1,20 @@
+# Secretos: nunca en GitHub
 .env
-*.key
+**/.env
+**/*.key
+**/private/
+*.p12
+*.pfx
 *.pem
-*.crt
-private/
-secrets/
+backups/
+*.sql
+*.sql.gz
+
+# Sistema y entorno
+.venv/
+__pycache__/
+*.log
+.DS_Store
 *.ova
 *.vmdk
 *.iso
-*.tar.gz
-*.sha256
-*.log
-__pycache__/
-.DS_Store
-# Criptografía y claves privadas (Seguridad)
-*.key
-*.pem
-ca/private/
-certs/private/
