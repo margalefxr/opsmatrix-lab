@@ -1,6 +1,20 @@
 # Fase 1 — Arquitectura con HTTPS
 
-Actualizo el diagrama de OpsMatrix (MF0488) para meter HTTPS: Nginx pasa a ser reverse proxy y punto de terminación TLS, y la CA del laboratorio se queda fuera de la VM.
+Actualizo el diagrama de OpsMatrix (MF0488) para añadir HTTPS. Nginx pasa a ser el reverse proxy y el punto donde termina TLS. La CA del laboratorio se queda fuera de la VM.
+
+## Conceptos
+
+| Pieza | Qué es | Papel en OpsMatrix |
+|---|---|---|
+| **TLS** | Protocolo que cifra la conexión y autentica al servidor con un certificado | Protege el tramo cliente → servidor (HTTPS = HTTP dentro de TLS) |
+| **Certificado X.509** | Documento firmado que une un nombre (`portal.opsmatrix.test`) con una clave pública | Lo presenta Nginx para demostrar que es el servidor legítimo |
+| **CA** | Entidad que firma certificados. Si confías en la CA, confías en lo que firma | CA propia de laboratorio, en el Mac |
+| **Nginx (reverse proxy)** | Servidor que recibe las peticiones y las reenvía a la app | Única puerta de entrada: termina TLS y pasa la petición a la app |
+| **App** | El servicio que genera la respuesta | Mini app Python que lee y escribe en MariaDB |
+| **MariaDB** | Base de datos | Guarda los datos; solo la ve la app |
+| **Suricata** | IDS que analiza el tráfico de red | Vigila la interfaz de la VM por donde entra el cliente |
+
+**Por qué este orden:** el cliente nunca habla directamente con la app ni con la BBDD. Pasa por Nginx, que es el único que tiene el certificado y la clave. Así el cifrado, los logs y la exposición se controlan en un solo punto. Es Defense in Depth y mínimo privilegio. Cada capa solo ve lo que necesita.
 
 ## Diagrama
 
@@ -48,7 +62,7 @@ flowchart LR
 | app → MariaDB | MySQL :3306 | `backend_net` (`internal: true`) | ❌ tráfico interno, sin salida a internet |
 | CSR / certificados Mac ↔ VM | scp | red de laboratorio | ✅ SSH |
 
-TLS termina en Nginx. Lo de dentro de Docker va en claro porque no sale del host y las redes están separadas. En producción con datos personales podría cifrarse también (mTLS o TLS hacia MariaDB).
+TLS termina en Nginx. Dentro de Docker el tráfico va en claro porque no sale del host y las redes están separadas. En producción, con datos personales, también se podría cifrar (mTLS entre servicios o TLS hacia MariaDB). Zero Trust pide no fiarse ni de la red interna.
 
 ## Certificados y claves
 
@@ -79,21 +93,32 @@ Suricata sigue en el host escuchando `enp2s0`, la interfaz por la que entra el t
 | HTTPS :443 | ✅ Parcial | IPs, puertos, handshake TLS, SNI. No ve rutas ni contenido |
 | Nginx → app → MariaDB | ❌ | Va por los bridges de Docker, no por `enp2s0` |
 
-Por eso el log de Nginx es la otra fuente: ve la petición ya descifrada (Fase 4).
+Suricata no ve las rutas HTTPS porque van cifradas. Nginx sí las ve, porque es quien descifra. Por eso en la Fase 4 se cruzan las dos fuentes.
 
 ## Decisiones
 
 | Decisión | Motivo |
 |---|---|
-| CA en el Mac, no en la VM | La VM se exportará como CTF; si `ca.key` estuviera dentro, cualquiera podría firmar certificados de confianza |
-| Nginx solo en `frontend_net` | Mínimo privilegio: el proxy no necesita hablar con la BBDD |
-| App nueva en Python | Antes Nginx devolvía un JSON fijo; hace falta una app real que use MariaDB para probar que todo sigue funcionando detrás del proxy |
-| Dominio `portal.opsmatrix.test` | `.test` está reservado para pruebas (RFC 6761) |
+| CA en el Mac, no en la VM | La VM se exportará como CTF. Si `ca.key` estuviera dentro, cualquiera que la descargue podría firmar certificados "de confianza" |
+| Nginx como reverse proxy, no TLS en la app | Un solo punto con el certificado, los logs y los puertos publicados. La app no tiene que saber nada de TLS |
+| Nginx solo en `frontend_net` | Mínimo privilegio: el proxy no necesita hablar con la BBDD. Si comprometen Nginx, no llegan directo a MariaDB |
+| App nueva en Python | Antes Nginx devolvía un JSON fijo. Hace falta una app real que use MariaDB para demostrar que todo sigue funcionando detrás del proxy |
+| Dominio `portal.opsmatrix.test` | `.test` está reservado para pruebas (RFC 6761) y no choca con dominios reales |
+| TLS 1.2 y 1.3, nada más antiguo | TLS 1.0 y 1.1 están obsoletos (RFC 8996) |
+
+## Dificultades
+
+| Dificultad | Solución |
+|---|---|
+| En MF0488 Nginx estaba en las dos redes y devolvía un JSON fijo, sin app real | Rediseño: Nginx solo en la red web y una app nueva conectada a las dos redes |
+| El README decía "TLS 1.3" pero `default.conf` permitía 1.2 y 1.3 | Se documenta TLS 1.2 + 1.3, que es lo que pide la rúbrica y lo que estará en la configuración |
 
 ## Normativa
 
 | Referencia | Relación |
 |---|---|
-| ENS (RD 311/2022) mp.com.2 / mp.com.3 | Protección de la confidencialidad e integridad en las comunicaciones → TLS en el tramo externo |
-| ISO 27001 A.8.24 / A.8.20 | Uso de criptografía y seguridad de redes (segmentación) |
-| RGPD art. 32 | Cifrado de datos en tránsito para un portal con datos de clientes |
+| ENS (RD 311/2022) mp.com.2 y mp.com.3 | Confidencialidad e integridad de las comunicaciones: TLS en el tramo externo |
+| ENS mp.com.1 y mp.com.4 / ISO 27001 A.8.22 | Perímetro seguro y separación de flujos en la red: `frontend_net` y `backend_net` |
+| ISO 27001 A.8.24 | Política de criptografía: algoritmos, tamaños de clave y custodia de claves privadas |
+| RGPD art. 32 | Cifrado en tránsito para un portal con datos de clientes (gestoría) |
+| CCN-STIC-807 | Guía del CCN sobre algoritmos criptográficos admitidos en el ENS |
