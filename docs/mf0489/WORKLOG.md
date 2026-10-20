@@ -14,6 +14,8 @@ Rama `mf0489-https`. Trabajo hecho el 19/10/2026 entre el Mac (CA y cliente) y l
 | 8 | Pruebas desde el Mac y reinicio para ver si se guardan los datos | Todo OK. [fase3-https-docker.md](fase3-https-docker.md) |
 | 9 | Revisión completa con `scripts/check-mac.sh` y `scripts/check-vm.sh` | Encontró un `ca.key` viejo en la VM, borrado |
 | 10 | Fase 4: log de Nginx con TLS, regla Suricata 1000003, pruebas TLS, tcpdump y correlación | TLS 1.1 rechazado, ruta invisible en el 443, mismo puerto en las 3 fuentes. [fase4-auditoria-tls-monitorizacion.md](fase4-auditoria-tls-monitorizacion.md) |
+| 11 | Fase 5: SSH solo con clave, limpieza del firewall viejo y las redes `docker_*`, copia de la BBDD probada | `Permission denied (publickey)` con contraseña, restaurada con 9 de 9 filas |
+| 12 | Reinicio de la VM y revisión final con `check-vm.sh` y `check-mac.sh` | Todo vuelve solo. [fase5-entrega-final.md](fase5-entrega-final.md) |
 
 ## Dificultades
 
@@ -22,7 +24,7 @@ Rama `mf0489-https`. Trabajo hecho el 19/10/2026 entre el Mac (CA y cliente) y l
 | 1 | 2 | `Permission denied` al leer `/etc/ssl/mf0489/ca.crt` aunque tenía 644 | La carpeta se creó con 700 por el `umask 077` de la sesión. `sudo chmod 755 /etc/ssl/mf0489` |
 | 2 | 2 | El `.gitignore` viejo no dejaba subir `*.crt` | Lo cambié para excluir solo claves y secretos. Los certificados son públicos |
 | 3 | 2 | Había restos de la PKI del MF0488 en el repo (`ca.srl`, `server.csr`) | Borrados |
-| 4 | 2 | `scp` me pidió contraseña aunque el README dice "solo Ed25519" | Pendiente para la Fase 5 (`PasswordAuthentication no`) |
+| 4 | 2 | `scp` me pidió contraseña aunque el README dice "solo Ed25519" | Resuelto en la Fase 5 (ver 16) |
 | 5 | 3 | La BBDD llevaba semanas reiniciándose | No había `.env` y los nombres de variables no coincidían. Arreglado el `.env.example` y creado el `.env` |
 | 6 | 3 | El Nginx que había cortaba la conexión | Tenía la config por defecto. Lo sustituí por el reverse proxy |
 | 7 | 3 | `pip install` sin internet al construir la app | `docker0` sin IP. `sudo systemctl restart docker` |
@@ -34,13 +36,15 @@ Rama `mf0489-https`. Trabajo hecho el 19/10/2026 entre el Mac (CA y cliente) y l
 | 13 | 4 | La regla 1000003 no saltaba con `flags:S` | El Mac manda el SYN con bits ECN. `flags:S,CE`, probado antes en local con Suricata |
 | 14 | 4 | Alertas duplicadas | Suricata arrancaba con `--af-packet -i enp2s0` (dos capturas). Override de systemd solo con `--af-packet` |
 | 15 | 4 | `tcpdump` del 80 casi vacío | Leí el archivo antes de que tcpdump lo escribiera. Esperar al `timeout` o usar `-l` |
-| 16 | — | Al copiar comandos se colaba `\;` y alguna vez lancé un bloque en la máquina equivocada | Comandos sin `;` y, al final, scripts en vez de copiar y pegar |
+| 16 | 5 | `authorized_keys` vacío: nunca hubo una clave autorizada | `ssh-copy-id`, comprobar y solo entonces `00-opsmatrix.conf` (gana a `50-cloud-init.conf`) |
+| 17 | 5 | `rules.v4` solo tenía reglas viejas de Docker | Copia en `~/backups/`, `netfilter-persistent` desactivado y reinicio |
+| 18 | 5 | `deploy.sh` y README desactualizados | Reescritos |
+| 19 | — | Al copiar comandos se colaba `\;` y alguna vez lancé un bloque en la máquina equivocada | Comandos sin `;` y, al final, scripts en vez de copiar y pegar |
 
-## Pendiente (Fase 5)
+## Pendiente (mejoras)
 
-| Qué | Fase |
+| Qué | Motivo |
 |---|---|
-| SSH solo con clave | 5 |
-| Limpiar `/etc/iptables/rules.v4` (22 reglas viejas) y las 4 redes `docker_*` vacías | 5 |
-| `scripts/deploy.sh` sigue apuntando al compose borrado | 5 |
-| Actualizar el README principal | 5 |
+| Firewall de host con nftables | Hoy depende de lo que publica Docker |
+| Actualizaciones de Ubuntu pendientes | Gestión de parches |
+| Renovar `servidor.crt` antes del 19/10/2027 | Caduca |

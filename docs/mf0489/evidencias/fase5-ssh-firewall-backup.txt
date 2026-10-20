@@ -1,0 +1,55 @@
+# Fase 5: SSH solo con clave, limpieza del firewall viejo y copia de la BBDD (20/10/2026)
+
+## Antes
+authorized_keys: 0 líneas (nunca hubo una clave autorizada)
+/etc/ssh/sshd_config.d/50-cloud-init.conf -> PasswordAuthentication yes
+/etc/iptables/rules.v4: 44 líneas, todas de Docker (ninguna regla propia)
+redes docker_backend_net, docker_frontend_net, docker_red_backend, docker_red_frontend: 0 contenedores, proyecto=docker
+
+## Mac: autorizar la clave
+$ ssh-copy-id -i ~/.ssh/id_ed25519.pub server@172.16.181.132
+Number of key(s) added:        1
+$ ssh -o PasswordAuthentication=no -o BatchMode=yes server@172.16.181.132 "echo ENTRO CON CLAVE"
+ENTRO CON CLAVE
+
+## VM: 00-opsmatrix.conf
+$ ls /etc/ssh/sshd_config.d/
+50-cloud-init.conf
+$ sudo sshd -t && echo "config OK"
+config OK
+$ sudo sshd -T | grep -E "^(passwordauthentication|pubkeyauthentication|permitrootlogin|kbdinteractiveauthentication) "
+permitrootlogin no
+pubkeyauthentication yes
+passwordauthentication no
+kbdinteractiveauthentication no
+
+## Mac: comprobación
+$ ssh -o BatchMode=yes server@172.16.181.132 "echo CLAVE OK"
+CLAVE OK
+$ ssh -o PubkeyAuthentication=no -o PreferredAuthentications=password server@172.16.181.132
+server@172.16.181.132: Permission denied (publickey).
+
+## VM: firewall viejo y redes
+$ sudo systemctl disable netfilter-persistent
+Removed '/etc/systemd/system/multi-user.target.wants/netfilter-persistent.service'.
+$ sudo mv /etc/iptables/rules.v4 /etc/iptables/rules.v4.mf0488.bak   (copia también en ~/backups/)
+$ docker network rm docker_backend_net docker_frontend_net docker_red_backend docker_red_frontend
+docker_backend_net
+docker_frontend_net
+docker_red_backend
+docker_red_frontend
+
+## VM: copia de la BBDD y prueba de restauración
+$ bash scripts/backup-db.sh
+-rw------- 1 server server 865 Oct 20 09:40 /home/server/backups/opsmatrix-2026-10-20-0940.sql.gz
+[+] Restaurando en restore_test...
+visitas en la BBDD buena:
+9
+visitas en la copia restaurada:
+9
+[OK] Copia en /home/server/backups/opsmatrix-2026-10-20-0940.sql.gz
+
+## Reinicio de la VM y entrada ya con clave
+$ sudo reboot
+$ ssh server@172.16.181.132        (entra sin pedir contraseña)
+Welcome to Ubuntu 26.04 LTS (GNU/Linux 7.0.0-38-generic aarch64)

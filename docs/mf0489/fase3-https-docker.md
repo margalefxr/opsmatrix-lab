@@ -193,7 +193,7 @@ Después de reiniciar, la siguiente visita sumó sobre las anteriores en vez de 
 
 **Contraseñas en el historial de git:** el compose que borré tenía contraseñas de laboratorio y siguen en commits antiguos. No sirven para nada: la BBDD se creó por primera vez con las nuevas del `.env`. Poner algo en `.gitignore` después no lo quita del historial.
 
-**Para la Fase 5:** SSH sigue aceptando contraseña, `/etc/iptables/rules.v4` tiene 22 reglas viejas del MF0488 y quedan 4 redes `docker_*` vacías.
+**Para la Fase 5:** SSH sigue aceptando contraseña, `/etc/iptables/rules.v4` tiene 22 reglas viejas del MF0488 y quedan 4 redes `docker_*` vacías. Resuelto en la [Fase 5](fase5-entrega-final.md#2-qué-corre-de-verdad).
 
 ## 9. Cómo desplegarlo
 
