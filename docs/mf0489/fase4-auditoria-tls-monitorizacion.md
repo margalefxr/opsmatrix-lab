@@ -108,7 +108,7 @@ Que la ruta no salga en la captura no es por sí sola una prueba de cifrado. Lo 
 
 ## 5. Regla de Suricata
 
-En [`layer1-telemetry/suricata/rules/local.rules`](../../layer1-telemetry/suricata/rules/local.rules), instalada en `/var/lib/suricata/rules/local.rules`:
+En [`layer1-telemetry/suricata/rules/local.rules`](../../layer1-telemetry/suricata/rules/local.rules), instalada en `/var/lib/suricata/rules/local.rules`. Es el archivo que carga Suricata: en `suricata.yaml` están `default-rule-path: /var/lib/suricata/rules` y `rule-files: - local.rules`.
 
 ```
 alert tcp any any -> $HOME_NET 443 (msg:"MF0489 - Conexion HTTPS observada"; flow:to_server; flags:S,CE; sid:1000003; rev:2;)
@@ -172,7 +172,7 @@ HTTP 404 puerto_origen=50093
 
 **¿Por qué son la misma prueba?** No me fío solo de la hora. Coinciden la IP, la hora al segundo y, sobre todo, el **puerto de origen 50093**, que el Mac elige al azar para cada conexión. Las tres fuentes están en UTC, así que no hubo que convertir horas. Docker no cambia la IP ni el puerto que recibe Nginx (la redirección la hace iptables y conserva el origen). La primera prueba (`/mf0489-correlacion-01`, puerto 64852) también cuadraba, pero con la alerta repetida.
 
-Esto **no** quiere decir que Suricata viera la ruta. Suricata ve la conexión y sus metadatos. Nginx ve la petición ya descifrada. Juntas cuentan la historia completa.
+Esto **no** quiere decir que Suricata viera la ruta. Suricata ve la conexión y sus metadatos. Nginx ve la petición ya descifrada. Hacen falta las dos.
 
 ## 8. Evento, alerta e incidente
 
@@ -182,7 +182,7 @@ Esto **no** quiere decir que Suricata viera la ruta. Suricata ve la conexión y 
 | **Alerta** | Sí | La regla 1000003 saltó |
 | **Incidente** | No | La hice yo, desde mi Mac, contra mi laboratorio y sabiendo lo que iba a pasar. No hay nada comprometido ni ningún daño |
 
-Una alerta solo dice "ha pasado algo que coincide con una regla". Para que sea incidente tiene que haber un impacto real o un intento no autorizado. Si cada alerta fuera un incidente, el SOC se ahogaría en falsos positivos.
+Una alerta solo dice "ha pasado algo que coincide con una regla". Para que sea incidente tiene que haber un impacto real o un intento no autorizado. Si cada alerta se tratara como incidente, el SOC no daría abasto con los falsos positivos.
 
 ## 9. Checklist final
 
@@ -218,7 +218,7 @@ Una alerta solo dice "ha pasado algo que coincide con una regla". Para que sea i
 | Fuente | Qué aporta |
 |---|---|
 | Suricata en la interfaz | Quién se conecta, cuándo, a qué puerto, con qué versión TLS y a qué nombre (SNI). Alertas por reglas |
-| Log de Nginx (donde termina TLS) | Qué pidió exactamente (método, ruta, estado) y con qué cifrado |
+| Log de Nginx (donde termina TLS) | Qué pidió (método, ruta, estado) y con qué cifrado |
 
 Se unen por IP, hora y puerto de origen. El IDS no necesita descifrar nada y el contenido solo se ve en el punto donde ya es legítimo verlo.
 
