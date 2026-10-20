@@ -1,0 +1,32 @@
+flowchart LR
+    subgraph MAC["Mac · equipo de administración (fuera de la VM)"]
+        CA["CA de laboratorio<br/>ca.key (AES-256, 600) · ca.crt"]
+        CLI["Cliente de pruebas<br/>curl / openssl con ca.crt"]
+    end
+
+    subgraph VM["Ubuntu Server 172.16.181.132 · enp2s0"]
+        SSH["OpenSSH :22<br/>solo clave Ed25519"]
+        SUR["Suricata IDS en enp2s0<br/>reglas 1000001-1000003"]
+        PKI["/etc/ssl/<br/>servidor.key (600) · servidor.crt · ca.crt"]
+        BK["~/backups/<br/>copias BBDD (600)"]
+
+        subgraph DOCKER["Docker Compose"]
+            subgraph FRONT["frontend_net"]
+                RP["reverse-proxy · nginx:1.28-alpine<br/>:80 → 301 · :443 TLS 1.2/1.3<br/>log mf0489 (tls, cipher)"]
+            end
+            APP["app · Flask :5000<br/>usuario nobody · sin puertos publicados"]
+            subgraph BACK["backend_net · internal: true"]
+                DB[("db · mariadb:10.11<br/>volumen mariadb_data")]
+            end
+        end
+    end
+
+    CA -. "firma la CSR (solo .csr y .crt viajan)" .-> PKI
+    CLI == "HTTPS :443" ==> RP
+    CLI -- "HTTP :80 → 301" --> RP
+    CLI -- "SSH con clave" --> SSH
+    PKI -. "montados :ro" .-> RP
+    RP -- "HTTP interno" --> APP
+    APP -- "SQL :3306" --> DB
+    DB -. "backup-db.sh" .-> BK
+    SUR -. "ve el tráfico de enp2s0" .- RP
