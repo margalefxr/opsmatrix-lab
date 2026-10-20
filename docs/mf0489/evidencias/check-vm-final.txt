@@ -1,0 +1,102 @@
+# Salida real de scripts/check-vm.sh tras el reinicio de la VM (20/10/2026 09:43 UTC)
+
+===== 1. SISTEMA =====
+Tue Oct 20 09:43:57 AM UTC 2026
+ubuntuserver
+up 3 minutes
+enp2s0           UP             172.16.181.132/24 metric 100 fe80::20c:29ff:fe54:2392/64 
+default via 172.16.181.2 dev enp2s0 proto dhcp src 172.16.181.132 metric 100 
+
+===== 2. SSH =====
+active
+port 22
+permitrootlogin no
+pubkeyauthentication yes
+passwordauthentication no
+
+===== 3. SURICATA =====
+active
+660:  - interface: enp2s0
+740:  - interface: default
+748:  - interface: default
+
+===== 4. DOCKER =====
+Docker version 29.1.3, build 29.1.3-0ubuntu4.1
+Docker Compose version 2.40.3+ds1-0ubuntu1
+docker0          DOWN           172.17.0.1/16 
+
+===== 5. CERTIFICADOS =====
+-rw------- 1 root root 2484 Oct 19 10:26 /etc/ssl/private/servidor.key
+-rw-r--r-- 1 root root 1809 Oct 19 10:26 /etc/ssl/certs/servidor.crt
+-rw-r--r-- 1 root root 1964 Oct 19 10:26 /etc/ssl/mf0489/ca.crt
+/etc/ssl/certs/servidor.crt: OK
+notAfter=Oct 19 10:23:24 2027 GMT
+hash clave:       4a232ee3d9b7e1e49c0713d2566598530dcd71ec005240db559b8c8260172ae4
+hash certificado: 4a232ee3d9b7e1e49c0713d2566598530dcd71ec005240db559b8c8260172ae4
+OK: ningún ca.key en la VM
+
+===== 6. REPO Y SECRETOS =====
+mf0489-https
+4baeccd MF0489 Fase 5: deploy.sh actualizado, backup-db.sh y SSH solo con clave
+-rw------- 1 server server 304 Oct 19 10:52 .env
+OK: .env ignorado por git
+OK: ninguna clave ni .env en git
+
+===== 7. COMPOSE =====
+OK: compose válido
+NAME              IMAGE               COMMAND                  SERVICE         CREATED        STATUS         PORTS
+opsmatrix-app     opsmatrix-lab-app   "python app.py"          app             22 hours ago   Up 3 minutes   5000/tcp
+opsmatrix-db      mariadb:10.11       "docker-entrypoint.s…"   db              22 hours ago   Up 3 minutes   3306/tcp
+opsmatrix-proxy   nginx:1.28-alpine   "/docker-entrypoint.…"   reverse-proxy   22 hours ago   Up 3 minutes   0.0.0.0:80->80/tcp, [::]:80->80/tcp, 0.0.0.0:443->443/tcp, [::]:443->443/tcp
+nginx: the configuration file /etc/nginx/nginx.conf syntax is ok
+nginx: configuration file /etc/nginx/nginx.conf test is successful
+
+===== 8. PUERTOS EN EL HOST =====
+tcp   LISTEN 0      4096                 0.0.0.0:443        0.0.0.0:*    users:(("docker-proxy",pid=2002,fd=7))                 
+tcp   LISTEN 0      4096                 0.0.0.0:80         0.0.0.0:*    users:(("docker-proxy",pid=1966,fd=7))                 
+tcp   LISTEN 0      4096                 0.0.0.0:22         0.0.0.0:*    users:(("sshd",pid=2147,fd=3),("systemd",pid=1,fd=111))
+tcp   LISTEN 0      4096                    [::]:443           [::]:*    users:(("docker-proxy",pid=2008,fd=7))                 
+tcp   LISTEN 0      4096                    [::]:80            [::]:*    users:(("docker-proxy",pid=1983,fd=7))                 
+tcp   LISTEN 0      4096                    [::]:22            [::]:*    users:(("sshd",pid=2147,fd=4),("systemd",pid=1,fd=112))
+
+===== 9. REDES DOCKER =====
+opsmatrix-lab_frontend_net internal=false contenedores: opsmatrix-app opsmatrix-proxy 
+opsmatrix-lab_backend_net internal=true contenedores: opsmatrix-db opsmatrix-app 
+
+===== 10. AISLAMIENTO ENTRE CONTENEDORES =====
+-- proxy -> app (debe funcionar)
+<h1>Portal OpsMatrix</h1><p>Visitas guardadas en MariaDB: 10</p><p>Has llegado por: http</p>
+-- proxy -> db (no debe ni resolver el nombre)
+OK: el proxy no ve la BBDD
+-- db -> internet (no debe salir)
+OK: la BBDD no sale a internet
+-- usuario de la app
+uid=65534(nobody) gid=65534(nogroup) groups=65534(nogroup)
+
+===== 11. BASE DE DATOS =====
+opsmatrix-lab_mariadb_data /var/lib/docker/volumes/opsmatrix-lab_mariadb_data/_data
+visitas	primera	ultima
+10	2026-10-19 11:14:06	2026-10-20 09:43:59
+
+===== 12. LOGS RECIENTES =====
+opsmatrix-proxy  | 2026/10/20 09:40:31 [notice] 1#1: OS: Linux 7.0.0-38-generic
+opsmatrix-proxy  | 2026/10/20 09:40:31 [notice] 1#1: getrlimit(RLIMIT_NOFILE): 1024:524288
+opsmatrix-proxy  | 2026/10/20 09:40:31 [notice] 1#1: start worker processes
+opsmatrix-proxy  | 2026/10/20 09:40:31 [notice] 1#1: start worker process 22
+opsmatrix-proxy  | 2026/10/20 09:40:31 [notice] 1#1: start worker process 23
+opsmatrix-app  |  * Running on all addresses (0.0.0.0)
+opsmatrix-app  |  * Running on http://127.0.0.1:5000
+opsmatrix-app  |  * Running on http://172.23.0.3:5000
+opsmatrix-app  | [33mPress CTRL+C to quit[0m
+opsmatrix-app  | 172.23.0.2 - - [20/Oct/2026 09:43:59] "GET / HTTP/1.1" 200 -
+
+===== 13. LIMPIEZA (FASE 5) =====
+redes docker_* viejas: 0
+netfilter-persistent: disabled
+reglas viejas cargadas: 0
+mariadb_data-2026-10-19.tgz
+opsmatrix-2026-10-20-0940.sql.gz
+rules.v4.mf0488
+rules.v6.mf0488
+
+===== FIN =====
