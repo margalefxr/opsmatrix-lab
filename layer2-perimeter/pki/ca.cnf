@@ -1,0 +1,24 @@
+# Config mínima para que la CA lleve registro de lo que firma y pueda revocar
+[ ca ]
+default_ca = CA_opsmatrix
+
+[ CA_opsmatrix ]
+dir              = .
+database         = $dir/index.txt
+rand_serial      = yes
+crlnumber        = $dir/crlnumber
+certificate      = $dir/ca.crt
+private_key      = $dir/private/ca.key
+new_certs_dir    = $dir/emitidos
+default_md       = sha256
+default_days     = 365
+default_crl_days = 30
+policy           = politica
+copy_extensions  = none
+unique_subject   = no
+
+[ politica ]
+commonName = supplied
+
+[ ext_crl ]
+authorityKeyIdentifier = keyid:always
