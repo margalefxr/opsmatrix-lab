@@ -1,100 +1,96 @@
 # OpsMatrix Lab — Infraestructura defensiva por capas
 
-![Esquema de Arquitectura - OpsMatrix Lab](https://raw.githubusercontent.com/margalefxr/opsmatrix-lab/main/docs/assets/architecture-schema.png)
-
 **Autor:** Xavier Margalef Riestra
-**Dominios:** Blue Team · Hardening perimetral · Micro-segmentación de red · IDS · GRC
-**Paradigma:** Defense-in-Depth y Zero Trust, en espejo con los vectores de ataque documentados en [MSA-Playbook](https://github.com/margalefxr/MSA-Playbook)
+**Módulos:** MF0488 (despliegue y hardening) · MF0489 (PKI, HTTPS y monitorización)
 
-## Qué es
+Laboratorio que simula el portal de una gestoría. Lo importante no es la web, sino los controles que tiene alrededor: HTTPS con una CA propia, un proxy como única entrada, una base de datos sin salida a internet y un IDS vigilando la red.
 
-Infraestructura simulada de un portal transaccional (tipo despacho profesional / gestoría) expuesta a redes públicas hostiles, diseñada para demostrar controles defensivos reales y no solo su descripción: terminación TLS en el perímetro, backend de base de datos sin ruta a internet, e IDS en escucha pasiva sobre el host.
+![Arquitectura final](docs/mf0489/arquitectura-final.png)
 
-## Arquitectura
+## Cómo funciona
 
-```text
-                 [ CLIENTE / ACTOR EXTERNO ]
-                              │
-                              ▼ (TLS 1.3 / Perímetro Cifrado)
-               [ NODO HOST: UBUNTU SERVER (Edge) ]
-                              │
-         ┌────────────────────┴────────────────────┐
-         │                                         │
-    [ OpenSSH ]                             [ Suricata IDS ]
-  (Plano de Control - Ed25519)            (Telemetría DPI / OISF)
-         │                                         │
-         └────────────────────┬────────────────────┘
-                              ▼
-                     [ Docker Engine ]
-                              │
-         ┌────────────────────┴────────────────────┐
-         │                                         │
-   [ frontend_net ]                          [ backend_net ]
-   (Bridge / DMZ expuesta)                   (internal: true)
-         │                                         │
-   [ Nginx Alpine ]                          [ MariaDB Engine ]
-   (Proxy inverso / WAF)                     (Bind mounts / backup local)
-         │                                         ▲
-         └─────────────── web ─────────────────────┘
-                   (Contenedor dual-homed)
+```
+Cliente ──HTTPS 443──▶ Nginx ──HTTP──▶ App Flask ──SQL──▶ MariaDB
+        ──HTTP 80 ──▶ (301)  frontend_net        backend_net (internal)
+                   ▲
+        Suricata vigila enp2s0
 ```
 
-| Capa | Componente | Función |
+| Pieza | Qué hace |
+|---|---|
+| **CA propia** (fuera de la VM) | Firma el certificado de `portal.opsmatrix.test`. Su clave nunca entra en la VM |
+| **Nginx** (`reverse-proxy`) | Única entrada. Redirige 80 → 443, termina TLS 1.2/1.3 y pasa la petición a la app |
+| **App** (Flask) | Guarda cada visita en MariaDB y enseña el total. Corre como `nobody`, sin puertos abiertos |
+| **MariaDB** (`db`) | En `backend_net` (`internal: true`): sin salida a internet y sin acceso desde fuera |
+| **Suricata** | IDS en la interfaz `enp2s0`. Regla propia para las conexiones HTTPS |
+| **SSH** | Solo con clave Ed25519 |
+
+## Puertos
+
+| Servicio | Puerto | ¿Abierto en la VM? |
 |---|---|---|
-| **01 · Telemetría** (`layer1-telemetry`) | Suricata IDS | Escucha pasiva sobre la interfaz del host, DPI, detección de anomalías en tiempo real |
-| **02 · Perímetro** (`layer2-perimeter`) | Nginx Alpine + PKI propia (RSA 4096) | Terminación TLS 1.3, proxy inverso, CA local |
-| **03 · Servicios** (`layer3-services`) | Docker Compose: `frontend_net` (DMZ) + `backend_net` (`internal: true`) | MariaDB sin ruta de salida a internet — neutraliza exfiltración y SSRF |
+| OpenSSH | 22 | ✅ solo con clave |
+| Nginx | 80, 443 | ✅ (80 solo redirige) |
+| App | 5000 | ❌ solo dentro de Docker |
+| MariaDB | 3306 | ❌ solo en `backend_net` |
 
-## Puertos expuestos
+## Desplegar
 
-| Servicio | Puerto | Expuesto |
-|---|---|---|
-| OpenSSH (host) | 22/TCP | Sí — claves Ed25519 |
-| Nginx | 80/TCP, 443/TCP | Sí — TLS 1.3 |
-| MariaDB | 3306/TCP | No — solo accesible desde `backend_net` |
+```bash
+git clone https://github.com/margalefxr/opsmatrix-lab.git
+cd opsmatrix-lab
+bash scripts/deploy.sh        # en la VM, con los certificados ya en /etc/ssl/
+bash scripts/check-vm.sh      # comprobar el servidor
+bash scripts/check-mac.sh     # comprobar desde el cliente
+```
 
-## Por qué está construido así
+Paso a paso, copias de seguridad y recuperación: [guía de despliegue](docs/mf0489/guia-despliegue.md).
 
-- **Docker Compose, no Kubernetes.** El alcance del laboratorio no justifica la complejidad operativa de un orquestador de clúster; Compose da un ciclo de vida declarativo y auditable sin sobreingeniería.
-- **`internal: true` en `backend_net`.** Las redes bridge de Docker enrutan hacia el exterior por defecto; marcar la red como interna elimina esa ruta por diseño, no por configuración de firewall añadida.
-- **Bind mounts, no clúster replicado.** Durabilidad suficiente para el alcance del proyecto sin la complejidad operativa de un storage distribuido.
-- **OrbStack como sandbox local (macOS)** para validar antes de desplegar en el nodo Ubuntu de producción.
+## Documentación MF0489
 
-Justificación detallada de cada decisión, con alternativas descartadas: [`docs/adr/`](./docs/adr/).
+| Fase | Documento |
+|---|---|
+| 1. Arquitectura con HTTPS | [fase1-arquitectura.md](docs/mf0489/fase1-arquitectura.md) |
+| 2. PKI con OpenSSL | [fase2-pki.md](docs/mf0489/fase2-pki.md) |
+| 3. HTTPS con Nginx y Docker | [fase3-https-docker.md](docs/mf0489/fase3-https-docker.md) |
+| 4. Auditoría TLS y monitorización | [fase4-auditoria-tls-monitorizacion.md](docs/mf0489/fase4-auditoria-tls-monitorizacion.md) |
+| 5. Entrega final | [fase5-entrega-final.md](docs/mf0489/fase5-entrega-final.md) |
+| Pasos y dificultades | [WORKLOG.md](docs/mf0489/WORKLOG.md) |
 
-## Cumplimiento normativo
+Lo del MF0488 sigue en [`docs/WORKLOG.md`](docs/WORKLOG.md) y [`docs/adr/`](docs/adr/). Es la foto de entonces: donde no coincida con lo de arriba (por ejemplo "solo TLS 1.3" o el compose de `layer3-services/docker`), manda lo del MF0489.
 
-Alineado con **ISO/IEC 27001** (control de accesos, criptografía, seguridad operacional), **ENS** (RD 311/2022 — líneas base de hardening y monitorización continua) y **NIST SP 800-53 / CIS Benchmarks** (mínimo privilegio, reducción de superficie de ataque).
-
-## Automatización y trazabilidad
-
-`scripts/sync_ops.sh` valida el estado de los contenedores, registra marcas de tiempo e inyecta la evidencia en [`docs/WORKLOG.md`](./docs/WORKLOG.md) antes de cada sincronización con el repositorio remoto.
-
-## Estructura del repositorio
+## Estructura
 
 ```text
 opsmatrix-lab/
-├── ARCHITECTURE.md
-├── README.md
-├── docs/
-│   ├── adr/                  ← decisiones de diseño (ADR), una por fichero
-│   ├── architecture-schema.md
-│   └── WORKLOG.md
-├── layer1-telemetry/
-│   ├── baseline/check_baseline.sh
-│   ├── scripts/
-│   └── suricata/rules/local.rules
+├── docker-compose.yml            ← proxy + app + db
+├── .env.example                  ← plantilla (el .env real no se sube)
+├── layer1-telemetry/suricata/    ← local.rules y override de systemd
 ├── layer2-perimeter/
-│   ├── nginx/
-│   └── pki/
-├── layer3-services/
-│   └── docker/docker-compose.yml
-└── scripts/
-    ├── deploy.sh
-    └── sync_ops.sh
+│   ├── nginx/default.conf
+│   ├── pki/                      ← ca.crt, servidor.crt, servidor.csr, servidor.ext (públicos)
+│   └── ssh/00-opsmatrix.conf     ← SSH solo con clave
+├── layer3-services/app/          ← app Flask + Dockerfile
+├── scripts/                      ← deploy, backup-db, check-vm, check-mac, fase4-*
+└── docs/mf0489/                  ← fases, guía, WORKLOG y evidencias
 ```
+
+## Lo que no está en el repo
+
+`ca.key`, `servidor.key`, `.env`, copias de la BBDD y la OVA. Lo impide el [`.gitignore`](.gitignore).
+
+## Normativa
+
+| Referencia | Dónde se aplica |
+|---|---|
+| ENS (RD 311/2022) mp.com.1-3 | Redes separadas y cifrado en tránsito |
+| ENS op.mon.1 / op.exp.8 | Suricata y logs de Nginx |
+| ISO 27001 A.8.24 | Criptografía y custodia de claves |
+| ISO 27001 A.8.22 | Segregación de redes |
+| ISO 27001 A.5.17 | Contraseñas fuera del código |
+| RGPD art. 32 | Cifrado de los datos de clientes en tránsito |
 
 ## Repositorios relacionados
 
-- **[MSA-Playbook](https://github.com/margalefxr/MSA-Playbook)** — metodología ofensiva; OpsMatrix Lab implementa, en espejo, los controles defensivos que neutralizan esos mismos vectores.
-- **[CyberOps-Portfolio](https://github.com/margalefxr/CyberOps-Portfolio)** — auditorías reales y laboratorios donde se aplica esa metodología.
+- **[MSA-Playbook](https://github.com/margalefxr/MSA-Playbook)** — metodología ofensiva. OpsMatrix aplica los controles que frenan esos mismos vectores.
+- **[CyberOps-Portfolio](https://github.com/margalefxr/CyberOps-Portfolio)** — laboratorios y auditorías donde aplico esa metodología.
