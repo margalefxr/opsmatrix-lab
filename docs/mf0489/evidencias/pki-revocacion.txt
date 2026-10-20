@@ -1,0 +1,48 @@
+# Salida real de scripts/pki-revocacion.sh en el Mac (20/10/2026 13:00 CEST)
+
+===== 1. Registrar servidor.crt en la base de datos de la CA =====
+Using configuration from ca.cnf
+Adding Entry with serial number 0132A8F5467CCE90D56EC0BE66C0B845430600F1 to DB for /CN=portal.opsmatrix.test
+Database updated
+
+===== 2. Certificado de prueba (simula uno robado) =====
+Using configuration from ca.cnf
+Check that the request matches the signature
+Signature ok
+The Subject's Distinguished Name is as follows
+commonName            :ASN.1 12:'prueba-revocacion.opsmatrix.test'
+Certificate is to be certified until Oct 20 11:00:32 2027 GMT (365 days)
+
+Write out database with 1 new entries
+Database updated
+
+===== 3. Revocar y publicar la CRL =====
+Using configuration from ca.cnf
+Revoking Certificate 3C3D07200EC5D7E71A3261D392FEF264B5D80523.
+Database updated
+Using configuration from ca.cnf
+V	271019102324Z		0132A8F5467CCE90D56EC0BE66C0B845430600F1	unknown	/CN=portal.opsmatrix.test
+R	271020110032Z	261020110035Z,keyCompromise	3C3D07200EC5D7E71A3261D392FEF264B5D80523	unknown	/CN=prueba-revocacion.opsmatrix.test
+lastUpdate=Oct 20 11:00:38 2026 GMT
+nextUpdate=Nov 19 11:00:38 2026 GMT
+    Serial Number: 3C3D07200EC5D7E71A3261D392FEF264B5D80523
+        Revocation Date: Oct 20 11:00:35 2026 GMT
+            X509v3 CRL Reason Code: 
+                Key Compromise
+
+===== 4. Comprobar =====
+-- certificado revocado (debe fallar con error 23):
+CN=prueba-revocacion.opsmatrix.test
+error 23 at 0 depth lookup: certificate revoked
+error emitidos/prueba.crt: verification failed
+-- certificado real (debe dar OK):
+emitidos/servidor.crt: OK
+-- conexión real a Nginx comprobando también la CRL:
+Verification: OK
+
+===== 5. SSH: intercambio de claves negociado =====
+debug1: Remote protocol version 2.0, remote software version OpenSSH_10.2p1 Ubuntu-2ubuntu3.8
+debug1: kex: algorithm: ecdh-sha2-nistp256
+debug1: kex: host key algorithm: ssh-ed25519
+
+===== FIN =====
