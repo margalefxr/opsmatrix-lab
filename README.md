@@ -2,19 +2,13 @@
 
 **Autor:** Xavier Margalef Riestra
 **Módulos:** MF0488 (despliegue y hardening) · MF0489 (PKI, HTTPS y monitorización)
+**Áreas:** Blue Team · Hardening · Segmentación de red · PKI · IDS · GRC
 
-Laboratorio que simula el portal de una gestoría. Lo importante no es la web, sino los controles que tiene alrededor: HTTPS con una CA propia, un proxy como única entrada, una base de datos sin salida a internet y un IDS vigilando la red.
+Laboratorio que simula el portal de una gestoría. La web es mínima a propósito. El trabajo está en los controles de alrededor: HTTPS con una CA propia, un proxy como única entrada, una base de datos sin salida a internet y un IDS vigilando la red.
 
 ![Arquitectura final](docs/mf0489/arquitectura-final.png)
 
 ## Cómo funciona
-
-```
-Cliente ──HTTPS 443──▶ Nginx ──HTTP──▶ App Flask ──SQL──▶ MariaDB
-        ──HTTP 80 ──▶ (301)  frontend_net        backend_net (internal)
-                   ▲
-        Suricata vigila enp2s0
-```
 
 | Pieza | Qué hace |
 |---|---|
@@ -45,7 +39,7 @@ Cliente ──HTTPS 443──▶ Nginx ──HTTP──▶ App Flask ──SQL�
 | Configuración como código | Compose, Nginx, reglas de Suricata y SSH versionados en el repo |
 | Observabilidad | Suricata en la red + log de Nginx con versión TLS, cruzados por IP y puerto |
 | Reproducible | `deploy.sh` + `check-*.sh`. Comprobado tras reiniciar la VM |
-| Versiones fijas | `nginx:1.28-alpine`, `mariadb:10.11`, `Flask==3.0.3`, `PyMySQL==1.1.1` |
+| Versiones fijas | Imágenes (`nginx:1.28-alpine`, `mariadb:10.11`) y todas las dependencias de Python, también las transitivas |
 
 ## Cómo lo he hecho
 
@@ -55,6 +49,21 @@ Cliente ──HTTPS 443──▶ Nginx ──HTTP──▶ App Flask ──SQL�
 | **Pruebas** | Primero en local, luego en la VM. Pruebas positivas y negativas (lo que tiene que fallar, falla). Matriz completa en la [Fase 5](docs/mf0489/fase5-entrega-final.md#cómo-he-probado-qa) |
 | **Trazabilidad** | Cada paso y cada problema en el [WORKLOG](docs/mf0489/WORKLOG.md). Las salidas de las pruebas son reales y están en [`evidencias/`](docs/mf0489/evidencias/) |
 | **IA** | Me he apoyado en un asistente de IA para preparar scripts y revisar la documentación. Los comandos los he ejecutado yo en mi laboratorio y las decisiones las he revisado una a una |
+
+## Extra: más allá de la rúbrica
+
+Temas que hoy pesan en el sector y que he aplicado al laboratorio.
+
+| Tema | Qué he hecho | Por qué importa |
+|---|---|---|
+| Software de terceros (supply chain) | `pip-audit` encontró CVE-2026-27205 en Flask 3.0.3. No era explotable aquí (no uso `session` ni caché), pero subí a 3.1.3, fijé todas las dependencias y generé el SBOM | El Cyber Resilience Act (UE 2024/2847) pedirá SBOM y gestión de vulnerabilidades. ISO 27001 A.5.21 |
+| Criptografía post-cuántica | Nginx y OpenSSL 3.5 ya negocian `X25519MLKEM768` | Riesgo "harvest now, decrypt later". La hoja de ruta PQC de la UE pide empezar la migración en 2026 |
+| Vida de los certificados | Certificado de 1 año y fecha de renovación anotada | El CA/B Forum baja los certificados públicos a 47 días en 2029: renovar a mano deja de ser viable (ACME) |
+| Detección como código | Reglas de Suricata en git y probadas con una captura antes de desplegarlas | Una regla que no se ha probado puede no saltar nunca (me pasó con `flags:S`) |
+| Huella TLS (JA4) | Suricata la registra en `eve.json` sin descifrar nada | Permite reconocer clientes o malware por cómo saludan en TLS |
+| Secretos | `detect-secrets`: 0 hallazgos. Historial revisado | Las claves subidas a git son una de las fugas más comunes |
+
+Evidencias: [`supply-chain.txt`](docs/mf0489/evidencias/supply-chain.txt) y [`sbom-app.cdx.json`](docs/mf0489/evidencias/sbom-app.cdx.json).
 
 ## Desplegar
 
@@ -77,9 +86,9 @@ Paso a paso, copias de seguridad y recuperación: [guía de despliegue](docs/mf0
 | 3. HTTPS con Nginx y Docker | 4,00 | [fase3-https-docker.md](docs/mf0489/fase3-https-docker.md) |
 | 4. Auditoría TLS y monitorización | 2,50 | [fase4-auditoria-tls-monitorizacion.md](docs/mf0489/fase4-auditoria-tls-monitorizacion.md) |
 | 5. Entrega final | — | [fase5-entrega-final.md](docs/mf0489/fase5-entrega-final.md) |
+| Pasos y dificultades | — | [WORKLOG.md](docs/mf0489/WORKLOG.md) |
 
 Cada documento empieza con la tabla de criterios de la rúbrica y dónde está la evidencia de cada uno.
-| Pasos y dificultades | [WORKLOG.md](docs/mf0489/WORKLOG.md) |
 
 Lo del MF0488 sigue en [`docs/WORKLOG.md`](docs/WORKLOG.md) y [`docs/adr/`](docs/adr/). Es la foto de entonces: donde no coincida con lo de arriba (por ejemplo "solo TLS 1.3" o el compose de `layer3-services/docker`), manda lo del MF0489.
 

@@ -25,7 +25,7 @@ Scripts usados: [`scripts/fase4-mac.sh`](../../scripts/fase4-mac.sh) y [`scripts
 
 ## 2. Conexión HTTPS real
 
-Esta vez no miro el archivo `servidor.crt`, sino el certificado que **entrega Nginx** al conectar.
+Aquí compruebo el certificado que **entrega Nginx** al conectar, no el archivo `servidor.crt`.
 
 ```
 $ curl -v --cacert ca.crt --resolve portal.opsmatrix.test:443:172.16.181.132 https://portal.opsmatrix.test/
@@ -170,7 +170,7 @@ HTTP 404 puerto_origen=50093
 
 **¿Por qué son la misma prueba?** No me fío solo de la hora. Coinciden la IP, la hora al segundo y, sobre todo, el **puerto de origen 50093**, que el Mac elige al azar para cada conexión. Las tres fuentes están en UTC, así que no hubo que convertir horas. Docker no cambia la IP ni el puerto que recibe Nginx (la redirección la hace iptables y conserva el origen). La primera prueba (`/mf0489-correlacion-01`, puerto 64852) también cuadraba, pero con la alerta repetida.
 
-Esto **no** quiere decir que Suricata viera la ruta. Suricata ve la conexión y sus metadatos. Nginx ve la petición ya descifrada. Hacen falta las dos.
+Suricata no vio la ruta: ve la conexión y sus metadatos. La ruta solo la ve Nginx, que es quien descifra. Por eso hacen falta las dos fuentes.
 
 ## 8. Evento, alerta e incidente
 
