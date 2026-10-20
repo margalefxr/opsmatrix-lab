@@ -48,7 +48,18 @@ Laboratorio que simula el portal de una gestoría. La web es mínima a propósit
 | **Método** | MSA / lean: lo mínimo que funcione y se pueda comprobar. Tablas antes que texto, una decisión = un motivo |
 | **Pruebas** | Primero en local, luego en la VM. Pruebas positivas y negativas (lo que tiene que fallar, falla). Matriz completa en la [Fase 5](docs/mf0489/fase5-entrega-final.md#cómo-he-probado-qa) |
 | **Trazabilidad** | Cada paso y cada problema en el [WORKLOG](docs/mf0489/WORKLOG.md). Las salidas de las pruebas son reales y están en [`evidencias/`](docs/mf0489/evidencias/) |
-| **IA** | Me he apoyado en un asistente de IA para preparar scripts y revisar la documentación. Los comandos los he ejecutado yo en mi laboratorio y las decisiones las he revisado una a una |
+| **CI** | [GitHub Actions](.github/workflows/checks.yml) repite en cada push `shellcheck`, `docker compose config`, `pip-audit` y `detect-secrets`. Con permisos de solo lectura y la acción fijada por commit |
+| **IA** | Ver abajo |
+
+### Uso de la IA
+
+| | |
+|---|---|
+| Qué hizo la IA | Preparar scripts y comandos, proponer la estructura de los docs y revisar coherencia |
+| Qué hice yo | Ejecutar todo en mi laboratorio, pegar las salidas reales y decidir. Lo que no entendía, lo pregunté hasta poder explicarlo |
+| Cómo lo verifiqué | Nada se documenta sin una salida real. Lo propuesto se probaba primero en local y luego en la VM |
+| Qué no le pasé | Ninguna clave privada, contraseña ni `.env`. Solo salidas y archivos públicos |
+| Paquetes sugeridos | Comprobados en PyPI y con `pip-audit` antes de usarlos. Las IA a veces inventan nombres de paquetes y alguien los registra con malware (*slopsquatting*) |
 
 ## Extra: más allá de la rúbrica
 
@@ -101,6 +112,7 @@ Lo del MF0488 sigue en [`docs/WORKLOG.md`](docs/WORKLOG.md) y [`docs/adr/`](docs
 opsmatrix-lab/
 ├── docker-compose.yml            ← proxy + app + db
 ├── .env.example                  ← plantilla (el .env real no se sube)
+├── .github/workflows/checks.yml  ← comprobaciones automáticas (CI)
 ├── layer1-telemetry/suricata/    ← local.rules y override de systemd
 ├── layer2-perimeter/
 │   ├── nginx/default.conf
