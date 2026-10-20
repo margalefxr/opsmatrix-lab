@@ -92,6 +92,18 @@ Capturé `enp2s0` con `tcpdump` mientras el Mac pedía `/mf0489-prueba-http` (pu
 
 **HTTPS no lo esconde todo.** Se siguen viendo IPs, puertos, tamaños, horas y el nombre del servidor (SNI), que va en claro en el saludo. El certificado no se ve porque en TLS 1.3 viaja cifrado.
 
+```
+# tcpdump -i enp2s0 -A 'tcp port 80'  → se lee todo
+08:31:08.191339 IP 172.16.181.1.64842 > 172.16.181.132.80: ... HTTP: HEAD /mf0489-prueba-http HTTP/1.1
+Host: portal.opsmatrix.test
+08:31:08.192249 IP 172.16.181.132.80 > 172.16.181.1.64842: ... HTTP: HTTP/1.1 301 Moved Permanently
+Location: https://portal.opsmatrix.test/mf0489-prueba-http
+
+# tcpdump -i enp2s0 -A 'tcp port 443' → 485 líneas, la ruta 0 veces, solo el SNI legible
+08:31:08.043740 IP 172.16.181.1.64837 > 172.16.181.132.443: Flags [SEW] ...
+.........portal.opsmatrix.test.......
+```
+
 Que la ruta no salga en la captura no es por sí sola una prueba de cifrado. Lo que lo demuestra es esa observación junto con la conexión verificada con `curl` y `openssl` (§2 y §3).
 
 ## 5. Regla de Suricata
@@ -185,6 +197,7 @@ Una alerta solo dice "ha pasado algo que coincide con una regla". Para que sea i
 | La regla 1000003 no saltaba (rev:1 con `flags:S`) | `tcpdump` mostró que el Mac manda el SYN con `[SEW]`: SYN + bits ECN (CWR y ECE). `flags:S` exige SYN **solo** | `flags:S,CE` (rev:2). Antes de llevarlo a la VM lo probé con Suricata y una captura hecha a mano: un SYN normal y uno con ECN saltan, un SYN-ACK no |
 | Aviso de `suricata -T`: `SYN-only … w/o direction specified` | La regla no decía la dirección | `flow:to_server` |
 | TLS 1.1 daba `no protocols available` | Es el cliente (OpenSSL 3.5) quien se niega, no el servidor | Repetir con `SECLEVEL=0` para que la respuesta sea del servidor |
+| `tcpdump` del 80 salía casi vacío | Con la salida en texto redirigida a un archivo, tcpdump guarda en memoria y escribe al terminar. Leí el archivo antes de que acabara (`-U` solo sirve con `-w`) | Leerlo cuando termina el `timeout`, o usar `-l` |
 | Nginx no cogía el `default.conf` nuevo tras `git merge` | El archivo está montado suelto en el contenedor y git lo sustituye por uno nuevo | `docker compose restart reverse-proxy` |
 
 ## 11. Conclusión
