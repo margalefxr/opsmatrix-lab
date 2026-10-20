@@ -64,8 +64,9 @@ En el navegador: añadir `IP_VM portal.opsmatrix.test` a `/etc/hosts` e importar
 | Código y configuración | git (GitHub) | `git clone` + `deploy.sh` |
 | Base de datos | `~/backups/opsmatrix-FECHA.sql.gz` en la VM (fuera del repo, 600) | Ver abajo |
 | `.env` | Solo en la VM | Si se pierde, se puede crear uno nuevo, pero la BBDD guardada tiene las contraseñas antiguas: restaurar desde copia o cambiar la contraseña en MariaDB |
-| `servidor.key` / `servidor.crt` | Solo en la VM | Generar clave y CSR nuevas y firmar de nuevo con la CA (Fase 2) |
+| `servidor.key` / `servidor.crt` | Solo en la VM | Si se ha filtrado, revocarlo primero ([procedimiento](extra-revocacion-inventario.md#1-revocación)). Luego clave y CSR nuevas y firmar de nuevo (Fase 2) |
 | `ca.key` | Solo en el equipo de administración | Si se pierde o se filtra: CA nueva, reemitir `servidor.crt` y repartir el nuevo `ca.crt` |
+| `ca.crl` | Equipo de administración y repo | Regenerar cada 30 días: `openssl ca -config ca.cnf -gencrl -crlexts ext_crl -out crl/ca.crl` |
 
 **Copia de la BBDD** (también comprueba que se puede restaurar en una base aparte):
 

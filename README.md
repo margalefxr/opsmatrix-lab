@@ -62,8 +62,10 @@ Temas que hoy pesan en el sector y que he aplicado al laboratorio.
 | Detección como código | Reglas de Suricata en git y probadas con una captura antes de desplegarlas | Una regla que no se ha probado puede no saltar nunca (me pasó con `flags:S`) |
 | Huella TLS (JA4) | Suricata la registra en `eve.json` sin descifrar nada | Permite reconocer clientes o malware por cómo saludan en TLS |
 | Secretos | `detect-secrets`: 0 hallazgos. Historial revisado | Las claves subidas a git son una de las fugas más comunes |
+| Revocación (CRL) | Revoqué un certificado de prueba como "clave comprometida", publiqué la CRL y el cliente lo rechaza (`error 23`). Procedimiento si se filtra una clave | Let's Encrypt apagó OCSP en 2025: la revocación vuelve a ir por CRL. Casi nadie la prueba en una PKI de laboratorio |
+| Inventario criptográfico | Tabla con cada clave, algoritmo, caducidad y si aguanta la post-cuántica. Hallazgo: TLS ya es post-cuántico, SSH todavía no | Es el primer paso de cualquier migración post-cuántica |
 
-Evidencias: [`supply-chain.txt`](docs/mf0489/evidencias/supply-chain.txt) y [`sbom-app.cdx.json`](docs/mf0489/evidencias/sbom-app.cdx.json).
+Detalle: [revocación e inventario](docs/mf0489/extra-revocacion-inventario.md). Evidencias: [`supply-chain.txt`](docs/mf0489/evidencias/supply-chain.txt), [`sbom-app.cdx.json`](docs/mf0489/evidencias/sbom-app.cdx.json) y [`pki-revocacion.txt`](docs/mf0489/evidencias/pki-revocacion.txt).
 
 ## Desplegar
 
@@ -86,6 +88,7 @@ Paso a paso, copias de seguridad y recuperación: [guía de despliegue](docs/mf0
 | 3. HTTPS con Nginx y Docker | 4,00 | [fase3-https-docker.md](docs/mf0489/fase3-https-docker.md) |
 | 4. Auditoría TLS y monitorización | 2,50 | [fase4-auditoria-tls-monitorizacion.md](docs/mf0489/fase4-auditoria-tls-monitorizacion.md) |
 | 5. Entrega final | — | [fase5-entrega-final.md](docs/mf0489/fase5-entrega-final.md) |
+| Extra: revocación e inventario | — | [extra-revocacion-inventario.md](docs/mf0489/extra-revocacion-inventario.md) |
 | Pasos y dificultades | — | [WORKLOG.md](docs/mf0489/WORKLOG.md) |
 
 Cada documento empieza con la tabla de criterios de la rúbrica y dónde está la evidencia de cada uno.
@@ -101,10 +104,10 @@ opsmatrix-lab/
 ├── layer1-telemetry/suricata/    ← local.rules y override de systemd
 ├── layer2-perimeter/
 │   ├── nginx/default.conf
-│   ├── pki/                      ← ca.crt, servidor.crt, servidor.csr, servidor.ext (públicos)
+│   ├── pki/                      ← ca.crt, servidor.crt/.csr/.ext, ca.crl, ca.cnf (todo público)
 │   └── ssh/00-opsmatrix.conf     ← SSH solo con clave
 ├── layer3-services/app/          ← app Flask + Dockerfile
-├── scripts/                      ← deploy, backup-db, check-vm, check-mac, fase4-* y sync_ops (MF0488)
+├── scripts/                      ← deploy, backup-db, check-vm, check-mac, fase4-*, pki-revocacion y sync_ops (MF0488)
 └── docs/mf0489/                  ← fases, guía, WORKLOG y evidencias
 ```
 

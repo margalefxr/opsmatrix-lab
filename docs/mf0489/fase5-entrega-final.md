@@ -31,7 +31,7 @@ Fuente editable: [arquitectura-final.mmd](arquitectura-final.mmd). Explicación 
 | Compose en `layer3-services/docker/` | Se usaba el de la raíz. El de `layer3` tenía contraseñas escritas | Un solo compose, contraseñas en `.env` (Fase 3) |
 | Reglas de Suricata del repo (`[OPSMATRIX-NIDS]…`) | Corrían otras (`[SEC-ALERT]…`) | El repo tiene las que corren de verdad + la 1000003 (Fase 4) |
 | "SSH solo con claves Ed25519" | `authorized_keys` **vacío** y `PasswordAuthentication yes` | Clave autorizada y contraseña desactivada (abajo) |
-| Firewall en `rules.v4` | Solo reglas viejas de Docker (44 líneas), ninguna propia | Desactivado `netfilter-persistent`. Docker crea sus reglas al arrancar |
+| Firewall en `rules.v4` | Solo reglas de Docker (44 líneas, 22 de ellas de bridges que ya no existen), ninguna propia | Desactivado `netfilter-persistent`. Docker crea sus reglas al arrancar |
 
 **SSH.** Primero autoricé la clave del Mac (`ssh-copy-id`) y comprobé que entraba sin contraseña. Solo después instalé [`00-opsmatrix.conf`](../../layer2-perimeter/ssh/00-opsmatrix.conf). Se llama `00-` para que sshd lo lea antes que `50-cloud-init.conf`, que pone `PasswordAuthentication yes` (en sshd gana el primer valor que lee).
 
@@ -137,6 +137,8 @@ Cada cambio lo probé antes y después de llevarlo a la VM.
 | Persistencia y recuperación | `down` / `up`, reinicio de la VM y copia restaurada en una base aparte | Fases 3 y 5 |
 | Búsqueda de secretos | `git ls-files` y `git log --all` buscando `.key`, `.env`, `.pem` | Fase 5 |
 | Coherencia docs = código | Cada directiva que nombran los docs, buscada con `grep` en el código | Fase 5 |
+| Validación con herramientas | `shellcheck` (scripts), `pyflakes` (app), `docker compose config`, `nginx -t`, `suricata -T`, `sshd -t` y `openssl verify` con la CRL. Sin errores | Fase 5 |
+| Revocación | Certificado de prueba revocado → `error 23`. El real sigue `OK` | [Extra](extra-revocacion-inventario.md) |
 
 ## 8. Dificultades de esta fase
 

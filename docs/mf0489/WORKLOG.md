@@ -17,6 +17,8 @@ Rama `mf0489-https`. Trabajo hecho el 19 y 20/10/2026 entre el Mac (CA y cliente
 | 11 | Fase 5: SSH solo con clave, limpieza del firewall viejo y las redes `docker_*`, copia de la BBDD probada | `Permission denied (publickey)` con contraseña, restaurada con 9 de 9 filas |
 | 12 | Reinicio de la VM y revisión final con `check-vm.sh` y `check-mac.sh` | Todo vuelve solo. [fase5-entrega-final.md](fase5-entrega-final.md) |
 | 13 | Extra: `pip-audit`, SBOM y `detect-secrets` | CVE en Flask 3.0.3 → 3.1.3 y dependencias fijadas. [supply-chain.txt](evidencias/supply-chain.txt) |
+| 14 | Extra: revocación con CRL e inventario criptográfico | Revocado → `error 23`, real → `OK`. SSH aún sin post-cuántica. [extra-revocacion-inventario.md](extra-revocacion-inventario.md) |
+| 15 | Revisión final con herramientas: `shellcheck`, `pyflakes`, `docker compose config`, `nginx -t`, `suricata -T`, `sshd -t`, OpenSSL y enlaces | Sin errores |
 
 ## Dificultades
 
@@ -41,7 +43,8 @@ Rama `mf0489-https`. Trabajo hecho el 19 y 20/10/2026 entre el Mac (CA y cliente
 | 17 | 5 | `rules.v4` solo tenía reglas viejas de Docker | Copia en `~/backups/`, `netfilter-persistent` desactivado y reinicio |
 | 18 | 5 | `deploy.sh` y README desactualizados | Reescritos |
 | 19 | Extra | `pip-audit` encontró CVE-2026-27205 en Flask 3.0.3 | No explotable aquí (sin `session` ni caché). Subido a 3.1.3, todas las dependencias fijadas, probado en local y reconstruido en la VM |
-| 20 | — | Al copiar comandos se colaba `\;` y alguna vez lancé un bloque en la máquina equivocada | Comandos sin `;` y, al final, scripts en vez de copiar y pegar |
+| 20 | Extra | En la prueba local, `openssl ca` dio `Serial number … has already been issued` | `ca.srl` guarda el último serial usado por `openssl x509`, pero `openssl ca` lo lee como el siguiente. Uso `rand_serial = yes` |
+| 21 | — | Al copiar comandos se colaba `\;` y alguna vez lancé un bloque en la máquina equivocada | Comandos sin `;` y, al final, scripts en vez de copiar y pegar |
 
 ## Pendiente (mejoras)
 
@@ -50,3 +53,6 @@ Rama `mf0489-https`. Trabajo hecho el 19 y 20/10/2026 entre el Mac (CA y cliente
 | Firewall de host con nftables | Hoy depende de lo que publica Docker |
 | Actualizaciones de Ubuntu pendientes | Gestión de parches |
 | Renovar `servidor.crt` antes del 19/10/2027 | Caduca |
+| Regenerar `ca.crl` antes del 19/11/2026 y añadir `crlDistributionPoints` | Si caduca, los clientes que la comprueban fallan |
+| Cifrar las copias de la BBDD | Hoy solo tienen permisos 600 |
+| SSH con intercambio post-cuántico | El servidor lo soporta; falta el cliente |
