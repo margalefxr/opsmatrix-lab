@@ -13,4 +13,7 @@ alert tcp any any -> any 80 (msg:"[SEC-ALERT] Acceso Web HTTP a Nginx Detectado"
 
 # Regla 3 (MF0489 Fase 4): cada conexión nueva (SYN) al 443 del servidor.
 # Es una regla de laboratorio para correlacionar con Nginx, no detecta ataques.
-alert tcp any any -> $HOME_NET 443 (msg:"MF0489 - Conexion HTTPS observada"; flags:S; sid:1000003; rev:1;)
+# flags:S,CE -> SYN, ignorando los bits ECN (CWR/ECE). El Mac manda el SYN con
+#   esos bits y con flags:S a secas la regla no saltaba (rev:1).
+# flow:to_server -> solo cliente -> servidor (quita el aviso de suricata -T).
+alert tcp any any -> $HOME_NET 443 (msg:"MF0489 - Conexion HTTPS observada"; flow:to_server; flags:S,CE; sid:1000003; rev:2;)
