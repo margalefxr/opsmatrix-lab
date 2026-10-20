@@ -18,7 +18,7 @@ Para que afecte hacen falta: usar `session` + un proxy que cachee respuestas con
 ## Después: Flask 3.1.3 y todas las dependencias fijadas (también las transitivas)
 $ pip-audit -r layer3-services/app/requirements.txt
 No known vulnerabilities found
-App probada en local detrás de Nginx con Flask 3.1.3: codigo=200 tls=0, el contador sube.
+App probada primero en local detrás de Nginx con Flask 3.1.3 (codigo=200 tls=0) y después en la VM (abajo).
 
 ## SBOM (CycloneDX 1.6)
 sbom-app.cdx.json: Flask 3.1.3, Werkzeug 3.1.9, Jinja2 3.1.6, MarkupSafe 3.0.4, PyMySQL 1.1.1, blinker 1.9.0, click 8.5.0, itsdangerous 2.2.0
@@ -27,3 +27,19 @@ sbom-app.cdx.json: Flask 3.1.3, Werkzeug 3.1.9, Jinja2 3.1.6, MarkupSafe 3.0.4, 
 $ detect-secrets scan --all-files
 0 hallazgos en el árbol actual.
 Historial: solo las contraseñas del compose antiguo del MF0488, ya sin uso (ver fase3 §8).
+
+## VM reconstruida con Flask 3.1.3 (20/10/2026 12:50)
+$ docker compose up -d --build app
+ => [app 4/6] RUN pip install --no-cache-dir -r requirements.txt           2.4s
+ ✔ Container opsmatrix-app  Started
+$ docker compose exec -T app pip show flask | grep Version
+Version: 3.1.3
+$ docker compose ps --format "{{.Name}} {{.Status}}"
+opsmatrix-app Up 10 seconds
+opsmatrix-db Up About an hour
+opsmatrix-proxy Up About an hour
+# Mac: bash check-mac.sh | grep -E "codigo|exit|Verification"
+codigo=200 tls=0
+exit 60          (sin la CA)
+exit 60          (nombre equivocado)
+Verification: OK
