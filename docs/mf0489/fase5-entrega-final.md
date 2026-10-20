@@ -138,7 +138,7 @@ Cada cambio lo probé antes y después de llevarlo a la VM.
 | Búsqueda de secretos | `git ls-files` y `git log --all` buscando `.key`, `.env`, `.pem` | Fase 5 |
 | Coherencia docs = código | Cada directiva que nombran los docs, buscada con `grep` en el código | Fase 5 |
 | Validación con herramientas | `shellcheck` (scripts), `pyflakes` (app), `docker compose config`, `nginx -t`, `suricata -T`, `sshd -t` y `openssl verify` con la CRL. Sin errores | Fase 5 |
-| Revocación | Certificado de prueba revocado → `error 23`. El real sigue `OK` | [Extra](extra-revocacion-inventario.md) |
+| Revocación | Certificado de prueba revocado → `error 23`. El real sigue `OK` | [Extra](extras.md) |
 
 ## 8. Dificultades de esta fase
 

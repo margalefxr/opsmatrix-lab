@@ -52,7 +52,7 @@ Laboratorio que simula el portal de una gestoría. La web es mínima a propósit
 
 ## Extra: más allá de la rúbrica
 
-Temas que hoy pesan en el sector y que he aplicado al laboratorio.
+Temas que hoy pesan en el sector y que he aplicado al laboratorio. El criterio para elegirlos y el detalle de cada uno están en [extras.md](docs/mf0489/extras.md).
 
 | Tema | Qué he hecho | Por qué importa |
 |---|---|---|
@@ -65,7 +65,7 @@ Temas que hoy pesan en el sector y que he aplicado al laboratorio.
 | Revocación (CRL) | Revoqué un certificado de prueba como "clave comprometida", publiqué la CRL y el cliente lo rechaza (`error 23`). Procedimiento si se filtra una clave | Let's Encrypt apagó OCSP en 2025: la revocación vuelve a ir por CRL. Casi nadie la prueba en una PKI de laboratorio |
 | Inventario criptográfico | Tabla con cada clave, algoritmo, caducidad y si aguanta la post-cuántica. Hallazgo: TLS ya es post-cuántico, SSH todavía no | Es el primer paso de cualquier migración post-cuántica |
 
-Detalle: [revocación e inventario](docs/mf0489/extra-revocacion-inventario.md). Evidencias: [`supply-chain.txt`](docs/mf0489/evidencias/supply-chain.txt), [`sbom-app.cdx.json`](docs/mf0489/evidencias/sbom-app.cdx.json) y [`pki-revocacion.txt`](docs/mf0489/evidencias/pki-revocacion.txt).
+Evidencias: [`supply-chain.txt`](docs/mf0489/evidencias/supply-chain.txt), [`sbom-app.cdx.json`](docs/mf0489/evidencias/sbom-app.cdx.json) y [`pki-revocacion.txt`](docs/mf0489/evidencias/pki-revocacion.txt).
 
 ## Desplegar
 
@@ -88,7 +88,7 @@ Paso a paso, copias de seguridad y recuperación: [guía de despliegue](docs/mf0
 | 3. HTTPS con Nginx y Docker | 4,00 | [fase3-https-docker.md](docs/mf0489/fase3-https-docker.md) |
 | 4. Auditoría TLS y monitorización | 2,50 | [fase4-auditoria-tls-monitorizacion.md](docs/mf0489/fase4-auditoria-tls-monitorizacion.md) |
 | 5. Entrega final | — | [fase5-entrega-final.md](docs/mf0489/fase5-entrega-final.md) |
-| Extra: revocación e inventario | — | [extra-revocacion-inventario.md](docs/mf0489/extra-revocacion-inventario.md) |
+| Extras (criterio, CVE de Flask, revocación, inventario) | — | [extras.md](docs/mf0489/extras.md) |
 | Pasos y dificultades | — | [WORKLOG.md](docs/mf0489/WORKLOG.md) |
 
 Cada documento empieza con la tabla de criterios de la rúbrica y dónde está la evidencia de cada uno.
