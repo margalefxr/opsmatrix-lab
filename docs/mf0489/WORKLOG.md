@@ -16,8 +16,8 @@ Rama `mf0489-https`. Trabajo hecho el 19 y 20/10/2026 entre el Mac (CA y cliente
 | 10 | Fase 4: log de Nginx con TLS, regla Suricata 1000003, pruebas TLS, tcpdump y correlación | TLS 1.1 rechazado, ruta invisible en el 443, mismo puerto en las 3 fuentes. [fase4-auditoria-tls-monitorizacion.md](fase4-auditoria-tls-monitorizacion.md) |
 | 11 | Fase 5: SSH solo con clave, limpieza del firewall viejo y las redes `docker_*`, copia de la BBDD probada | `Permission denied (publickey)` con contraseña, restaurada con 9 de 9 filas |
 | 12 | Reinicio de la VM y revisión final con `check-vm.sh` y `check-mac.sh` | Todo vuelve solo. [fase5-entrega-final.md](fase5-entrega-final.md) |
-| 13 | Extra: `pip-audit`, SBOM y `detect-secrets` | CVE en Flask 3.0.3 → 3.1.3 y dependencias fijadas. [supply-chain.txt](evidencias/supply-chain.txt) |
-| 14 | Extra: revocación con CRL e inventario criptográfico | Revocado → `error 23`, real → `OK`. SSH aún sin post-cuántica. [extra-revocacion-inventario.md](extra-revocacion-inventario.md) |
+| 13 | Extra: `pip-audit`, SBOM y `detect-secrets` | CVE en Flask 3.0.3: no explotable aquí, actualizado igual a 3.1.3 y dependencias fijadas. [extras.md](extras.md#1-software-de-terceros-cve-de-flask) |
+| 14 | Extra: revocación con CRL e inventario criptográfico | Revocado → `error 23`, real → `OK`. SSH aún sin post-cuántica. [extras.md](extras.md) |
 | 15 | Revisión final con herramientas: `shellcheck`, `pyflakes`, `docker compose config`, `nginx -t`, `suricata -T`, `sshd -t`, OpenSSL y enlaces | Sin errores |
 
 ## Dificultades

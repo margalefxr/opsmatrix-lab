@@ -1,13 +1,50 @@
-# Extra — Revocación e inventario criptográfico
+# Extras — Más allá de la rúbrica
 
-La rúbrica pide construir la PKI. Esto va un paso más allá: qué pasa cuando algo sale mal (revocación) y qué criptografía hay exactamente en el proyecto (inventario). Son dos cosas que el sector está empujando ahora:
+La rúbrica está completa en las Fases 1-4. Esto es lo que añadí por encima, pensando en lo que hoy se pide en un SOC o en un equipo de seguridad.
 
-| Tendencia | Por qué importa |
+## Criterio para añadir algo
+
+| Regla | Por qué |
 |---|---|
-| Vuelven las CRL | Let's Encrypt apagó OCSP en 2025 y el CA/B Forum lo dejó opcional. La revocación vuelve a ir por listas (CRL) |
-| Inventario criptográfico (CBOM) | Es el primer paso de la migración post-cuántica que piden la UE y el NIST: no se puede migrar lo que no sabes que tienes |
+| No quitar ni cambiar nada de lo que pide la rúbrica | Lo primero es la nota |
+| Solo lo que pueda probar con una salida real | Nada de "se podría". Cada extra tiene su evidencia |
+| Que sea un tema que el sector o la normativa empujan ahora | Es lo que distingue un laboratorio de clase de uno pensado para el trabajo real |
+| Que quepa en una tabla | Lean: si necesita un documento entero, es otro proyecto |
 
-## 1. Revocación
+| Extra | Tendencia detrás |
+|---|---|
+| [Software de terceros](#1-software-de-terceros-cve-de-flask) | Supply chain: SBOM y gestión de vulnerabilidades (Cyber Resilience Act) |
+| [Secretos](#2-secretos) | Fugas de claves en repositorios |
+| [Revocación](#3-revocación) | Let's Encrypt apagó OCSP en 2025 y el CA/B Forum lo dejó opcional. La revocación vuelve a ir por CRL |
+| [Inventario criptográfico](#4-inventario-criptográfico) | Primer paso de la migración post-cuántica que piden la UE y el NIST |
+
+## 1. Software de terceros (CVE de Flask)
+
+La app depende de código que no he escrito (Flask, PyMySQL y lo que instalan por debajo). Lo revisé con `pip-audit`.
+
+| Paso | Resultado |
+|---|---|
+| Hallazgo | `flask 3.0.3` → **CVE-2026-27205** (GHSA-68rp-wp8r-4726). Arreglado en 3.1.3 |
+| Qué es | En algunos accesos a `session`, Flask no añade `Vary: Cookie`. Un proxy con caché podría guardar una respuesta con datos de un usuario y dársela a otro |
+| ¿Me afecta? | **No.** Hacen falta dos condiciones y no se cumple ninguna: la app no usa `session` ni cookies, y Nginx no tiene caché (no hay `proxy_cache` en `default.conf`) |
+| Decisión | Actualizar igual. Cuesta poco y evita que el aviso salga en cada auditoría |
+| Acción | Flask 3.1.3 y **todas** las dependencias fijadas, también las que instala Flask (`Werkzeug`, `Jinja2`…). SBOM en CycloneDX |
+| Comprobación | `pip-audit`: 0 vulnerabilidades. App probada en local y reconstruida en la VM: `Version: 3.1.3`, `codigo=200 tls=0` |
+
+Dejar escrito **por qué** un CVE no afecta (en vez de solo decir "actualizado") es lo que en el sector se llama VEX: sirve para que el siguiente que audite no repita el análisis.
+
+Evidencias: [`supply-chain.txt`](evidencias/supply-chain.txt) y [`sbom-app.cdx.json`](evidencias/sbom-app.cdx.json).
+
+## 2. Secretos
+
+| Comprobación | Resultado |
+|---|---|
+| `detect-secrets scan --all-files` | 0 hallazgos |
+| `git ls-files` / `git log --all` buscando `.key`, `.env`, `.pem` | Ninguno, nunca |
+| Contraseñas en el historial | Solo las del compose antiguo del MF0488, ya sin uso |
+| Claves privadas en la VM | Solo `/etc/ssl/private/servidor.key`. Ningún `ca.key` (la vieja del MF0488 se borró con `shred`) |
+
+## 3. Revocación
 
 **¿Qué pasaba antes?** La CA puede firmar listas de revocación (`cRLSign`), pero no había ninguna. Si alguien robaba `servidor.key`, el certificado seguía siendo válido hasta 2027 y no había forma de anularlo.
 
@@ -43,7 +80,7 @@ El revocado se rechaza (error 23) y el real sigue valiendo, también en la conex
 
 **Límite:** `servidor.crt` no lleva la dirección donde descargar la CRL (`crlDistributionPoints`), así que hoy el cliente tiene que recibirla a mano (`-CRLfile`, `curl --crlfile`). En la próxima emisión la añadiría a `servidor.ext` y Nginx serviría la CRL.
 
-## 2. Inventario criptográfico
+## 4. Inventario criptográfico
 
 | Activo | Algoritmo | Dónde | Caduca | ¿Aguanta un ordenador cuántico? | Siguiente paso |
 |---|---|---|---|---|---|
@@ -59,6 +96,15 @@ El revocado se rechaza (error 23) y el real sigue valiendo, también en la conex
 
 **Hallazgo SSH.** El servidor es OpenSSH 10.2, que ya soporta intercambio post-cuántico (`mlkem768x25519-sha256`). Aun así, la conexión desde el Mac negoció `ecdh-sha2-nistp256`, clásico. Lo decide la lista de algoritmos que ofrece el cliente. No lo fuerzo en el servidor porque, si el cliente del Mac no lo soporta, me quedaría fuera. Siguiente paso: `ssh -Q kex` en el Mac y, si sale `mlkem768x25519-sha256`, ponerlo el primero en `~/.ssh/config`.
 
+## 5. Lo que he dejado fuera
+
+| Tema | Por qué no |
+|---|---|
+| Certificados cortos automáticos (ACME, step-ca) | Es otro proyecto entero. Queda como siguiente paso por los certificados de 47 días |
+| mTLS / Zero Trust entre contenedores | Cambia la arquitectura que pide la rúbrica |
+| Firma y escaneo de imágenes (cosign, Trivy) | Más supply chain. Con la app ya cubierta, no aporta lo bastante |
+| Reglas Sigma / MITRE ATT&CK | La regla 1000003 registra conexiones, no detecta ataques. Mapearla sería forzarlo |
+
 ## Normativa
 
 | Referencia | Relación |
@@ -67,4 +113,6 @@ El revocado se rechaza (error 23) y el real sigue valiendo, también en la conex
 | ISO 27001 A.5.26 | Respuesta a incidentes: qué hacer si se filtra una clave |
 | ENS op.exp.10 | Protección de claves criptográficas |
 | RFC 5280 §5 | Formato de las CRL |
+| ISO 27001 A.5.21 / A.8.8 | Software de terceros y gestión de vulnerabilidades |
+| Cyber Resilience Act (UE 2024/2847) | SBOM y gestión de vulnerabilidades en productos con software |
 | Hoja de ruta PQC de la UE (2025) | Inventario como primer paso de la migración |
