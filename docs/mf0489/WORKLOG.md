@@ -40,7 +40,7 @@ Rama `mf0489-https`. Trabajo hecho el 19 y 20/10/2026 entre el Mac (CA y cliente
 | 16 | 5 | `authorized_keys` vacío: nunca hubo una clave autorizada | `ssh-copy-id`, comprobar y solo entonces `00-opsmatrix.conf` (gana a `50-cloud-init.conf`) |
 | 17 | 5 | `rules.v4` solo tenía reglas viejas de Docker | Copia en `~/backups/`, `netfilter-persistent` desactivado y reinicio |
 | 18 | 5 | `deploy.sh` y README desactualizados | Reescritos |
-| 19 | Extra | `pip-audit` encontró CVE-2026-27205 en Flask 3.0.3 | No explotable aquí (sin `session` ni caché). Subido a 3.1.3, todas las dependencias fijadas y probado en local |
+| 19 | Extra | `pip-audit` encontró CVE-2026-27205 en Flask 3.0.3 | No explotable aquí (sin `session` ni caché). Subido a 3.1.3, todas las dependencias fijadas, probado en local y reconstruido en la VM |
 | 20 | — | Al copiar comandos se colaba `\;` y alguna vez lancé un bloque en la máquina equivocada | Comandos sin `;` y, al final, scripts en vez de copiar y pegar |
 
 ## Pendiente (mejoras)
