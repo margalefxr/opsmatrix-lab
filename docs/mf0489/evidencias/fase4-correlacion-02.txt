@@ -1,0 +1,19 @@
+# Correlación final (20/10/2026), después del override de Suricata
+
+## VM: arranque de Suricata tras el override
+[629716 - Suricata-Main] 2026-10-20 08:44:58 Info: runmodes: enp2s0: creating 1 thread
+[629716 - Suricata-Main] 2026-10-20 08:44:58 Notice: threads: Threads created -> W: 1 FM: 1 FR: 1   Engine started.
+
+## Mac
+$ curl -s -o /dev/null -w "HTTP %{http_code} puerto_origen=%{local_port}\n" --cacert ca.crt --resolve portal.opsmatrix.test:443:172.16.181.132 https://portal.opsmatrix.test/mf0489-correlacion-02
+HTTP 404 puerto_origen=50093
+
+## VM: Suricata
+$ sudo grep ":50093 -> " /var/log/suricata/fast.log
+10/20/2026-08:45:25.120291  [**] [1:1000003:2] MF0489 - Conexion HTTPS observada [**] [Classification: (null)] [Priority: 3] {TCP} 172.16.181.1:50093 -> 172.16.181.132:443
+$ sudo grep ":50093 -> " /var/log/suricata/fast.log | wc -l
+1
+
+## VM: Nginx
+$ docker compose logs --no-log-prefix reverse-proxy | grep correlacion-02
+2026-10-20T08:45:25+00:00 client=172.16.181.1:50093 request="GET /mf0489-correlacion-02 HTTP/1.1" status=404 tls=TLSv1.3 cipher=TLS_CHACHA20_POLY1305_SHA256
