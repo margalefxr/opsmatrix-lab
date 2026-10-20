@@ -2,6 +2,14 @@
 
 Actualizo el diagrama de OpsMatrix (MF0488) para añadir HTTPS. Nginx pasa a ser el reverse proxy y el punto donde termina TLS. La CA del laboratorio se queda fuera de la VM.
 
+## Resumen
+
+| Criterio | Pts | Evidencia |
+|---|---|---|
+| F1.1 Nginx como entrada HTTPS y punto claro de terminación TLS | 0,20 | [Diagrama](#diagrama) · [Tramos](#tramos-con-tls-y-tramos-internos) |
+| F1.2 CA fuera de la VM CTF; certificados y claves en su sitio | 0,15 | [Diagrama](#diagrama) · [Certificados y claves](#certificados-y-claves) |
+| F1.3 Redes, app, BBDD, puertos y Suricata coherentes | 0,15 | [Puertos](#puertos) · [Qué ve Suricata](#qué-ve-suricata) |
+
 ## Conceptos
 
 | Pieza | Qué es | Papel en OpsMatrix |

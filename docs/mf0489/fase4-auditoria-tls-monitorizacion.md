@@ -4,16 +4,14 @@ Compruebo que el HTTPS montado en la Fase 3 está bien configurado y que, aunque
 
 ## Resumen
 
-| Lo que pide la fase | Resultado | Dónde |
+| Criterio | Pts | Evidencia |
 |---|---|---|
-| El certificado que presenta Nginx es el bueno y se valida con la CA | ✅ | [§2](#2-conexión-https-real) |
-| TLS 1.2 y 1.3 sí, TLS 1.1 no | ✅ | [§3](#3-versiones-tls) |
-| Versión y cipher suite de una conexión real | ✅ | [§3](#3-versiones-tls) |
-| Diferencia de lo que se ve en HTTP y en HTTPS | ✅ | [§4](#4-qué-se-ve-en-http-y-en-https) |
-| Regla propia de Suricata para el 443 | ✅ SID 1000003 | [§5](#5-regla-de-suricata) |
-| Log de Nginx con versión TLS y cipher | ✅ | [§6](#6-log-de-nginx) |
-| Correlación Suricata ↔ Nginx | ✅ Mismo puerto de origen | [§7](#7-correlación) |
-| La infraestructura sigue bien después de las pruebas | ✅ | [§9](#9-checklist-final) |
+| F4.1 Línea base HTTPS: certificado confiable, nombre, versión TLS y cipher suite | 0,45 | [§2](#2-conexión-https-real) |
+| F4.2 TLS 1.2/1.3 sí, obsoletos no, contrastado con la config activa | 0,50 | [§3](#3-versiones-tls) |
+| F4.3 Comparativa HTTP/HTTPS desde la interfaz: qué ve Suricata y qué solo ve Nginx | 0,45 | [§4](#4-qué-se-ve-en-http-y-en-https) |
+| F4.4 Suricata en la interfaz correcta, regla propia, `suricata -T` y alerta real | 0,50 | [§1](#1-máquinas-e-interfaz) · [§5](#5-regla-de-suricata) · [§7](#7-correlación) |
+| F4.5 Correlación Suricata ↔ Nginx con IP, hora y diferencias por NAT/Docker | 0,40 | [§7](#7-correlación) |
+| F4.6 App, BBDD, TLS y monitorización siguen funcionando | 0,20 | [§9](#9-checklist-final) |
 
 ## 1. Máquinas e interfaz
 

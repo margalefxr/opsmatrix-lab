@@ -70,13 +70,15 @@ Paso a paso, copias de seguridad y recuperación: [guía de despliegue](docs/mf0
 
 ## Documentación MF0489
 
-| Fase | Documento |
-|---|---|
-| 1. Arquitectura con HTTPS | [fase1-arquitectura.md](docs/mf0489/fase1-arquitectura.md) |
-| 2. PKI con OpenSSL | [fase2-pki.md](docs/mf0489/fase2-pki.md) |
-| 3. HTTPS con Nginx y Docker | [fase3-https-docker.md](docs/mf0489/fase3-https-docker.md) |
-| 4. Auditoría TLS y monitorización | [fase4-auditoria-tls-monitorizacion.md](docs/mf0489/fase4-auditoria-tls-monitorizacion.md) |
-| 5. Entrega final | [fase5-entrega-final.md](docs/mf0489/fase5-entrega-final.md) |
+| Fase | Pts | Documento |
+|---|---|---|
+| 1. Arquitectura con HTTPS | 0,50 | [fase1-arquitectura.md](docs/mf0489/fase1-arquitectura.md) |
+| 2. PKI con OpenSSL | 3,00 | [fase2-pki.md](docs/mf0489/fase2-pki.md) |
+| 3. HTTPS con Nginx y Docker | 4,00 | [fase3-https-docker.md](docs/mf0489/fase3-https-docker.md) |
+| 4. Auditoría TLS y monitorización | 2,50 | [fase4-auditoria-tls-monitorizacion.md](docs/mf0489/fase4-auditoria-tls-monitorizacion.md) |
+| 5. Entrega final | — | [fase5-entrega-final.md](docs/mf0489/fase5-entrega-final.md) |
+
+Cada documento empieza con la tabla de criterios de la rúbrica y dónde está la evidencia de cada uno.
 | Pasos y dificultades | [WORKLOG.md](docs/mf0489/WORKLOG.md) |
 
 Lo del MF0488 sigue en [`docs/WORKLOG.md`](docs/WORKLOG.md) y [`docs/adr/`](docs/adr/). Es la foto de entonces: donde no coincida con lo de arriba (por ejemplo "solo TLS 1.3" o el compose de `layer3-services/docker`), manda lo del MF0489.
