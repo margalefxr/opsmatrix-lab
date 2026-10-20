@@ -7,3 +7,7 @@ alert icmp any any -> $HOME_NET any (msg:"[OPSMATRIX-NIDS] Traza ICMP Detectada 
 
 # Regla 2: Detección de Intento de Escaneo Nmap / User-Agent Sospechoso en HTTP
 alert http any any -> $HOME_NET 80 (msg:"[OPSMATRIX-NIDS] Escaneo HTTP Nmap/Nikto Detectado"; content:"Nmap"; http_user_agent; sid:1000002; rev:1;)
+
+# Regla 3 (MF0489 Fase 4): registra cada conexión nueva (SYN) al 443 del servidor.
+# Es una regla de laboratorio para correlacionar con Nginx, no detecta ataques.
+alert tcp any any -> $HOME_NET 443 (msg:"MF0489 - Conexion HTTPS observada"; flags:S; sid:1000003; rev:1;)
