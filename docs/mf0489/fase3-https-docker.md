@@ -198,29 +198,14 @@ Después de reiniciar, la siguiente visita sumó sobre las anteriores en vez de 
 
 ## 9. Cómo desplegarlo
 
-Hace falta Docker con Compose y los certificados de la [Fase 2](fase2-pki.md) en `/etc/ssl/`.
+Con los certificados de la [Fase 2](fase2-pki.md) en `/etc/ssl/`:
 
 ```bash
-# En la VM
-git clone https://github.com/margalefxr/opsmatrix-lab.git
-cd opsmatrix-lab
-cp .env.example .env
-sed -i "s|^DB_ROOT_PASSWORD=.*|DB_ROOT_PASSWORD=$(openssl rand -base64 24)|" .env
-sed -i "s|^DB_PASSWORD=.*|DB_PASSWORD=$(openssl rand -base64 24)|" .env
-chmod 600 .env
-docker compose config --quiet && echo "compose OK"
-docker compose up -d --build
-bash scripts/check-vm.sh
+bash scripts/deploy.sh     # crea el .env con contraseñas aleatorias y levanta el compose
+bash scripts/check-vm.sh   # comprobar
 ```
 
-```bash
-# En el cliente, con ca.crt (cambiar la IP si hace falta)
-bash scripts/check-mac.sh
-```
-
-Si el build falla por DNS, mirar `ip -4 addr show docker0`. Si no tiene IP: `sudo systemctl restart docker`.
-
-Para parar: `docker compose down`. **Nunca `down -v`**, porque borra la BBDD.
+Paso a paso, copias y problemas conocidos en la [guía de despliegue](guia-despliegue.md). Para parar: `docker compose down`, **nunca `down -v`** (borra la BBDD).
 
 ## Normativa
 
