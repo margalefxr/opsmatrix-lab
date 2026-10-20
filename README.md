@@ -71,7 +71,7 @@ opsmatrix-lab/
 │   ├── pki/                      ← ca.crt, servidor.crt, servidor.csr, servidor.ext (públicos)
 │   └── ssh/00-opsmatrix.conf     ← SSH solo con clave
 ├── layer3-services/app/          ← app Flask + Dockerfile
-├── scripts/                      ← deploy, backup-db, check-vm, check-mac, fase4-*
+├── scripts/                      ← deploy, backup-db, check-vm, check-mac, fase4-* y sync_ops (MF0488)
 └── docs/mf0489/                  ← fases, guía, WORKLOG y evidencias
 ```
 

@@ -1,6 +1,6 @@
 # WORKLOG — ExP 89 (MF0489)
 
-Rama `mf0489-https`. Trabajo hecho el 19/10/2026 entre el Mac (CA y cliente) y la VM Ubuntu (servidor).
+Rama `mf0489-https`. Trabajo hecho el 19 y 20/10/2026 entre el Mac (CA y cliente) y la VM Ubuntu (servidor).
 
 | # | Paso | Resultado |
 |---|---|---|
