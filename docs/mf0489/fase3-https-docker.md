@@ -79,6 +79,7 @@ Pesa 131 bytes porque el volumen estaba vacío: la BBDD nunca llegó a arrancar,
 | La app corre como `nobody` | Si la explotan, no es root dentro del contenedor |
 | Versiones fijas (`nginx:1.28-alpine`, `mariadb:10.11`) | Para que siempre se instale lo mismo y no lo que traiga `latest` ese día |
 | Un solo `docker-compose.yml` | Había dos y uno no se usaba. Borré el que sobraba |
+| La app usa el servidor de pruebas de Flask | Basta para un laboratorio con una visita cada vez. En producción iría detrás de un servidor WSGI como gunicorn (Flask avisa de ello en el log) |
 
 ### Preguntas de la Actividad 10
 

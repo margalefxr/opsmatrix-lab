@@ -110,7 +110,7 @@ Suricata no ve las rutas HTTPS porque van cifradas. Nginx sí las ve, porque es 
 
 | Dificultad | Solución |
 |---|---|
-| En MF0488 Nginx estaba en las dos redes y devolvía un JSON fijo, sin app real | Rediseño: Nginx solo en la red web y una app nueva conectada a las dos redes |
+| En el compose del MF0488 (`layer3-services/docker`) Nginx estaba en las dos redes y devolvía un JSON fijo, sin app real. En la VM corría además otro compose distinto (ver [Fase 3](fase3-https-docker.md#2-antes-y-después)) | Rediseño: Nginx solo en la red web y una app nueva conectada a las dos redes |
 | El README decía "TLS 1.3" pero `default.conf` permitía 1.2 y 1.3 | Se documenta TLS 1.2 + 1.3, que es lo que pide la rúbrica y lo que estará en la configuración |
 
 ## Normativa

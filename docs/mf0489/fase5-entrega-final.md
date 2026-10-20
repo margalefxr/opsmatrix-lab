@@ -89,7 +89,7 @@ Pasos completos de recuperación y vuelta atrás en la [guía de despliegue](gui
 |---|---|
 | Contenedores | Los 3 `Up` (`restart: unless-stopped`) |
 | `docker0` con IP | ✅ `172.17.0.1/16` (el fallo de la Fase 3 no se repitió) |
-| Suricata | `active`, con el override |
+| Suricata | `active` |
 | SSH | Entré con clave, sin contraseña |
 | Datos | 10 visitas, la primera del 19/10 |
 | Reglas viejas del firewall | 0 |
@@ -141,6 +141,7 @@ Salidas completas: [`check-vm-final.txt`](evidencias/check-vm-final.txt) y [`che
 | Firewall de host propio (nftables: entrada solo 22/80/443) | Hoy depende de lo que publica Docker |
 | Aplicar las 68 actualizaciones de Ubuntu (4 de seguridad) | ISO 27001 A.8.8, gestión de vulnerabilidades |
 | Renovar `servidor.crt` antes del 19/10/2027 | Caduca en un año |
+| Cabecera HSTS en Nginx | Que el navegador no vuelva a intentar HTTP. No la puse porque con una CA de laboratorio puede dejar el dominio bloqueado en el navegador si algo falla |
 | Revisar el proyecto `infra-lab` (WordPress) antes de exportar la OVA | No es de OpsMatrix, pero estará en la VM del CTF |
 
 ## Normativa

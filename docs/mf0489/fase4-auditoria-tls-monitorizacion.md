@@ -88,7 +88,7 @@ Capturé `enp2s0` con `tcpdump` mientras el Mac pedía `/mf0489-prueba-http` (pu
 | Ruta (`/mf0489-prueba-…`) | ✅ `/mf0489-prueba-http` | ❌ 0 apariciones en la captura |
 | Versión TLS / metadatos | — | ✅ versión, SNI `portal.opsmatrix.test`, huella JA4 |
 | Contenido en texto claro | ✅ cabeceras y `Location` | ❌ |
-| Eventos en Suricata | `http` (url, método, estado 301) + alerta 1000002 | `tls` (versión, SNI) + `flow` + alerta 1000003 |
+| Eventos en Suricata | `http` (url, método, estado 301) + alerta 1000002 | `tls` (versión, SNI) + alerta 1000003 |
 
 **HTTPS no lo esconde todo.** Se siguen viendo IPs, puertos, tamaños, horas y el nombre del servidor (SNI), que va en claro en el saludo. El certificado no se ve porque en TLS 1.3 viaja cifrado.
 
