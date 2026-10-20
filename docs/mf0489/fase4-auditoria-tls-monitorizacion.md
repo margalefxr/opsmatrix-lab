@@ -23,7 +23,7 @@ Compruebo que el HTTPS montado en la Fase 3 está bien configurado y que, aunque
 | Servidor | Ubuntu `ubuntuserver` | 172.16.181.132 | Nginx + app + MariaDB en Docker |
 | Interfaz | `enp2s0` | — | Por donde entra el cliente. Es la que escucha Suricata (`- interface: enp2s0`) |
 
-Scripts usados: [`scripts/fase4-mac.sh`](../../scripts/fase4-mac.sh) y [`scripts/fase4-vm.sh`](../../scripts/fase4-vm.sh). Salidas en [`evidencias/fase4-mac.txt`](evidencias/fase4-mac.txt) y [`evidencias/fase4-vm.txt`](evidencias/fase4-vm.txt).
+Scripts usados: [`scripts/fase4-mac.sh`](../../scripts/fase4-mac.sh) y [`scripts/fase4-vm.sh`](../../scripts/fase4-vm.sh). Salidas en [`evidencias/fase4-mac.txt`](evidencias/fase4-mac.txt), [`evidencias/fase4-vm.txt`](evidencias/fase4-vm.txt) (aún con las alertas duplicadas) y [`evidencias/fase4-correlacion-02.txt`](evidencias/fase4-correlacion-02.txt) (prueba final ya arreglada).
 
 ## 2. Conexión HTTPS real
 
@@ -149,19 +149,28 @@ Nginx sí ve la ruta porque es quien descifra. El 404 es normal: la app solo tie
 
 ## 7. Correlación
 
-Una sola petición con una ruta nueva: `/mf0489-correlacion-01`.
+Una sola petición con una ruta nueva: `/mf0489-correlacion-02`. La hice después de arreglar las alertas duplicadas (ver [§10](#10-dificultades)).
+
+```
+# Mac
+HTTP 404 puerto_origen=50093
+# Suricata (fast.log)
+10/20/2026-08:45:25.120291 [1:1000003:2] MF0489 - Conexion HTTPS observada {TCP} 172.16.181.1:50093 -> 172.16.181.132:443
+# Nginx
+2026-10-20T08:45:25+00:00 client=172.16.181.1:50093 request="GET /mf0489-correlacion-02 HTTP/1.1" status=404 tls=TLSv1.3 cipher=TLS_CHACHA20_POLY1305_SHA256
+```
 
 | Campo | Cliente (Mac) | Suricata | Nginx |
 |---|---|---|---|
-| Hora (UTC) | 08:31:11 | 08:31:11.257 | 08:31:11 |
+| Hora (UTC) | 08:45:25 | 08:45:25.120 | 08:45:25 |
 | IP cliente | — | 172.16.181.1 | 172.16.181.1 |
-| **Puerto de origen** | **64852** | **64852** | **64852** |
+| **Puerto de origen** | **50093** | **50093** | **50093** |
 | Destino | 172.16.181.132:443 | 172.16.181.132:443 | — |
-| Evento | `curl` | SYN al 443, alerta SID 1000003 | `GET /mf0489-correlacion-01` |
+| Evento | `curl` | SYN al 443, alerta SID 1000003 (una sola) | `GET /mf0489-correlacion-02` |
 | Resultado | HTTP 404 | Alerta de laboratorio | `status=404` |
-| TLS / HTTP visible | — | TLS 1.3, SNI (evento `tls`). Sin ruta | TLS 1.3, `TLS_CHACHA20_POLY1305_SHA256`, ruta completa |
+| TLS / HTTP visible | — | Conexión al 443. En el evento `tls`: versión y SNI. Sin ruta | TLS 1.3, `TLS_CHACHA20_POLY1305_SHA256`, ruta completa |
 
-**¿Por qué son la misma prueba?** No me fío solo de la hora: coinciden la IP, la hora al segundo y, sobre todo, el **puerto de origen 64852**, que el sistema del Mac elige al azar para cada conexión. Las tres fuentes están en UTC, así que no hubo que convertir horas. Docker no cambia la IP ni el puerto de origen que recibe Nginx (la redirección del puerto la hace iptables y conserva el origen).
+**¿Por qué son la misma prueba?** No me fío solo de la hora. Coinciden la IP, la hora al segundo y, sobre todo, el **puerto de origen 50093**, que el Mac elige al azar para cada conexión. Las tres fuentes están en UTC, así que no hubo que convertir horas. Docker no cambia la IP ni el puerto que recibe Nginx (la redirección la hace iptables y conserva el origen). La primera prueba (`/mf0489-correlacion-01`, puerto 64852) también cuadraba, pero con la alerta repetida.
 
 Esto **no** quiere decir que Suricata viera la ruta. Suricata ve la conexión y sus metadatos. Nginx ve la petición ya descifrada. Juntas cuentan la historia completa.
 
@@ -198,6 +207,8 @@ Una alerta solo dice "ha pasado algo que coincide con una regla". Para que sea i
 | Aviso de `suricata -T`: `SYN-only … w/o direction specified` | La regla no decía la dirección | `flow:to_server` |
 | TLS 1.1 daba `no protocols available` | Es el cliente (OpenSSL 3.5) quien se niega, no el servidor | Repetir con `SECLEVEL=0` para que la respuesta sea del servidor |
 | `tcpdump` del 80 salía casi vacío | Con la salida en texto redirigida a un archivo, tcpdump guarda en memoria y escribe al terminar. Leí el archivo antes de que acabara (`-U` solo sirve con `-w`) | Leerlo cuando termina el `timeout`, o usar `-l` |
+| Cada alerta salía **dos veces**, también las del MF0488 | Las dos copias tenían el mismo `flow_id`: era el mismo paquete procesado dos veces. El servicio arrancaba con `--af-packet -i enp2s0`, que monta dos capturas sobre `enp2s0` (en el log, `creating 1 thread` dos veces y `W: 2`). Lo reproduje en local con `--af-packet -i lo` | Drop-in de systemd ([`override.conf`](../../layer1-telemetry/suricata/override.conf)) que arranca solo con `--af-packet`. Ahora sale `W: 1` y una alerta por conexión. No toco el servicio del paquete, así no se pierde al actualizar. Sigue saliendo un aviso de `fanout` al arrancar, pero con una sola captura no afecta |
+| `systemctl cat suricata` decía `Permission denied` con el override | Otra vez el `umask 077`: `sudo install -D` creó la carpeta `suricata.service.d` con 700 | systemd (root) la lee bien. Para verla: `sudo systemctl cat suricata` |
 | Nginx no cogía el `default.conf` nuevo tras `git merge` | El archivo está montado suelto en el contenedor y git lo sustituye por uno nuevo | `docker compose restart reverse-proxy` |
 
 ## 11. Conclusión
