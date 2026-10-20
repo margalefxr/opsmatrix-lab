@@ -4,15 +4,14 @@ Publico el portal de OpsMatrix en `https://portal.opsmatrix.test` con el certifi
 
 ## Resumen
 
-| Lo que pide la fase | Resultado | Dónde |
+| Criterio | Pts | Evidencia |
 |---|---|---|
-| Entrar por `https://portal.opsmatrix.test` (443) | ✅ | [§6](#6-pruebas-desde-el-mac) |
-| Nginx usa el certificado y la clave de la Fase 2 | ✅ | [§4](#4-certificados) |
-| El certificado se verifica con la CA, sin `-k` | ✅ | [§6](#6-pruebas-desde-el-mac) |
-| HTTP redirige a HTTPS | ✅ | [§6](#6-pruebas-desde-el-mac) |
-| Nginx → app → BBDD funciona y los datos se guardan | ✅ | [§7](#7-app-y-persistencia) |
-| App y BBDD sin puertos abiertos al exterior | ✅ | [§2](#2-antes-y-después) |
-| Nada secreto en GitHub | ✅ | [§3](#3-decisiones) |
+| F3.1 Compose: proxy funcional, config y certificados montados en solo lectura, config válida | 0,70 | [§2](#2-antes-y-después) · [§5](#5-nginx) |
+| F3.2 Nginx en 443, presenta el certificado esperado, `nginx -t` OK | 0,85 | [§5](#5-nginx) · [§6](#6-pruebas-desde-el-mac) |
+| F3.3 Solo publica lo necesario, BBDD no expuesta, backend accesible desde la app | 0,60 | [§2](#2-antes-y-después) · [§7](#7-app-y-persistencia) |
+| F3.4 App funcionando detrás del proxy, sin 502 y sin perder datos | 0,85 | [§7](#7-app-y-persistencia) |
+| F3.5 HTTPS verificado desde el cliente con `curl --cacert`, sin `-k` | 0,65 | [§6](#6-pruebas-desde-el-mac) |
+| F3.6 HTTP → HTTPS conservando host y ruta | 0,35 | [§6](#6-pruebas-desde-el-mac) |
 
 ## 1. Arquitectura
 
@@ -55,6 +54,23 @@ $ sudo ss -tulnp | grep -E ':(22|80|443|3306|5000)\b'
 0.0.0.0:22   sshd
 0.0.0.0:443  docker-proxy
 ```
+
+```
+$ docker compose config --quiet && echo "compose OK"
+compose OK
+$ docker compose ps                     # columnas recortadas
+NAME              IMAGE               SERVICE         STATUS          PORTS
+opsmatrix-app     opsmatrix-lab-app   app             Up 15 seconds   5000/tcp
+opsmatrix-db      mariadb:10.11       db              Up 4 minutes    3306/tcp
+opsmatrix-proxy   nginx:1.28-alpine   reverse-proxy   Up 54 seconds   0.0.0.0:80->80/tcp, 0.0.0.0:443->443/tcp
+# montajes del proxy (comprobado el 20/10 en la Fase 4)
+$ docker inspect opsmatrix-proxy -f '{{range .Mounts}}{{.Destination}} rw={{.RW}}{{"\n"}}{{end}}'
+/etc/nginx/conf.d/default.conf rw=false
+/etc/nginx/certs/servidor.crt rw=false
+/etc/nginx/certs/servidor.key rw=false
+```
+
+Solo el proxy publica puertos (80 y 443). La app y la BBDD salen con su puerto interno (`5000/tcp`, `3306/tcp`), sin `0.0.0.0`. Los tres montajes del proxy son de solo lectura (`rw=false`).
 
 **Copia de seguridad antes de tocar nada** (con `down`, nunca `down -v`):
 
@@ -122,6 +138,9 @@ Archivo: [`layer2-perimeter/nginx/default.conf`](../../layer2-perimeter/nginx/de
 ```
 $ docker compose exec reverse-proxy nginx -t
 nginx: configuration file /etc/nginx/nginx.conf test is successful
+$ docker compose logs --tail=5 app reverse-proxy
+opsmatrix-app    |  * Running on http://172.23.0.2:5000
+opsmatrix-proxy  | [notice] 1#1: start worker processes
 ```
 
 ## 6. Pruebas desde el Mac
@@ -129,6 +148,20 @@ nginx: configuration file /etc/nginx/nginx.conf test is successful
 **¿Cómo resuelvo el nombre?** Con `curl --resolve portal.opsmatrix.test:443:172.16.181.132`, sin tocar `/etc/hosts`. Para el navegador habría que añadir `172.16.181.132 portal.opsmatrix.test` en `/etc/hosts`. Entrar por IP no vale porque el certificado solo tiene el nombre DNS.
 
 Todas las pruebas están en [`scripts/check-mac.sh`](../../scripts/check-mac.sh). Salida completa en [`evidencias/check-mac.txt`](evidencias/check-mac.txt).
+
+```
+$ curl -sI -H "Host: portal.opsmatrix.test" http://172.16.181.132/algo
+HTTP/1.1 301 Moved Permanently
+Server: nginx
+Location: https://portal.opsmatrix.test/algo
+
+$ curl -s -w "\ncodigo=%{http_code} tls=%{ssl_verify_result}\n" --cacert ca.crt \
+    --resolve portal.opsmatrix.test:443:172.16.181.132 https://portal.opsmatrix.test/
+<h1>Portal OpsMatrix</h1><p>Visitas guardadas en MariaDB: 5</p><p>Has llegado por: https</p>
+codigo=200 tls=0
+```
+
+`tls=0` es el resultado de la verificación del certificado: 0 significa correcto (cadena y nombre).
 
 | Prueba | Resultado | ✔ |
 |---|---|---|
