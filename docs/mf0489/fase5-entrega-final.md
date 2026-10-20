@@ -162,7 +162,7 @@ Cada cambio lo probé antes y después de llevarlo a la VM.
 
 | Referencia | Relación |
 |---|---|
-| ISO 27001 A.8.13 / ENS mp.info.6 | Copias de seguridad probadas, no solo hechas |
+| ISO 27001 A.8.13 / ENS mp.info.6 | Copias de seguridad hechas y restauradas para comprobarlas |
 | ISO 27001 A.8.9 / ENS op.exp.3 | Configuración documentada igual a la real |
 | ISO 27001 A.8.5 / ENS op.acc.6 | Autenticación SSH solo con clave |
 | ISO 27001 A.8.24 | Custodia de claves: `ca.key` fuera de la VM |

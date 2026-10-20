@@ -16,6 +16,7 @@ Rama `mf0489-https`. Trabajo hecho el 19 y 20/10/2026 entre el Mac (CA y cliente
 | 10 | Fase 4: log de Nginx con TLS, regla Suricata 1000003, pruebas TLS, tcpdump y correlación | TLS 1.1 rechazado, ruta invisible en el 443, mismo puerto en las 3 fuentes. [fase4-auditoria-tls-monitorizacion.md](fase4-auditoria-tls-monitorizacion.md) |
 | 11 | Fase 5: SSH solo con clave, limpieza del firewall viejo y las redes `docker_*`, copia de la BBDD probada | `Permission denied (publickey)` con contraseña, restaurada con 9 de 9 filas |
 | 12 | Reinicio de la VM y revisión final con `check-vm.sh` y `check-mac.sh` | Todo vuelve solo. [fase5-entrega-final.md](fase5-entrega-final.md) |
+| 13 | Extra: `pip-audit`, SBOM y `detect-secrets` | CVE en Flask 3.0.3 → 3.1.3 y dependencias fijadas. [supply-chain.txt](evidencias/supply-chain.txt) |
 
 ## Dificultades
 
@@ -39,7 +40,8 @@ Rama `mf0489-https`. Trabajo hecho el 19 y 20/10/2026 entre el Mac (CA y cliente
 | 16 | 5 | `authorized_keys` vacío: nunca hubo una clave autorizada | `ssh-copy-id`, comprobar y solo entonces `00-opsmatrix.conf` (gana a `50-cloud-init.conf`) |
 | 17 | 5 | `rules.v4` solo tenía reglas viejas de Docker | Copia en `~/backups/`, `netfilter-persistent` desactivado y reinicio |
 | 18 | 5 | `deploy.sh` y README desactualizados | Reescritos |
-| 19 | — | Al copiar comandos se colaba `\;` y alguna vez lancé un bloque en la máquina equivocada | Comandos sin `;` y, al final, scripts en vez de copiar y pegar |
+| 19 | Extra | `pip-audit` encontró CVE-2026-27205 en Flask 3.0.3 | No explotable aquí (sin `session` ni caché). Subido a 3.1.3, todas las dependencias fijadas y probado en local |
+| 20 | — | Al copiar comandos se colaba `\;` y alguna vez lancé un bloque en la máquina equivocada | Comandos sin `;` y, al final, scripts en vez de copiar y pegar |
 
 ## Pendiente (mejoras)
 
