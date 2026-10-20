@@ -87,9 +87,10 @@ docker compose logs --tail=5 reverse-proxy
 docker compose logs --tail=5 app
 
 echo
-echo "===== 13. RESTOS PENDIENTES (FASE 5) ====="
-docker network ls --format '{{.Name}}' | grep -E "^docker_"
-sudo grep -cE "br-e2efeb52c253|10\.0\.[123]\." /etc/iptables/rules.v4
+echo "===== 13. LIMPIEZA (FASE 5) ====="
+echo "redes docker_* viejas: $(docker network ls --format '{{.Name}}' | grep -cE '^docker_')"
+echo "netfilter-persistent: $(systemctl is-enabled netfilter-persistent 2>/dev/null)"
+echo "reglas viejas cargadas: $(sudo iptables-save | grep -cE 'br-e2efeb52c253|10\.0\.[123]\.')"
 ls ~/backups/ 2>/dev/null
 
 echo
