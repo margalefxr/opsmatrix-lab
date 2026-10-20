@@ -124,6 +124,20 @@ Salidas completas: [`check-vm-final.txt`](evidencias/check-vm-final.txt) y [`che
 | Aislamiento | El proxy no ve la BBDD, la BBDD no sale a internet, la app corre como `nobody` |
 | Monitorización | Suricata `active` en `enp2s0` con la regla 1000003 (Fase 4) |
 
+### Cómo he probado (QA)
+
+Cada cambio lo probé antes y después de llevarlo a la VM.
+
+| Tipo de prueba | Qué hice | Dónde |
+|---|---|---|
+| Antes de desplegar (shift-left) | Nginx, la app y MariaDB montados en local: `nginx -t`, 301, TLS 1.3 y TLS 1.1 rechazado | Fase 3 |
+| Validar la regla del IDS sin tocar la VM | Captura hecha a mano con un SYN normal, uno con ECN y un SYN-ACK, pasada por Suricata con `flags:S` y con `flags:S,CE` | Fase 4 |
+| Pruebas de humo | `check-vm.sh` y `check-mac.sh` después de cada cambio | `scripts/` |
+| Pruebas negativas | Sin CA, nombre equivocado, TLS 1.1, puertos 3306/5000, proxy → BBDD, BBDD → internet, SSH con contraseña. Todas tienen que **fallar** | Fases 3, 4 y 5 |
+| Persistencia y recuperación | `down` / `up`, reinicio de la VM y copia restaurada en una base aparte | Fases 3 y 5 |
+| Búsqueda de secretos | `git ls-files` y `git log --all` buscando `.key`, `.env`, `.pem` | Fase 5 |
+| Coherencia docs = código | Cada directiva que nombran los docs, buscada con `grep` en el código | Fase 5 |
+
 ## 8. Dificultades de esta fase
 
 | Problema | Solución |

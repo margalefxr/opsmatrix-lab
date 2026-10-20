@@ -34,6 +34,28 @@ Cliente ──HTTPS 443──▶ Nginx ──HTTP──▶ App Flask ──SQL�
 | App | 5000 | ❌ solo dentro de Docker |
 | MariaDB | 3306 | ❌ solo en `backend_net` |
 
+## Principios
+
+| Principio | Cómo se aplica aquí |
+|---|---|
+| Defensa en profundidad | Varias capas: TLS, proxy como única entrada, redes separadas, IDS y logs |
+| Mínimo privilegio | Nginx no ve la BBDD, la app corre como `nobody`, montajes `:ro`, claves con 600 |
+| Segmentación | `frontend_net` y `backend_net` (`internal: true`), solo 80/443 publicados |
+| Secretos fuera del código | `.env` y claves fuera de git. La CA, fuera de la VM |
+| Configuración como código | Compose, Nginx, reglas de Suricata y SSH versionados en el repo |
+| Observabilidad | Suricata en la red + log de Nginx con versión TLS, cruzados por IP y puerto |
+| Reproducible | `deploy.sh` + `check-*.sh`. Comprobado tras reiniciar la VM |
+| Versiones fijas | `nginx:1.28-alpine`, `mariadb:10.11`, `Flask==3.0.3`, `PyMySQL==1.1.1` |
+
+## Cómo lo he hecho
+
+| | |
+|---|---|
+| **Método** | MSA / lean: lo mínimo que funcione y se pueda comprobar. Tablas antes que texto, una decisión = un motivo |
+| **Pruebas** | Primero en local, luego en la VM. Pruebas positivas y negativas (lo que tiene que fallar, falla). Matriz completa en la [Fase 5](docs/mf0489/fase5-entrega-final.md#cómo-he-probado-qa) |
+| **Trazabilidad** | Cada paso y cada problema en el [WORKLOG](docs/mf0489/WORKLOG.md). Las salidas de las pruebas son reales y están en [`evidencias/`](docs/mf0489/evidencias/) |
+| **IA** | Me he apoyado en un asistente de IA para preparar scripts y revisar la documentación. Los comandos los he ejecutado yo en mi laboratorio y las decisiones las he revisado una a una |
+
 ## Desplegar
 
 ```bash
