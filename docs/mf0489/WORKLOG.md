@@ -19,6 +19,7 @@ Rama `mf0489-https`. Trabajo hecho el 19 y 20/10/2026 entre el Mac (CA y cliente
 | 13 | Extra: `pip-audit`, SBOM y `detect-secrets` | CVE en Flask 3.0.3: no explotable aquí, actualizado igual a 3.1.3 y dependencias fijadas. [extras.md](extras.md#1-software-de-terceros-cve-de-flask) |
 | 14 | Extra: revocación con CRL e inventario criptográfico | Revocado → `error 23`, real → `OK`. SSH aún sin post-cuántica. [extras.md](extras.md) |
 | 15 | Revisión final con herramientas: `shellcheck`, `pyflakes`, `docker compose config`, `nginx -t`, `suricata -T`, `sshd -t`, OpenSSL y enlaces | Sin errores |
+| 16 | CI con GitHub Actions y justificación HTTP/HTTPS en la Fase 1 | Las comprobaciones de la Fase 5 se repiten solas en cada push |
 
 ## Dificultades
 

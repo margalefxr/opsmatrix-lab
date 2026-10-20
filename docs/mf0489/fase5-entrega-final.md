@@ -139,6 +139,7 @@ Cada cambio lo probé antes y después de llevarlo a la VM.
 | Coherencia docs = código | Cada directiva que nombran los docs, buscada con `grep` en el código | Fase 5 |
 | Validación con herramientas | `shellcheck` (scripts), `pyflakes` (app), `docker compose config`, `nginx -t`, `suricata -T`, `sshd -t` y `openssl verify` con la CRL. Sin errores | Fase 5 |
 | Revocación | Certificado de prueba revocado → `error 23`. El real sigue `OK` | [Extra](extras.md) |
+| Automatizadas (CI) | `shellcheck`, `docker compose config`, `pip-audit` y `detect-secrets` en cada push | [`checks.yml`](../../.github/workflows/checks.yml) |
 
 ## 8. Dificultades de esta fase
 
