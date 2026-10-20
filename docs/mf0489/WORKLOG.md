@@ -36,7 +36,7 @@ Rama `mf0489-https`. Trabajo hecho el 19/10/2026 entre el Mac (CA y cliente) y l
 | 15 | 4 | `tcpdump` del 80 casi vacío | Leí el archivo antes de que tcpdump lo escribiera. Esperar al `timeout` o usar `-l` |
 | 16 | — | Al copiar comandos se colaba `\;` y alguna vez lancé un bloque en la máquina equivocada | Comandos sin `;` y, al final, scripts en vez de copiar y pegar |
 
-## Pendiente (Fase 4 y 5)
+## Pendiente (Fase 5)
 
 | Qué | Fase |
 |---|---|
