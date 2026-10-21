@@ -163,7 +163,7 @@ Los cambios de configuración (compose, Nginx, app, reglas, SSH) se probaron pri
 | Renovar `servidor.crt` antes del 19/10/2027 | Caduca en un año |
 | Cabecera HSTS en Nginx | Que el navegador no vuelva a intentar HTTP. No la puse porque con una CA de laboratorio puede dejar el dominio bloqueado en el navegador si algo falla |
 | Revisar el proyecto `infra-lab` (WordPress, ver [`fase5-ssh-firewall-backup.txt`](evidencias/fase5/fase5-ssh-firewall-backup.txt)) antes de exportar la OVA | No es de OpsMatrix, pero estará en la VM del CTF |
-| Decidir qué hacer con los 10 volúmenes de Docker que no usa ningún contenedor (8 anónimos y `db-primaria-datos` / `db-replica-datos` de `infra-lab`) | Pueden guardar datos y contraseñas viejas que irían dentro de la OVA ([`check-vm-final2.txt`](evidencias/fase5/check-vm-final2.txt) §13). Borrarlos no tiene vuelta atrás |
+| Decidir si `db-primaria-datos` y `db-replica-datos` (de `infra-lab`) van en la OVA | Los 8 volúmenes anónimos del MF0488 ya están borrados (1,2 GB, [`volumenes-limpieza.txt`](evidencias/fase5/volumenes-limpieza.txt)). Quedan estos 2, sin usar, que pueden guardar datos y contraseñas viejas |
 
 ## Normativa
 

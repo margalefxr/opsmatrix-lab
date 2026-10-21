@@ -1,0 +1,45 @@
+# Limpieza de volúmenes de Docker que no usaba nadie, antes de exportar la OVA (21/10/2026). Salida real
+
+## Antes: qué eran (solo lectura)
+$ docker volume ls -q -f dangling=true | xargs docker volume inspect -f '{{.Name}} {{.CreatedAt}} {{index .Labels "com.docker.compose.project"}}'
+8a6afaca67b70e71a37f5246df55a89e16487b6a064212d0f9b188884d90f238 2026-09-14T12:02:48Z
+9d991214f1d0e86adf0269c811aeda402e21700ff695c65f1ff5198b603dd34b 2026-09-14T12:02:29Z
+6381ac76a22b51d5cfb743c2e86f0dd11845dd965e3345cb4eda07272a092c31 2026-09-14T12:01:53Z
+31951b0e0163b3df3a9faade604c8cdcd95ea7c3a57feb2eae5110e69375e98e 2026-09-16T11:50:02Z
+a96dcd497022812ee225240ae1544c2b70f1b8a66abd99cc9263321c84edca85 2026-09-16T11:47:46Z
+b8676778c9720ce49de7379b2a0307a27b35ec1b979262c097712c0832d22758 2026-09-16T11:53:36Z
+bea4e4445017db2d4f8230d99143b45911ce22036def34711baf74554e9a5e54 2026-09-14T11:12:59Z
+db-primaria-datos 2026-09-07T09:51:19Z
+db-replica-datos 2026-09-07T11:32:29Z
+e5af328845feafc58fa9eaa6429bac0d189f6beb1f84d0186341c4257f0153d3 2026-09-16T11:50:30Z
+-> 8 anónimos de las pruebas del MF0488 (14 y 16/09, sin proyecto) y 2 con nombre de infra-lab (07/09, otro proyecto)
+
+## Borrado: solo los anónimos (docker volume prune sin -a)
+$ docker volume prune
+WARNING! This will remove anonymous local volumes not used by at least one container.
+Are you sure you want to continue? [y/N] y
+Deleted Volumes:
+31951b0e0163b3df3a9faade604c8cdcd95ea7c3a57feb2eae5110e69375e98e
+6381ac76a22b51d5cfb743c2e86f0dd11845dd965e3345cb4eda07272a092c31
+8a6afaca67b70e71a37f5246df55a89e16487b6a064212d0f9b188884d90f238
+9d991214f1d0e86adf0269c811aeda402e21700ff695c65f1ff5198b603dd34b
+b8676778c9720ce49de7379b2a0307a27b35ec1b979262c097712c0832d22758
+bea4e4445017db2d4f8230d99143b45911ce22036def34711baf74554e9a5e54
+a96dcd497022812ee225240ae1544c2b70f1b8a66abd99cc9263321c84edca85
+e5af328845feafc58fa9eaa6429bac0d189f6beb1f84d0186341c4257f0153d3
+
+Total reclaimed space: 1.195GB
+
+## Después
+$ docker volume ls
+DRIVER    VOLUME NAME
+local     db-primaria-datos
+local     db-replica-datos
+local     opsmatrix-lab_mariadb_data
+$ bash scripts/check-vm.sh 2>&1 | tail -8   (§13)
+-- volúmenes de Docker (los que no use nadie pueden guardar datos viejos en la OVA)
+db-primaria-datos
+db-replica-datos
+opsmatrix-lab_mariadb_data
+sin usar: 2
+-> quedan la BBDD de OpsMatrix (en uso) y los 2 de infra-lab, pendientes de decidir si van en el CTF
