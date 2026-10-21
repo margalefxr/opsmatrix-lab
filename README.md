@@ -8,6 +8,24 @@ Laboratorio que simula el portal de una gestoría. La web es mínima a propósit
 
 ![Arquitectura final](docs/mf0489/arquitectura-final.png)
 
+## Entrega MF0489 (ExP 89)
+
+| Fase | Pts | Documento |
+|---|---|---|
+| 1. Arquitectura con HTTPS | 0,50 | [fase1-arquitectura.md](docs/mf0489/fase1-arquitectura.md) |
+| 2. PKI con OpenSSL | 3,00 | [fase2-pki.md](docs/mf0489/fase2-pki.md) |
+| 3. HTTPS con Nginx y Docker | 4,00 | [fase3-https-docker.md](docs/mf0489/fase3-https-docker.md) |
+| 4. Auditoría TLS y monitorización | 2,50 | [fase4-auditoria-tls-monitorizacion.md](docs/mf0489/fase4-auditoria-tls-monitorizacion.md) · incluye las [evidencias pedidas en el feedback del MF0488](docs/mf0489/fase4-auditoria-tls-monitorizacion.md#evidencias-pedidas-en-el-feedback-del-mf0488) |
+| 5. Entrega final | — | [fase5-entrega-final.md](docs/mf0489/fase5-entrega-final.md) |
+| Guía de despliegue y recuperación | — | [guia-despliegue.md](docs/mf0489/guia-despliegue.md) |
+| Evidencias (salidas reales) | — | [`evidencias/`](docs/mf0489/evidencias/): `fase3/`, `fase4/`, `fase5/`, `extras/` |
+| Extras (criterio, CVE de Flask, revocación, inventario) | — | [extras.md](docs/mf0489/extras.md) |
+| Pasos y dificultades | — | [WORKLOG.md](docs/mf0489/WORKLOG.md) |
+
+Cada documento empieza con la tabla de criterios de la rúbrica y dónde está la evidencia de cada uno.
+
+Lo del MF0488 sigue en [`docs/WORKLOG.md`](docs/WORKLOG.md) y [`docs/adr/`](docs/adr/). Es la foto de entonces: donde no coincida con lo de arriba (por ejemplo "solo TLS 1.3" o el compose de `layer3-services/docker`), manda lo del MF0489.
+
 ## Cómo funciona
 
 | Pieza | Qué hace |
@@ -89,22 +107,6 @@ bash scripts/check-mac.sh     # comprobar desde el cliente
 ```
 
 Paso a paso, copias de seguridad y recuperación: [guía de despliegue](docs/mf0489/guia-despliegue.md).
-
-## Documentación MF0489
-
-| Fase | Pts | Documento |
-|---|---|---|
-| 1. Arquitectura con HTTPS | 0,50 | [fase1-arquitectura.md](docs/mf0489/fase1-arquitectura.md) |
-| 2. PKI con OpenSSL | 3,00 | [fase2-pki.md](docs/mf0489/fase2-pki.md) |
-| 3. HTTPS con Nginx y Docker | 4,00 | [fase3-https-docker.md](docs/mf0489/fase3-https-docker.md) |
-| 4. Auditoría TLS y monitorización | 2,50 | [fase4-auditoria-tls-monitorizacion.md](docs/mf0489/fase4-auditoria-tls-monitorizacion.md) · incluye las [evidencias pedidas en el feedback del MF0488](docs/mf0489/fase4-auditoria-tls-monitorizacion.md#evidencias-pedidas-en-el-feedback-del-mf0488) |
-| 5. Entrega final | — | [fase5-entrega-final.md](docs/mf0489/fase5-entrega-final.md) |
-| Extras (criterio, CVE de Flask, revocación, inventario) | — | [extras.md](docs/mf0489/extras.md) |
-| Pasos y dificultades | — | [WORKLOG.md](docs/mf0489/WORKLOG.md) |
-
-Cada documento empieza con la tabla de criterios de la rúbrica y dónde está la evidencia de cada uno.
-
-Lo del MF0488 sigue en [`docs/WORKLOG.md`](docs/WORKLOG.md) y [`docs/adr/`](docs/adr/). Es la foto de entonces: donde no coincida con lo de arriba (por ejemplo "solo TLS 1.3" o el compose de `layer3-services/docker`), manda lo del MF0489.
 
 ## Estructura
 
