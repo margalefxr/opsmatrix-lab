@@ -9,6 +9,8 @@ Cómo montar OpsMatrix desde cero, comprobar que funciona y recuperarlo si algo 
 | Equipo de administración (en mi caso, el Mac) | CA y cliente de pruebas | OpenSSL 3, `curl`, `ssh` |
 | Ubuntu Server (VM) | Servidor | Docker con Compose, OpenSSL, Suricata, `jq` |
 
+Probado con Ubuntu 26.04 LTS, Docker 29.1.3, Compose 2.40.3, Suricata 8.0.3 y OpenSSL 3.5.5 en la VM, y OpenSSL 3.5.9 en el Mac ([`fase5-ssh-firewall-backup.txt`](evidencias/fase5/fase5-ssh-firewall-backup.txt), [`check-vm-github.txt`](evidencias/fase5/check-vm-github.txt), [`feedback-mf0488.txt`](evidencias/fase4/feedback-mf0488.txt), [`pki-salidas.txt`](evidencias/fase2/pki-salidas.txt)).
+
 La CA **nunca** se crea en la VM. La VM se exportará como CTF y no puede llevar `ca.key`.
 
 ## 2. PKI (una vez)

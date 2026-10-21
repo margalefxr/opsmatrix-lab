@@ -1,6 +1,6 @@
 # ADR-006: Correccion de Montaje de Volumenes y Terminacion TLS 1.3 en Nginx
 
-> **Nota MF0489:** Nginx permite TLS 1.2 y 1.3, no solo 1.3. La configuración actual está en [fase3-https-docker.md](../mf0489/fase3-https-docker.md).
+> **MF0488.** Documento de entonces, sin cambios. Lo que ya no es cierto está en [correcciones-mf0488.md](../correcciones-mf0488.md).
 
 * Fecha: 2026-09-16
 * Estado: Aceptado

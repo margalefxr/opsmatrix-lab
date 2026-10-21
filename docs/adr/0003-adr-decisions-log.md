@@ -1,5 +1,7 @@
 # Registro de Decisiones de Arquitectura (ADR) - OpsMatrix
 
+> **MF0488.** Documento de entonces, sin cambios. Lo que ya no es cierto está en [correcciones-mf0488.md](../correcciones-mf0488.md).
+
 ## ADR-000: Elección de Entorno Virtualizado y Host OS
 * **Fecha:** 2026-09-14
 * **Estado:** Aceptado

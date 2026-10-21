@@ -1,6 +1,6 @@
 # ADR-0007: Selección de stack y justificación arquitectónica (Fase 1)
 
-> **Nota MF0489:** la BBDD no usa bind mounts sino un volumen con nombre (`mariadb_data`), declarado en `docker-compose.yml` y comprobado tras reiniciar. Ver [fase3-https-docker.md](../mf0489/fase3-https-docker.md#7-app-y-persistencia).
+> **MF0488.** Documento de entonces, sin cambios. Lo que ya no es cierto está en [correcciones-mf0488.md](../correcciones-mf0488.md).
 
 * **Estado:** Aprobado
 * **Autor:** Xavier Margalef Riestra

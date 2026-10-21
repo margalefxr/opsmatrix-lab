@@ -23,6 +23,7 @@ Rama `mf0489-https`, ya unida a `main`. Trabajo hecho del 19 al 21/10/2026 entre
 | 17 | Evidencias pedidas en el feedback del MF0488: ping, SID 1000001, `suricata -T`, `HOME_NET` y línea base de actividad | Todo real. [Fase 4](fase4-auditoria-tls-monitorizacion.md#evidencias-pedidas-en-el-feedback-del-mf0488) |
 | 18 | Subida a GitHub y comprobación desde un clon limpio: `check-vm.sh` en la VM (en `main`) y `check-mac.sh` en el Mac | Igual que antes de subir. [`check-vm-github.txt`](evidencias/fase5/check-vm-github.txt) y [`check-mac-github.txt`](evidencias/fase5/check-mac-github.txt) |
 | 19 | Revisión cruzada: cada salida de los docs buscada en las evidencias y cada directiva en el código | 44 OK. Las salidas que solo estaban en mi terminal ahora están en `evidencias/`. [`coherencia-docs-codigo.txt`](evidencias/fase5/coherencia-docs-codigo.txt) |
+| 20 | Revisión de todo el repo, también lo del MF0488 | Tabla de [correcciones del MF0488](../correcciones-mf0488.md), banner en cada documento antiguo, bug de `check_baseline.sh` corregido, carpetas vacías borradas y `shellcheck` de todos los `.sh` en la CI |
 
 ## Dificultades
 

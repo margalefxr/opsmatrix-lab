@@ -1,5 +1,7 @@
 # OpsMatrix Lab Architecture: Manual CLI vs. Declarative Compose
 
+> **MF0488.** Documento de entonces, sin cambios. Lo que ya no es cierto está en [correcciones-mf0488.md](docs/correcciones-mf0488.md).
+
 Este documento define la transición arquitectónica y la equivalencia operativa entre el despliegue manual y el modelo declarativo en capas.
 
 ## 1. Equivalencia Operativa

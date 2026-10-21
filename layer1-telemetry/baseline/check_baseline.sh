@@ -1,4 +1,5 @@
 #!/bin/bash
+# MF0488. No se usa en el MF0489: ver docs/correcciones-mf0488.md
 # ==============================================================================
 # Script de Telemetría y Salud de Infraestructura - Layer 1 Baseline
 # ==============================================================================
@@ -25,7 +26,8 @@ SURICATA_STATUS=$(systemctl is-active suricata)
 echo "[+] Servicio Suricata IDS: ${SURICATA_STATUS}"
 
 if [ -f /var/log/suricata/eve.json ]; then
-    ALERTS_COUNT=$(sudo grep -c '"event_type":"alert"' /var/log/suricata/eve.json 2>/dev/null || echo "0")
+    # grep -c ya escribe 0 si no hay alertas. Con "|| echo 0" salía "0" dos veces (corregido en el MF0489)
+    ALERTS_COUNT=$(sudo grep -c '"event_type":"alert"' /var/log/suricata/eve.json 2>/dev/null || true)
     echo "[+] Alertas Registradas en eve.json: ${ALERTS_COUNT}"
 else
     echo "[!] Log eve.json aun no generado."
