@@ -24,7 +24,7 @@ Laboratorio que simula el portal de una gestoría. La web es mínima a propósit
 
 Las fases 1-4 empiezan con la tabla de criterios de la rúbrica y dónde está la evidencia de cada uno. Lo que dicen los docs está comprobado contra el código en [`coherencia-docs-codigo.txt`](docs/mf0489/evidencias/fase5/coherencia-docs-codigo.txt).
 
-Lo del MF0488 sigue en [`docs/WORKLOG.md`](docs/WORKLOG.md) y [`docs/adr/`](docs/adr/). Es la foto de entonces: donde no coincida con lo de arriba (por ejemplo "solo TLS 1.3" o el compose de `layer3-services/docker`), manda lo del MF0489.
+Lo del MF0488 sigue en [`docs/WORKLOG.md`](docs/WORKLOG.md) y [`docs/adr/`](docs/adr/). Es la foto de entonces y no lo he reescrito. Lo que ya no es cierto (por ejemplo "solo TLS 1.3", el WAF o las reglas de Nmap) está en [correcciones-mf0488.md](docs/correcciones-mf0488.md), con lo que hay hoy y su evidencia.
 
 ## Cómo funciona
 
@@ -57,7 +57,7 @@ Lo del MF0488 sigue en [`docs/WORKLOG.md`](docs/WORKLOG.md) y [`docs/adr/`](docs
 | Configuración como código | Compose, Nginx, reglas de Suricata y SSH versionados en el repo |
 | Observabilidad | Suricata en la red + log de Nginx con versión TLS, cruzados por IP y puerto |
 | Reproducible | `deploy.sh` + `check-*.sh`. Comprobado tras reiniciar la VM |
-| Versiones fijas | Imágenes (`nginx:1.28-alpine`, `mariadb:10.11`) y todas las dependencias de Python, también las transitivas |
+| Versiones fijas | Dependencias de Python exactas (`==`), también las transitivas. Imágenes por rama (`nginx:1.28-alpine`, `mariadb:10.11`, `python:3.12-slim`): no cambian de versión mayor, pero sí reciben parches |
 
 ## Cómo lo he hecho
 
@@ -66,7 +66,7 @@ Lo del MF0488 sigue en [`docs/WORKLOG.md`](docs/WORKLOG.md) y [`docs/adr/`](docs
 | **Método** | MSA / lean: lo mínimo que funcione y se pueda comprobar. Tablas antes que texto, una decisión = un motivo |
 | **Pruebas** | Primero en local, luego en la VM. Pruebas positivas y negativas (lo que tiene que fallar, falla). Matriz completa en la [Fase 5](docs/mf0489/fase5-entrega-final.md#cómo-he-probado-qa) |
 | **Trazabilidad** | Cada paso y cada problema en el [WORKLOG](docs/mf0489/WORKLOG.md). Las salidas de las pruebas son reales y están en [`evidencias/`](docs/mf0489/evidencias/) |
-| **CI** | [GitHub Actions](.github/workflows/checks.yml) repite en cada push `shellcheck`, `docker compose config`, `pip-audit` y `detect-secrets`. Con permisos de solo lectura y la acción fijada por commit |
+| **CI** | [GitHub Actions](.github/workflows/checks.yml) repite en cada push `shellcheck` (todos los `.sh`), `docker compose config`, `py_compile`, `pip-audit` y `detect-secrets`. Con permisos de solo lectura y la acción fijada por commit |
 | **IA** | Ver abajo |
 
 ### Uso de la IA
@@ -121,7 +121,7 @@ opsmatrix-lab/
 │   ├── pki/                      ← ca.crt, servidor.crt/.csr/.ext, ca.crl, ca.cnf (todo público)
 │   └── ssh/00-opsmatrix.conf     ← SSH solo con clave
 ├── layer3-services/app/          ← app Flask + Dockerfile
-├── scripts/                      ← deploy, backup-db, check-vm, check-mac, fase4-*, pki-revocacion y sync_ops (MF0488)
+├── scripts/                      ← deploy, backup-db, check-vm, check-mac, fase4-*, feedback-mf0488-vm, pki-revocacion y sync_ops (MF0488, no se usa)
 └── docs/mf0489/                  ← fases, guía, WORKLOG y evidencias
 ```
 

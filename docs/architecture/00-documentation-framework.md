@@ -1,5 +1,7 @@
 # Marco Metodológico de Documentación Técnico-Operativa (Docs as Code)
 
+> **MF0488.** Documento de entonces, sin cambios. Lo que ya no es cierto está en [correcciones-mf0488.md](../correcciones-mf0488.md).
+
 ## 1. Principios de Documentación SecOps
 Para garantizar trazabilidad, auditoría y mantenibilidad en entornos de producción, la documentación se gestiona mediante el paradigma **Docs as Code**:
 * **Co-localización:** La documentación reside en el mismo repositorio de código (`docs/`), garantizando que la evolución técnica e infraestructura se mantengan sincronizadas en cada commit.

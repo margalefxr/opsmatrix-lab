@@ -15,7 +15,7 @@ jobs:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
 
       - name: Scripts sin errores (shellcheck)
-        run: shellcheck -S warning scripts/*.sh
+        run: shellcheck -S warning $(git ls-files '*.sh')
 
       - name: Compose válido
         run: cp .env.example .env && docker compose config --quiet

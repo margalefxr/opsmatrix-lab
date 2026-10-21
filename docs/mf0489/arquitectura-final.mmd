@@ -14,7 +14,7 @@ flowchart LR
             subgraph FRONT["frontend_net"]
                 RP["reverse-proxy · nginx:1.28-alpine<br/>:80 → 301 · :443 TLS 1.2/1.3<br/>log mf0489 (tls, cipher)"]
             end
-            APP["app · Flask :5000<br/>usuario nobody · sin puertos publicados"]
+            APP["app · Flask :5000<br/>en frontend_net y backend_net<br/>usuario nobody · sin puertos publicados"]
             subgraph BACK["backend_net · internal: true"]
                 DB[("db · mariadb:10.11<br/>volumen mariadb_data")]
             end

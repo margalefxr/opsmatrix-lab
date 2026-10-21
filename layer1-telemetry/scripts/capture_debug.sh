@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# MF0488. No se usa en el MF0489: ver docs/correcciones-mf0488.md
 # Captura de fricción técnica / debugging automatizado
 # Uso: ./layer1-telemetry/scripts/capture_debug.sh "Descripción del problema/error" "Solución o comando aplicado"
 

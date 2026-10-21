@@ -26,8 +26,8 @@ Actualizo el diagrama de OpsMatrix (MF0488) para añadir HTTPS. Nginx pasa a ser
 
 | Pregunta | Respuesta |
 |---|---|
-| ¿Por qué HTTPS y no HTTP? | Con HTTP todo viaja en claro: usuario, contraseña y datos de clientes se leen con un `tcpdump` (se ve en la Fase 4). Y nada demuestra que el servidor sea el bueno, así que alguien en medio puede suplantarlo (MITM). HTTPS añade cifrado, integridad y autenticación del servidor |
-| ¿Por qué TLS 1.2 y 1.3? | TLS 1.3 tiene un handshake más corto, solo admite cifrados AEAD y siempre usa claves de sesión nuevas (forward secrecy). TLS 1.2 se deja por compatibilidad con clientes más antiguos. 1.0 y 1.1 están obsoletos (RFC 8996) |
+| ¿Por qué HTTPS y no HTTP? | Con HTTP todo viaja en claro: rutas, cabeceras y, si los hubiera, usuarios, contraseñas y datos de clientes se leen con un `tcpdump` (en la Fase 4 se ven la ruta y las cabeceras del puerto 80). Y nada demuestra que el servidor sea el bueno, así que alguien en medio puede suplantarlo (MITM). HTTPS añade cifrado, integridad y autenticación del servidor |
+| ¿Por qué TLS 1.2 y 1.3? | TLS 1.3 tiene un handshake más corto, solo admite cifrados AEAD y cada handshake completo usa claves de sesión nuevas (forward secrecy). TLS 1.2 se deja por compatibilidad con clientes más antiguos. 1.0 y 1.1 están obsoletos (RFC 8996) |
 
 ## Diagrama
 

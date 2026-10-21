@@ -1,5 +1,7 @@
 # ADR 0002: Posicionamiento del Sensor NIDS Suricata en la Capa del Host
 
+> **MF0488.** Documento de entonces, sin cambios. Lo que ya no es cierto está en [correcciones-mf0488.md](../correcciones-mf0488.md).
+
 * **Estatus:** Aceptado
 * **Fecha:** 2026-09-15
 * **Autor:** Xavier Margalef Riestra
