@@ -123,7 +123,7 @@ Salidas completas: [`check-vm-final.txt`](evidencias/fase5/check-vm-final.txt) y
 | TLS 1.3 / 1.2 / 1.1 | ✅ / ✅ / rechazado por el servidor (alerta 70) |
 | App | `Visitas guardadas en MariaDB: 11`, `Has llegado por: https` |
 | Puertos desde fuera | 22, 80 y 443 abiertos. 3306 y 5000 cerrados |
-| Aislamiento | El proxy no ve la BBDD, la BBDD no sale a internet, la app corre como `nobody` |
+| Aislamiento | El proxy no ve la BBDD, la BBDD no sale a internet (sin ruta por defecto), la app corre como `nobody`. Con controles positivos: [`check-vm-controles.txt`](evidencias/fase5/check-vm-controles.txt) §10 |
 | Monitorización | Suricata `active` en `enp2s0` con la regla 1000003 (Fase 4) |
 
 ### Cómo he probado (QA)
@@ -135,7 +135,7 @@ Los cambios de configuración (compose, Nginx, app, reglas, SSH) los probé en l
 | Antes de desplegar (shift-left) | Nginx, la app y MariaDB montados en local: `nginx -t`, 301, TLS 1.3 y TLS 1.1 rechazado | [`prueba-local.txt`](evidencias/fase3/prueba-local.txt) |
 | Validar la regla del IDS sin tocar la VM | Captura hecha a mano con un SYN normal, uno con ECN y un SYN-ACK, pasada por Suricata con `flags:S` y con `flags:S,CE` | [`prueba-regla-pcap.txt`](evidencias/extras/prueba-regla-pcap.txt) |
 | Pruebas de humo | `check-vm.sh` y `check-mac.sh` al acabar la Fase 3, tras reiniciar en la Fase 5 y después de subir a GitHub | `evidencias/fase3/` y `fase5/` |
-| Pruebas negativas | Sin CA, nombre equivocado, TLS 1.1, puertos 3306/5000, proxy → BBDD, BBDD → internet, SSH con contraseña. Todas tienen que **fallar** | Fases 3, 4 y 5 |
+| Pruebas negativas | Sin CA, nombre equivocado, TLS 1.1, puertos 3306/5000, proxy → BBDD, BBDD → internet, SSH con contraseña. Todas tienen que **fallar**, y cada una tiene al lado otra que sí funciona (con CA, nombre bueno, TLS 1.2/1.3, puertos 22/80/443, proxy → app, app → internet, SSH con clave) para que el fallo no sea del comando | Fases 3, 4 y 5 |
 | Persistencia y recuperación | `down` / `up`, reinicio de la VM y copia restaurada en una base aparte | Fases 3 y 5 |
 | Búsqueda de secretos | `git ls-files` y `git log --all` buscando `.key`, `.env`, `.pem` | Fase 5 |
 | Coherencia docs = código | Cada directiva que nombran los docs, buscada en el código, más AKI/SKI y hash de la clave pública: 44 OK, 0 fallos | [`coherencia-docs-codigo.txt`](evidencias/fase5/coherencia-docs-codigo.txt) |
@@ -158,6 +158,7 @@ Los cambios de configuración (compose, Nginx, app, reglas, SSH) los probé en l
 | Mejora | Motivo |
 |---|---|
 | Firewall de host propio (nftables: entrada solo 22/80/443) | Hoy depende de lo que publica Docker |
+| Cortar la salida a internet de la app | La app sí sale (`rc=0` en [`check-vm-controles.txt`](evidencias/fase5/check-vm-controles.txt)) porque `frontend_net` no puede ser `internal`: publica 80/443. No lo necesita. Se haría con una regla en `DOCKER-USER` |
 | Aplicar las 68 actualizaciones de Ubuntu (4 de seguridad, aviso al entrar por SSH el 20/10) | ISO 27001 A.8.8, gestión de vulnerabilidades |
 | Renovar `servidor.crt` antes del 19/10/2027 | Caduca en un año |
 | Cabecera HSTS en Nginx | Que el navegador no vuelva a intentar HTTP. No la puse porque con una CA de laboratorio puede dejar el dominio bloqueado en el navegador si algo falla |

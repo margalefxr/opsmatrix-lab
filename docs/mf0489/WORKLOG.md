@@ -24,6 +24,7 @@ Rama `mf0489-https`, ya unida a `main`. Trabajo hecho del 19 al 21/10/2026 entre
 | 18 | Subida a GitHub y comprobación desde un clon limpio: `check-vm.sh` en la VM (en `main`) y `check-mac.sh` en el Mac | Igual que antes de subir. [`check-vm-github.txt`](evidencias/fase5/check-vm-github.txt) y [`check-mac-github.txt`](evidencias/fase5/check-mac-github.txt) |
 | 19 | Revisión cruzada: cada salida de los docs buscada en las evidencias y cada directiva en el código | 44 OK. Las salidas que solo estaban en mi terminal ahora están en `evidencias/`. [`coherencia-docs-codigo.txt`](evidencias/fase5/coherencia-docs-codigo.txt) |
 | 20 | Revisión de todo el repo, también lo del MF0488 | Tabla de [correcciones del MF0488](../correcciones-mf0488.md), banner en cada documento antiguo, bug de `check_baseline.sh` corregido, carpetas vacías borradas y `shellcheck` de todos los `.sh` en la CI |
+| 21 | Controles positivos en `check-vm.sh`: cada prueba que tiene que fallar, con otra que demuestra que el comando funciona | El proxy resuelve `app` pero no `db`. La app sale (`rc=0`) y la BBDD no (`rc=1`, sin ruta por defecto). [`check-vm-controles.txt`](evidencias/fase5/check-vm-controles.txt) |
 
 ## Dificultades
 
@@ -53,12 +54,14 @@ Rama `mf0489-https`, ya unida a `main`. Trabajo hecho del 19 al 21/10/2026 entre
 | 22 | Entrega | En GitHub se veían carpetas vacías `config/`, `docker/` y `suricata/` en la raíz (solo un `.gitkeep` del MF0488). La de `suricata/` podía hacer pensar que faltaban las reglas | Borradas. Las reglas están en `layer1-telemetry/suricata/rules/` (tabla de equivalencias en el README) |
 | 23 | — | Al copiar comandos se colaba `\;` y alguna vez lancé un bloque en la máquina equivocada | Comandos sin `;` y, al final, scripts en vez de copiar y pegar |
 | 24 | Entrega | En la revisión final vi que algunas salidas citadas en los docs (Fase 2, Actividad 8, tcpdump del 80, primer intento de la Fase 4) estaban en mi terminal pero no en el repo | Copiadas a `evidencias/`. Lo que no pude enseñar con una salida de la VM lo reproduje en local y lo digo (regla ICMP, montaje de `default.conf`) |
+| 25 | Entrega | Las pruebas que tienen que fallar (proxy → BBDD, BBDD → internet) decían "OK" también si fallaba el comando. Y mi primer control tenía su propio fallo: `sh` en la imagen de MariaDB es `dash`, y `command -v bash timeout` solo mira el primer nombre | Control positivo para cada una, código de salida real y tabla de rutas. Los dos intentos están en `evidencias/fase5/` |
 
 ## Pendiente (mejoras)
 
 | Qué | Motivo |
 |---|---|
 | Firewall de host con nftables | Hoy depende de lo que publica Docker |
+| Cortar la salida a internet de la app | Sale y no lo necesita (`frontend_net` no puede ser `internal`) |
 | Actualizaciones de Ubuntu pendientes | Gestión de parches |
 | Renovar `servidor.crt` antes del 19/10/2027 | Caduca |
 | Regenerar `ca.crl` antes del 19/11/2026 y añadir `crlDistributionPoints` | Si caduca, los clientes que la comprueban fallan |
