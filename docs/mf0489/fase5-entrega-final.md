@@ -111,7 +111,7 @@ Para montarlo en otra máquina: [guía de despliegue](guia-despliegue.md). No ne
 
 ## 7. Pruebas finales
 
-Salidas completas: [`check-vm-final.txt`](evidencias/check-vm-final.txt) y [`check-mac-final.txt`](evidencias/check-mac-final.txt).
+Salidas completas: [`check-vm-final.txt`](evidencias/fase5/check-vm-final.txt) y [`check-mac-final.txt`](evidencias/fase5/check-mac-final.txt).
 
 | Prueba | Resultado |
 |---|---|

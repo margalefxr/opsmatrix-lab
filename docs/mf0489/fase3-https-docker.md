@@ -147,7 +147,7 @@ opsmatrix-proxy  | [notice] 1#1: start worker processes
 
 **¿Cómo resuelvo el nombre?** Con `curl --resolve portal.opsmatrix.test:443:172.16.181.132`, sin tocar `/etc/hosts`. Para el navegador habría que añadir `172.16.181.132 portal.opsmatrix.test` en `/etc/hosts`. Entrar por IP no vale porque el certificado solo tiene el nombre DNS.
 
-Todas las pruebas están en [`scripts/check-mac.sh`](../../scripts/check-mac.sh). Salida completa en [`evidencias/check-mac.txt`](evidencias/check-mac.txt).
+Todas las pruebas están en [`scripts/check-mac.sh`](../../scripts/check-mac.sh). Salida completa en [`evidencias/check-mac.txt`](evidencias/fase3/check-mac.txt).
 
 ```
 $ curl -sI -H "Host: portal.opsmatrix.test" http://172.16.181.132/algo
@@ -205,7 +205,7 @@ Después de reiniciar, la siguiente visita sumó sobre las anteriores en vez de 
 | Los datos sobreviven a `down` / `up` | Se guardan en el volumen `mariadb_data` |
 | La IP guardada es la del Mac (`172.16.181.1`) | La cabecera `X-Real-IP` llega bien |
 
-**Aislamiento** (con [`scripts/check-vm.sh`](../../scripts/check-vm.sh), salida en [`evidencias/check-vm.txt`](evidencias/check-vm.txt)):
+**Aislamiento** (con [`scripts/check-vm.sh`](../../scripts/check-vm.sh), salida en [`evidencias/check-vm.txt`](evidencias/fase3/check-vm.txt)):
 
 | Prueba | Resultado |
 |---|---|

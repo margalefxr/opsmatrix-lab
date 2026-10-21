@@ -33,7 +33,7 @@ La app depende de código que no he escrito (Flask, PyMySQL y lo que instalan po
 
 Dejar escrito **por qué** un CVE no afecta (en vez de solo decir "actualizado") es lo que en el sector se llama VEX: sirve para que el siguiente que audite no repita el análisis.
 
-Evidencias: [`supply-chain.txt`](evidencias/supply-chain.txt) y [`sbom-app.cdx.json`](evidencias/sbom-app.cdx.json).
+Evidencias: [`supply-chain.txt`](evidencias/extras/supply-chain.txt) y [`sbom-app.cdx.json`](evidencias/extras/sbom-app.cdx.json).
 
 ## 2. Secretos
 
@@ -69,7 +69,7 @@ $ openssl s_client -connect 172.16.181.132:443 … -CRL crl/ca.crl -crl_check
 Verification: OK
 ```
 
-El revocado se rechaza (error 23) y el real sigue valiendo, también en la conexión a Nginx. Salida completa: [`pki-revocacion.txt`](evidencias/pki-revocacion.txt).
+El revocado se rechaza (error 23) y el real sigue valiendo, también en la conexión a Nginx. Salida completa: [`pki-revocacion.txt`](evidencias/extras/pki-revocacion.txt).
 
 **Qué hacer si se filtra una clave:**
 
