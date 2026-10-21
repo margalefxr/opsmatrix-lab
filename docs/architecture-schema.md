@@ -1,5 +1,7 @@
 # OpsMatrix - Topologia de Arquitectura e Infraestructura
 
+> **Nota MF0489:** este esquema es del MF0488. Nginx permite TLS 1.2 y 1.3 y el diagrama actual está en [fase5-entrega-final.md](mf0489/fase5-entrega-final.md#1-arquitectura-final).
+
 ## Diagrama de Capas (Modelo Zero Trust)
 
 HOST: 172.16.181.132 (Ubuntu Server)

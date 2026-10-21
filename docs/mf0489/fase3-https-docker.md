@@ -28,11 +28,40 @@ Mac (cliente) ──HTTPS 443──▶ Nginx ──HTTP 5000──▶ app (Flask
 | Nginx → app | ❌ | Red interna de Docker |
 | app → MariaDB | ❌ | `backend_net` es `internal`: no tiene salida ni entrada desde fuera |
 
-El diagrama completo está en la [Fase 1](fase1-arquitectura.md#diagrama).
+El diagrama completo está en la [Fase 1](fase1-arquitectura.md#diagrama) y el final en la [Fase 5](fase5-entrega-final.md#1-arquitectura-final).
+
+**Decisiones obligatorias (Actividad 9):**
+
+| # | Decisión | Respuesta |
+|---|---|---|
+| 1 | Contenedor que hace de reverse proxy | Uno **nuevo**, `reverse-proxy` (`nginx:1.28-alpine`). El Nginx anterior no tenía nada que aprovechar |
+| 2 | Nombre, puerto y protocolo de la app | `app`, puerto **5000**, **HTTP**. No se publica en la VM |
+| 3 | Quién comparte la red web | `reverse-proxy` y `app` en `frontend_net`. Nginx llega a la app por su nombre DNS `app` |
+| 4 | Quién comparte la red de BBDD | `app` y `db` en `backend_net` (`internal: true`). Nginx no está |
+| 5 | Dónde termina TLS | En Nginx. Nginx → app va por HTTP interno, y está documentado como límite |
 
 ## 2. Antes y después
 
-**Antes** (lo que encontré al revisar la VM):
+**Antes** (Actividad 8, 19/10 10:33 UTC):
+
+```
+$ docker compose ls
+opsmatrix-lab   restarting(1), running(1)   /home/server/opsmatrix-lab/docker-compose.yml
+$ docker compose ps
+opsmatrix-web   nginx:alpine    Up 3 weeks       0.0.0.0:80->80/tcp, 0.0.0.0:443->443/tcp
+opsmatrix-db    mariadb:10.11   Restarting (1)
+$ sudo ss -tulnp      # 22 sshd, 80 y 443 docker-proxy. 3306 no publicado
+$ curl -v http://localhost/
+curl: (56) Recv failure: Connection reset by peer
+```
+
+| Pregunta de la Actividad 8 | Respuesta |
+|---|---|
+| ¿Qué contenedor sirve la app? | Ninguno de verdad: `opsmatrix-web` solo tenía la página por defecto de Nginx |
+| ¿Cuál tiene la BBDD? | `opsmatrix-db`, con el volumen `opsmatrix-lab_mariadb_data` |
+| ¿Hay reverse proxy? | No |
+| ¿Qué compose se usa? | El de la raíz. El de `layer3-services/docker/` no se usaba |
+
 
 | Contenedor | Estado | Problema |
 |---|---|---|
