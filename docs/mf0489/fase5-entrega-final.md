@@ -1,6 +1,6 @@
 # Fase 5 — Entrega final
 
-Último repaso de punta a punta. Aquí compruebo que lo documentado es lo que de verdad corre, que alguien puede montarlo sin mis claves y que se puede recuperar si algo falla. Todo se comprobó **después de reiniciar la VM** (20/10/2026).
+Último repaso de punta a punta. Aquí compruebo que lo documentado es lo que de verdad corre, que alguien puede montarlo sin mis claves y que se puede recuperar si algo falla. La copia de la BBDD se probó antes de reiniciar. Las pruebas de §5 y §7 se hicieron **después de reiniciar la VM** (20/10/2026).
 
 ## Resumen
 
@@ -128,13 +128,13 @@ Salidas completas: [`check-vm-final.txt`](evidencias/fase5/check-vm-final.txt) y
 
 ### Cómo he probado (QA)
 
-Cada cambio lo probé antes y después de llevarlo a la VM.
+Los cambios de configuración (compose, Nginx, app, reglas, SSH) los probé en local antes de llevarlos a la VM y otra vez en la VM.
 
 | Tipo de prueba | Qué hice | Dónde |
 |---|---|---|
 | Antes de desplegar (shift-left) | Nginx, la app y MariaDB montados en local: `nginx -t`, 301, TLS 1.3 y TLS 1.1 rechazado | [`prueba-local.txt`](evidencias/fase3/prueba-local.txt) |
 | Validar la regla del IDS sin tocar la VM | Captura hecha a mano con un SYN normal, uno con ECN y un SYN-ACK, pasada por Suricata con `flags:S` y con `flags:S,CE` | [`prueba-regla-pcap.txt`](evidencias/extras/prueba-regla-pcap.txt) |
-| Pruebas de humo | `check-vm.sh` y `check-mac.sh` después de cada cambio | `scripts/` |
+| Pruebas de humo | `check-vm.sh` y `check-mac.sh` al acabar la Fase 3, tras reiniciar en la Fase 5 y después de subir a GitHub | `evidencias/fase3/` y `fase5/` |
 | Pruebas negativas | Sin CA, nombre equivocado, TLS 1.1, puertos 3306/5000, proxy → BBDD, BBDD → internet, SSH con contraseña. Todas tienen que **fallar** | Fases 3, 4 y 5 |
 | Persistencia y recuperación | `down` / `up`, reinicio de la VM y copia restaurada en una base aparte | Fases 3 y 5 |
 | Búsqueda de secretos | `git ls-files` y `git log --all` buscando `.key`, `.env`, `.pem` | Fase 5 |

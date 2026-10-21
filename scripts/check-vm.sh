@@ -69,9 +69,14 @@ echo
 echo "===== 10. AISLAMIENTO ENTRE CONTENEDORES ====="
 echo "-- proxy -> app (debe funcionar)"
 docker compose exec -T reverse-proxy wget -qO- http://app:5000/ | head -c 120; echo
+echo "-- control: el proxy sí resuelve 'app' (getent funciona)"
+docker compose exec -T reverse-proxy getent hosts app || echo "ALERTA: getent no funciona, la prueba siguiente no vale"
 echo "-- proxy -> db (no debe ni resolver el nombre)"
 docker compose exec -T reverse-proxy getent hosts db || echo "OK: el proxy no ve la BBDD"
+echo "-- control: la app (frontend_net) sí sale a internet (la prueba funciona)"
+docker compose exec -T app timeout 3 bash -c "</dev/tcp/1.1.1.1/443" 2>/dev/null && echo "control OK: hay salida desde frontend_net" || echo "ALERTA: tampoco sale la app, la prueba siguiente no vale"
 echo "-- db -> internet (no debe salir)"
+docker compose exec -T db sh -c "command -v bash timeout" | tr '\n' ' '; echo "<- la BBDD tiene bash y timeout"
 docker compose exec -T db timeout 3 bash -c "</dev/tcp/1.1.1.1/443" 2>/dev/null && echo "ALERTA: la BBDD sale a internet" || echo "OK: la BBDD no sale a internet"
 echo "-- usuario de la app"
 docker compose exec -T app id

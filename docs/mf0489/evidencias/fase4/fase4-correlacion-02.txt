@@ -7,6 +7,7 @@
 ## Mac
 $ curl -s -o /dev/null -w "HTTP %{http_code} puerto_origen=%{local_port}\n" --cacert ca.crt --resolve portal.opsmatrix.test:443:172.16.181.132 https://portal.opsmatrix.test/mf0489-correlacion-02
 HTTP 404 puerto_origen=50093
+(el prompt del Mac marca al acabar: at 10:45:25 CEST = 08:45:25 UTC)
 
 ## VM: Suricata
 $ sudo grep ":50093 -> " /var/log/suricata/fast.log
