@@ -10,7 +10,7 @@ Rama `mf0489-https`, ya unida a `main`. Trabajo hecho del 19 al 21/10/2026 entre
 | 4 | Copia del volumen y `docker compose down` (sin `-v`) | Volumen vacío (131 bytes) |
 | 5 | Compose nuevo, Nginx, app Flask y `.env.example`, probados primero en local | `nginx -t` OK, 301, TLS 1.3. [prueba-local.txt](evidencias/fase3/prueba-local.txt) |
 | 6 | Paso de la rama a la VM con `git bundle` (sin subir a GitHub) | Rama en la VM |
-| 7 | `.env` con `openssl rand`, `docker compose up -d --build` | Los 3 contenedores `Up` |
+| 7 | `.env` con `openssl rand`, `docker compose up -d --build` | Los 3 contenedores `Up`. [`env-creado.txt`](evidencias/fase3/env-creado.txt) |
 | 8 | Pruebas desde el Mac y reinicio para ver si se guardan los datos | Todo OK. [fase3-https-docker.md](fase3-https-docker.md) |
 | 9 | Revisión completa con `scripts/check-mac.sh` y `scripts/check-vm.sh` | Encontró un `ca.key` viejo en la VM, borrado |
 | 10 | Fase 4: log de Nginx con TLS, regla Suricata 1000003, pruebas TLS, tcpdump y correlación | TLS 1.1 rechazado, ruta invisible en el 443, mismo puerto en las 3 fuentes. [fase4-auditoria-tls-monitorizacion.md](fase4-auditoria-tls-monitorizacion.md) |
@@ -48,7 +48,7 @@ Rama `mf0489-https`, ya unida a `main`. Trabajo hecho del 19 al 21/10/2026 entre
 | 18 | 5 | `deploy.sh` y README desactualizados | Reescritos |
 | 19 | Extra | `pip-audit` encontró CVE-2026-27205 en Flask 3.0.3 | No explotable aquí (sin `session` ni caché). Subido a 3.1.3, todas las dependencias fijadas, probado en local y reconstruido en la VM |
 | 20 | Extra | En la prueba local, `openssl ca` dio `Serial number … has already been issued` | `ca.srl` guarda el último serial usado por `openssl x509`, pero `openssl ca` lo lee como el siguiente. Uso `rand_serial = yes` |
-| 21 | CI | La primera ejecución en GitHub falló en `detect-secrets` | Con `--all-files` escaneaba el `.env` que crea el paso anterior a partir de `.env.example`. Ahora solo mira los archivos versionados en git |
+| 21 | CI | La primera ejecución en GitHub falló en `detect-secrets` | Con `--all-files` escaneaba el `.env` que crea el paso anterior a partir de `.env.example`. Ahora solo mira los archivos versionados en git. Reproducido en local: [`ci.txt`](evidencias/fase5/ci.txt) |
 | 22 | Entrega | En GitHub se veían carpetas vacías `config/`, `docker/` y `suricata/` en la raíz (solo un `.gitkeep` del MF0488). La de `suricata/` podía hacer pensar que faltaban las reglas | Borradas. Las reglas están en `layer1-telemetry/suricata/rules/` (tabla de equivalencias en el README) |
 | 23 | — | Al copiar comandos se colaba `\;` y alguna vez lancé un bloque en la máquina equivocada | Comandos sin `;` y, al final, scripts en vez de copiar y pegar |
 | 24 | Entrega | En la revisión final vi que algunas salidas citadas en los docs (Fase 2, Actividad 8, tcpdump del 80, primer intento de la Fase 4) estaban en mi terminal pero no en el repo | Copiadas a `evidencias/`. Lo que no pude enseñar con una salida de la VM lo reproduje en local y lo digo (regla ICMP, montaje de `default.conf`) |

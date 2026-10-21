@@ -91,7 +91,7 @@ Temas que hoy pesan en el sector y que he aplicado al laboratorio. El criterio p
 | Detección como código | Reglas de Suricata en git y probadas con una captura antes de desplegarlas | Una regla que no se ha probado puede no saltar nunca (me pasó con `flags:S`) |
 | Huella TLS (JA4) | Suricata la registra en `eve.json` sin descifrar nada | Permite reconocer clientes o malware por cómo saludan en TLS |
 | Secretos | `detect-secrets`: 0 hallazgos. Historial revisado | Las claves subidas a git son una de las fugas más comunes |
-| Revocación (CRL) | Revoqué un certificado de prueba como "clave comprometida", publiqué la CRL y el cliente lo rechaza (`error 23`). Procedimiento si se filtra una clave | Let's Encrypt apagó OCSP en 2025: la revocación vuelve a ir por CRL. Casi nadie la prueba en una PKI de laboratorio |
+| Revocación (CRL) | Revoqué un certificado de prueba como "clave comprometida", publiqué la CRL y el cliente lo rechaza (`error 23`). Procedimiento si se filtra una clave | Let's Encrypt apagó OCSP en agosto de 2025: la revocación vuelve a ir por CRL |
 | Inventario criptográfico | Tabla con cada clave, algoritmo, caducidad y si aguanta la post-cuántica. Hallazgo: TLS ya es post-cuántico, SSH todavía no | Es el primer paso de cualquier migración post-cuántica |
 
 Evidencias: [`supply-chain.txt`](docs/mf0489/evidencias/extras/supply-chain.txt), [`sbom-app.cdx.json`](docs/mf0489/evidencias/extras/sbom-app.cdx.json) y [`pki-revocacion.txt`](docs/mf0489/evidencias/extras/pki-revocacion.txt).

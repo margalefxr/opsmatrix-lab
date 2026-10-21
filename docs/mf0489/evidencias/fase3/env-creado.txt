@@ -1,0 +1,16 @@
+# Creación del .env en la VM (19/10/2026 10:52 UTC). Solo se enseñan los NOMBRES de las variables, nunca los valores
+
+$ cp .env.example .env
+sed -i "s|^DB_ROOT_PASSWORD=.*|DB_ROOT_PASSWORD=$(openssl rand -base64 24)|" .env
+sed -i "s|^DB_PASSWORD=.*|DB_PASSWORD=$(openssl rand -base64 24)|" .env
+chmod 600 .env
+ls -l .env; cut -d= -f1 .env; git check-ignore .env
+-rw------- 1 server server 304 Oct 19 10:52 .env
+# Copiar a .env y poner contraseñas reales: cp .env.example .env
+# Generar una contraseña: openssl rand -base64 24
+# .env está en .gitignore: nunca se sube a GitHub
+
+DB_ROOT_PASSWORD
+DB_NAME
+DB_USER
+DB_PASSWORD
