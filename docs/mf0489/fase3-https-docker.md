@@ -215,7 +215,7 @@ Verified peername: portal.opsmatrix.test
 Negotiated TLS1.3 group: X25519MLKEM768
 ```
 
-`Verification: OK` quiere decir que la firma es de mi CA, y `Verified peername` que el nombre coincide. El grupo `X25519MLKEM768` es un intercambio de claves que mezcla uno clásico con uno post-cuántico (ML-KEM). No lo configuré yo: lo eligen solos OpenSSL 3.5 del Mac y de la VM.
+`Verification: OK` quiere decir que la firma es de mi CA, y `Verified peername` que el nombre coincide. Además, la huella SHA-256 del certificado que entrega Nginx es la misma que la del `servidor.crt` que firmó la CA (`13:2B:31:0E…06:EE`, [`check-mac-final2.txt`](evidencias/fase5/check-mac-final2.txt) §7): Nginx presenta justo el certificado esperado. El grupo `X25519MLKEM768` es un intercambio de claves que mezcla uno clásico con uno post-cuántico (ML-KEM). No lo configuré yo: lo eligen solos OpenSSL 3.5 del Mac y de la VM.
 
 ## 7. App y persistencia
 
