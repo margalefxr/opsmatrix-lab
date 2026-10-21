@@ -1,0 +1,41 @@
+# Salida real de scripts/feedback-mf0488-vm.sh (21/10/2026 07:59 UTC), tras ping -c 4 y un SSH con contraseña desde el Mac
+
+Wed Oct 21 07:59:04 AM UTC 2026
+===== 1. Suricata activo y en qué interfaz =====
+● suricata.service - Suricata IDS/IDP daemon
+     Loaded: loaded (/usr/lib/systemd/system/suricata.service; enabled; preset: enabled)
+    Drop-In: /etc/systemd/system/suricata.service.d
+             └─override.conf
+     Active: active (running) since Tue 2026-10-20 09:40:31 UTC; 22h ago
+660:  - interface: enp2s0
+
+===== 2. suricata -T y HOME_NET =====
+i: suricata: This is Suricata version 8.0.3 RELEASE running in SYSTEM mode
+i: suricata: Configuration provided was successfully loaded. Exiting.
+18:    HOME_NET: "[192.168.0.0/16,10.0.0.0/8,172.16.0.0/12]"
+
+===== 3. Regla 1000001 cargada =====
+9:alert icmp any any -> any any (msg:"[SEC-ALERT] Traza ICMP Detectada en enp2s0"; sid:1000001; rev:1;)
+
+===== 4. Alerta del ping en fast.log =====
+10/21/2026-06:46:21.845884  [**] [1:1000001:1] [SEC-ALERT] Traza ICMP Detectada en enp2s0 [**] [Classification: (null)] [Priority: 3] {IPv6-ICMP} fe80:0000:0000:0000:020c:29ff:fe54:2392:133 -> ff02:0000:0000:0000:0000:0000:0000:0002:0
+10/21/2026-07:45:01.312416  [**] [1:1000001:1] [SEC-ALERT] Traza ICMP Detectada en enp2s0 [**] [Classification: (null)] [Priority: 3] {IPv6-ICMP} fe80:0000:0000:0000:020c:29ff:fe54:2392:133 -> ff02:0000:0000:0000:0000:0000:0000:0002:0
+10/21/2026-07:58:46.490828  [**] [1:1000001:1] [SEC-ALERT] Traza ICMP Detectada en enp2s0 [**] [Classification: (null)] [Priority: 3] {ICMP} 172.16.181.1:8 -> 172.16.181.132:0
+10/21/2026-07:58:46.490907  [**] [1:1000001:1] [SEC-ALERT] Traza ICMP Detectada en enp2s0 [**] [Classification: (null)] [Priority: 3] {ICMP} 172.16.181.132:0 -> 172.16.181.1:0
+
+===== 5. La misma alerta en eve.json =====
+{"timestamp":"2026-10-21T06:46:21.845884+0000","src_ip":"fe80:0000:0000:0000:020c:29ff:fe54:2392","dest_ip":"ff02:0000:0000:0000:0000:0000:0000:0002","proto":"IPv6-ICMP","icmp_type":133,"sid":1000001,"msg":"[SEC-ALERT] Traza ICMP Detectada en enp2s0"}
+{"timestamp":"2026-10-21T07:45:01.312416+0000","src_ip":"fe80:0000:0000:0000:020c:29ff:fe54:2392","dest_ip":"ff02:0000:0000:0000:0000:0000:0000:0002","proto":"IPv6-ICMP","icmp_type":133,"sid":1000001,"msg":"[SEC-ALERT] Traza ICMP Detectada en enp2s0"}
+{"timestamp":"2026-10-21T07:58:46.490828+0000","src_ip":"172.16.181.1","dest_ip":"172.16.181.132","proto":"ICMP","icmp_type":8,"sid":1000001,"msg":"[SEC-ALERT] Traza ICMP Detectada en enp2s0"}
+{"timestamp":"2026-10-21T07:58:46.490907+0000","src_ip":"172.16.181.132","dest_ip":"172.16.181.1","proto":"ICMP","icmp_type":0,"sid":1000001,"msg":"[SEC-ALERT] Traza ICMP Detectada en enp2s0"}
+
+===== 6. SSH: entrada con clave y intento con contraseña rechazado =====
+Oct 21 07:58:46 ubuntuserver sshd-session[32251]: Accepted publickey for server from 172.16.181.1 port 63164 ssh2: ED25519 SHA256:bmUF1q1cZ3TYXfrx/ixE01C8pU6Iy9vTZ4BZAI4Paqs
+Oct 21 07:58:49 ubuntuserver sshd-session[32353]: Connection closed by authenticating user server 172.16.181.1 port 63172 [preauth]
+
+===== 7. Nginx: peticiones 200 y 404 =====
+2026-10-20T08:45:25+00:00 client=172.16.181.1:50093 request="GET /mf0489-correlacion-02 HTTP/1.1" status=404 tls=TLSv1.3 cipher=TLS_CHACHA20_POLY1305_SHA256
+2026-10-20T09:44:13+00:00 client=172.16.181.1:56873 request="GET / HTTP/1.1" status=200 tls=TLSv1.3 cipher=TLS_CHACHA20_POLY1305_SHA256
+2026-10-20T10:50:53+00:00 client=172.16.181.1:64589 request="GET / HTTP/1.1" status=200 tls=TLSv1.3 cipher=TLS_CHACHA20_POLY1305_SHA256
+
+===== FIN =====

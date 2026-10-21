@@ -97,7 +97,7 @@ Paso a paso, copias de seguridad y recuperación: [guía de despliegue](docs/mf0
 | 1. Arquitectura con HTTPS | 0,50 | [fase1-arquitectura.md](docs/mf0489/fase1-arquitectura.md) |
 | 2. PKI con OpenSSL | 3,00 | [fase2-pki.md](docs/mf0489/fase2-pki.md) |
 | 3. HTTPS con Nginx y Docker | 4,00 | [fase3-https-docker.md](docs/mf0489/fase3-https-docker.md) |
-| 4. Auditoría TLS y monitorización | 2,50 | [fase4-auditoria-tls-monitorizacion.md](docs/mf0489/fase4-auditoria-tls-monitorizacion.md) |
+| 4. Auditoría TLS y monitorización | 2,50 | [fase4-auditoria-tls-monitorizacion.md](docs/mf0489/fase4-auditoria-tls-monitorizacion.md) · incluye las [evidencias pedidas en el feedback del MF0488](docs/mf0489/fase4-auditoria-tls-monitorizacion.md#evidencias-pedidas-en-el-feedback-del-mf0488) |
 | 5. Entrega final | — | [fase5-entrega-final.md](docs/mf0489/fase5-entrega-final.md) |
 | Extras (criterio, CVE de Flask, revocación, inventario) | — | [extras.md](docs/mf0489/extras.md) |
 | Pasos y dificultades | — | [WORKLOG.md](docs/mf0489/WORKLOG.md) |
