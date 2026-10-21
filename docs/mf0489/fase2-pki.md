@@ -1,6 +1,6 @@
 # Fase 2 — PKI con OpenSSL
 
-Monto una CA de laboratorio y emito con ella el certificado del servidor `portal.opsmatrix.test`. Todas las salidas son reales, del 19/10/2026.
+Monto una CA de laboratorio y emito con ella el certificado del servidor `portal.opsmatrix.test`. Todas las salidas son reales, del 19/10/2026. Salidas sin recortar: [`evidencias/fase2/pki-salidas.txt`](evidencias/fase2/pki-salidas.txt).
 
 ## Resumen
 
@@ -129,7 +129,7 @@ X509v3 Subject Alternative Name:
 | `CA:FALSE` | Es un certificado final: no puede firmar otros |
 | `serverAuth` | Solo vale para identificar un servidor TLS |
 | SAN `DNS:portal.opsmatrix.test` | Es lo que comprueban los clientes. El CN ya no se usa para validar el nombre |
-| `subjectKeyIdentifier` / `authorityKeyIdentifier` | Huellas que encadenan el certificado con su CA. Aquí el AKI del servidor (`71:F1:48:5D…`) es el SKI de la CA |
+| `subjectKeyIdentifier` / `authorityKeyIdentifier` | Huellas que encadenan el certificado con su CA. Aquí el AKI del servidor (`71:F1:48:5D…`) es el SKI de la CA ([comprobado](evidencias/fase5/coherencia-docs-codigo.txt)) |
 
 `servidor.ext` se pone en la firma porque la CA decide qué extensiones lleva el certificado final. Las de la CSR no se copian solas.
 
@@ -162,7 +162,7 @@ drwxr-xr-x 2 root root 4096 Oct 19 10:26 /etc/ssl/mf0489
 |---|---|---|
 | CA raíz con su propio certificado | `ca.crt: OK` | La CA es coherente |
 | Verificación sin confiar en la CA | `error 20 … unable to get local issuer certificate` | El sistema no conoce la CA. El certificado no está mal, falta el ancla de confianza |
-| Verificación con `-CAfile` | `/etc/ssl/certs/servidor.crt: OK` | Cadena, propósito `sslserver` y nombre correctos |
+| Verificación con `-CAfile` | `/etc/ssl/certs/servidor.crt: OK` | La cadena es correcta. Con `-purpose sslserver -verify_hostname` y la CRL también da `OK` ([validación](evidencias/fase5/validacion-herramientas.txt)) |
 | SAN coincide con el DNS | `DNS:portal.opsmatrix.test` | ✅ |
 | Nombre incorrecto `servidor-equivocado.test` | `error 62 … hostname mismatch` | Firmado bien, pero no identifica a ese servidor. Además de la firma, el nombre tiene que coincidir |
 | Vigencia | `notAfter=Oct 19 10:23:24 2027 GMT` · `Certificate will not expire` | Vigente |

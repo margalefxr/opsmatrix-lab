@@ -1,0 +1,72 @@
+# Lo que dicen los docs, buscado en el código (21/10/2026, código de 71887bf: después solo cambian docs y evidencias)
+# Formato: OK/FALLA | qué dice el doc | archivo:línea donde está
+
+## Nginx (Fase 3 §5, Fase 4 §6)
+OK    | 80 redirige a HTTPS con host y ruta | layer2-perimeter/nginx/default.conf:14
+OK    | 443 con TLS | layer2-perimeter/nginx/default.conf:19
+OK    | server_name = SAN, en los dos bloques | layer2-perimeter/nginx/default.conf:10,20
+OK    | Solo TLS 1.2 y 1.3 | layer2-perimeter/nginx/default.conf:26
+OK    | Certificado montado | layer2-perimeter/nginx/default.conf:24
+OK    | Clave montada | layer2-perimeter/nginx/default.conf:25
+OK    | Pasa a la app por nombre | layer2-perimeter/nginx/default.conf:32
+OK    | Cabecera X-Real-IP | layer2-perimeter/nginx/default.conf:34
+OK    | Cabecera X-Forwarded-Proto | layer2-perimeter/nginx/default.conf:36
+OK    | server_tokens off en los dos bloques | layer2-perimeter/nginx/default.conf:11,21
+OK    | log_format con TLS y cipher | layer2-perimeter/nginx/default.conf:5
+OK    | access_log mf0489 en los dos bloques | layer2-perimeter/nginx/default.conf:12,29
+INFO  | sin proxy_cache (CVE de Flask no explotable): 0 apariciones
+
+## Compose (Fase 3 §2)
+OK    | Imagen fija de Nginx | docker-compose.yml:8
+OK    | Imagen fija de MariaDB | docker-compose.yml:43
+OK    | Solo el proxy publica 80 y 443 | docker-compose.yml:13
+INFO  | bloques ports: en el compose: 1 (solo reverse-proxy)
+OK    | App solo con expose | docker-compose.yml:33
+OK    | Montajes :ro (config, crt, key) | docker-compose.yml:15,16,17
+OK    | backend_net interna | docker-compose.yml:61
+OK    | Volumen con nombre para la BBDD | docker-compose.yml:52
+OK    | Vuelven solos al reiniciar la VM | docker-compose.yml:10,27,45
+OK    | Contraseñas desde .env | docker-compose.yml:47
+
+## App (Fase 3 §7)
+OK    | Corre como nobody | layer3-services/app/Dockerfile:12
+OK    | chmod 644 por el umask 077 | layer3-services/app/Dockerfile:9
+OK    | Flask 3.1.3 fijado | layer3-services/app/requirements.txt:3
+OK    | Guarda la IP de X-Real-IP | layer3-services/app/app.py:24
+INFO  | uso de session/cookies en app.py: 0 apariciones
+
+## Suricata (Fase 4 §5)
+OK    | Regla 1000003 rev 2 con flags:S,CE y flow:to_server | layer1-telemetry/suricata/rules/local.rules:19
+OK    | Reglas del MF0488 que siguen activas | layer1-telemetry/suricata/rules/local.rules:9
+OK    | Override sin -i (una sola captura) | layer1-telemetry/suricata/override.conf:11
+
+## SSH (Fase 5 §2)
+OK    | PasswordAuthentication no | layer2-perimeter/ssh/00-opsmatrix.conf:8
+OK    | KbdInteractiveAuthentication no | layer2-perimeter/ssh/00-opsmatrix.conf:9
+OK    | PubkeyAuthentication yes | layer2-perimeter/ssh/00-opsmatrix.conf:10
+OK    | PermitRootLogin no | layer2-perimeter/ssh/00-opsmatrix.conf:11
+
+## PKI (Fase 2, Extras)
+OK    | basicConstraints=critical,CA:FALSE | layer2-perimeter/pki/servidor.ext:1
+OK    | extendedKeyUsage=serverAuth | layer2-perimeter/pki/servidor.ext:3
+OK    | subjectAltName=DNS:portal.opsmatrix.test | layer2-perimeter/pki/servidor.ext:4
+OK    | Serial aleatorio en openssl ca | layer2-perimeter/pki/ca.cnf:8
+OK    | CRL válida 30 días | layer2-perimeter/pki/ca.cnf:15
+INFO  | layer2-perimeter/pki/servidor.crt: OK
+INFO  | AKI de servidor.crt: 71:F1:48:5D:77:5B:60:FF:6C:26:23:6E:55:18:B0:1E:27:E4:F9:E6
+INFO  | SKI de ca.crt:       71:F1:48:5D:77:5B:60:FF:6C:26:23:6E:55:18:B0:1E:27:E4:F9:E6
+INFO  | hash de la clave pública de servidor.crt del repo: 4a232ee3d9b7e1e4…
+        (el mismo que check-vm.sh calcula en la VM con servidor.key: 4a232ee3d9b7e1e4…)
+INFO  | la CSR del repo lleva la misma clave que el certificado: sí
+
+## .gitignore (Fase 5 §6)
+OK    | .env | .gitignore:2
+OK    | **/*.key | .gitignore:4
+OK    | **/private/ | .gitignore:5
+OK    | *.pem | .gitignore:8
+OK    | backups/ | .gitignore:9
+OK    | *.sql.gz | .gitignore:11
+OK    | *.ova | .gitignore:18
+
+## Resumen
+FALLA: 0 / OK: 44

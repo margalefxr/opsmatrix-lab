@@ -1,0 +1,20 @@
+# ¿Por qué Nginx no ve el default.conf nuevo después de git merge? (21/10/2026)
+# Reproducido en el entorno de pruebas sin Docker: un montaje de un solo archivo (mount --bind),
+# que es lo mismo que hace Docker con ./layer2-perimeter/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+
+$ mount --bind repo/default.conf contenedor/default.conf
+$ cat contenedor/default.conf
+version 1
+$ stat -c "inodo %i" repo/default.conf
+inodo 1090001
+
+$ git merge --ff-only   (trae la versión 2)
+$ cat repo/default.conf
+version 2
+$ stat -c "inodo %i" repo/default.conf
+inodo 1090113
+$ cat contenedor/default.conf   (lo que vería Nginx)
+version 1
+
+-> git no edita el archivo: escribe uno nuevo (otro inodo). El montaje sigue apuntando al viejo.
+   Por eso hace falta 'docker compose restart reverse-proxy' (o up -d --force-recreate) tras cambiar default.conf.

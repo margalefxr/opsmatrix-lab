@@ -1,6 +1,6 @@
 # WORKLOG — ExP 89 (MF0489)
 
-Rama `mf0489-https`. Trabajo hecho del 19 al 21/10/2026 entre el Mac (CA y cliente) y la VM Ubuntu (servidor).
+Rama `mf0489-https`, ya unida a `main`. Trabajo hecho del 19 al 21/10/2026 entre el Mac (CA y cliente) y la VM Ubuntu (servidor).
 
 | # | Paso | Resultado |
 |---|---|---|
@@ -21,6 +21,8 @@ Rama `mf0489-https`. Trabajo hecho del 19 al 21/10/2026 entre el Mac (CA y clien
 | 15 | Revisión final con herramientas: `shellcheck`, `pyflakes`, `docker compose config`, `nginx -t`, `suricata -T`, `sshd -t`, OpenSSL y enlaces | Sin errores. [validacion-herramientas.txt](evidencias/fase5/validacion-herramientas.txt) |
 | 16 | CI con GitHub Actions y justificación HTTP/HTTPS en la Fase 1 | Las comprobaciones de la Fase 5 se repiten solas en cada push |
 | 17 | Evidencias pedidas en el feedback del MF0488: ping, SID 1000001, `suricata -T`, `HOME_NET` y línea base de actividad | Todo real. [Fase 4](fase4-auditoria-tls-monitorizacion.md#evidencias-pedidas-en-el-feedback-del-mf0488) |
+| 18 | Subida a GitHub y comprobación desde un clon limpio: `check-vm.sh` en la VM (en `main`) y `check-mac.sh` en el Mac | Igual que antes de subir. [`check-vm-github.txt`](evidencias/fase5/check-vm-github.txt) y [`check-mac-github.txt`](evidencias/fase5/check-mac-github.txt) |
+| 19 | Revisión cruzada: cada salida de los docs buscada en las evidencias y cada directiva en el código | 44 OK. Las salidas que solo estaban en mi terminal ahora están en `evidencias/`. [`coherencia-docs-codigo.txt`](evidencias/fase5/coherencia-docs-codigo.txt) |
 
 ## Dificultades
 
@@ -49,6 +51,7 @@ Rama `mf0489-https`. Trabajo hecho del 19 al 21/10/2026 entre el Mac (CA y clien
 | 21 | CI | La primera ejecución en GitHub falló en `detect-secrets` | Con `--all-files` escaneaba el `.env` que crea el paso anterior a partir de `.env.example`. Ahora solo mira los archivos versionados en git |
 | 22 | Entrega | En GitHub se veían carpetas vacías `config/`, `docker/` y `suricata/` en la raíz (solo un `.gitkeep` del MF0488). La de `suricata/` podía hacer pensar que faltaban las reglas | Borradas. Las reglas están en `layer1-telemetry/suricata/rules/` (tabla de equivalencias en el README) |
 | 23 | — | Al copiar comandos se colaba `\;` y alguna vez lancé un bloque en la máquina equivocada | Comandos sin `;` y, al final, scripts en vez de copiar y pegar |
+| 24 | Entrega | En la revisión final vi que algunas salidas citadas en los docs (Fase 2, Actividad 8, tcpdump del 80, primer intento de la Fase 4) estaban en mi terminal pero no en el repo | Copiadas a `evidencias/`. Lo que no pude enseñar con una salida de la VM lo reproduje en local y lo digo (regla ICMP, montaje de `default.conf`) |
 
 ## Pendiente (mejoras)
 

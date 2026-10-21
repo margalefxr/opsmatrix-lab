@@ -1,0 +1,64 @@
+# Persistencia: down/up sin -v y la tabla visitas sigue ahí (19/10/2026, hora local CEST = UTC+2)
+# Salida real de la terminal, sin recortar
+
+~/ca_root-pki/ca                                                  at 13:14:06
+> scp ~/Downloads/opsmatrix-mf0489.bundle server@172.16.181.132:~/
+server@172.16.181.132's password:
+opsmatrix-mf0489.bundle                       100%  252KB  56.7MB/s   00:00
+
+ ~/ca_root-pki/ca                                                  at 13:16:20
+>
+
+server@ubuntuserver:~/opsmatrix-lab$ cd ~/opsmatrix-lab
+git fetch ~/opsmatrix-mf0489.bundle mf0489-https
+git merge --ff-only FETCH_HEAD
+git log --oneline -1
+docker compose down && docker compose up -d && sleep 15
+docker compose ps
+docker compose exec db sh -c 'mariadb -u"$MARIADB_USER" -p"$MARIADB_PASSWORD" "$MARIADB_DATABASE" -e "SELECT * FROM visitas"'
+Receiving objects: 100% (404/404), 252.38 KiB | 19.41 MiB/s, done.
+Resolving deltas: 100% (208/208), done.
+From /home/server/opsmatrix-mf0489.bundle
+ * branch            mf0489-https -> FETCH_HEAD
+Updating 573f621..994b198
+Fast-forward
+ layer2-perimeter/nginx/default.conf | 1 +
+ 1 file changed, 1 insertion(+)
+994b198 (HEAD -> mf0489-https) MF0489 Fase 3: server_tokens off también en el bloque HTTP
+[+] Running 5/5
+ ✔ Container opsmatrix-proxy           Remo...                             0.1s
+ ✔ Container opsmatrix-app             Remove...                          10.1s
+ ✔ Container opsmatrix-db              Removed                             0.1s
+ ✔ Network opsmatrix-lab_frontend_net  Removed                             0.0s
+ ✔ Network opsmatrix-lab_backend_net   Removed                             0.1s
+[+] Running 5/5
+ ✔ Network opsmatrix-lab_backend_net   Created                             0.0s
+ ✔ Network opsmatrix-lab_frontend_net  Created                             0.0s
+ ✔ Container opsmatrix-db              Started                             0.1s
+ ✔ Container opsmatrix-app             Starte...                           0.2s
+ ✔ Container opsmatrix-proxy           Star...                             0.2s
+NAME              IMAGE               COMMAND                  SERVICE         CREATED          STATUS          PORTS
+opsmatrix-app     opsmatrix-lab-app   "python app.py"          app             15 seconds ago   Up 15 seconds   5000/tcp
+opsmatrix-db      mariadb:10.11       "docker-entrypoint.s…"   db              15 seconds ago   Up 15 seconds   3306/tcp
+opsmatrix-proxy   nginx:1.28-alpine   "/docker-entrypoint.…"   reverse-proxy   15 seconds ago   Up 15 seconds   0.0.0.0:80->80/tcp, [::]:80->80/tcp, 0.0.0.0:443->443/tcp, [::]:443->443/tcp
++----+---------------------+--------------+
+| id | fecha               | ip           |
++----+---------------------+--------------+
+|  1 | 2026-10-19 11:14:06 | 172.16.181.1 |
+|  2 | 2026-10-19 11:14:06 | 172.16.181.1 |
++----+---------------------+--------------+
+server@ubuntuserver:~/opsmatrix-lab$
+
+
+
+ ~/ca_root-pki/ca                                                  at 13:18:26
+> curl -sI -H "Host: $D" http://$IP/algo | grep -iE "^HTTP|^Server|^Location"
+curl -s -w "\n" --cacert ca.crt --resolve $D:443:$IP https://$D/
+HTTP/1.1 301 Moved Permanently
+Server: nginx
+Location: https://portal.opsmatrix.test/algo
+<h1>Portal OpsMatrix</h1><p>Visitas guardadas en MariaDB: 4</p><p>Has llegado por: https</p>
+
+ ~/ca_root-pki/ca                                                  at 13:18:29
+>
+

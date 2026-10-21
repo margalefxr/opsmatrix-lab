@@ -21,7 +21,7 @@ Compruebo que el HTTPS montado en la Fase 3 está bien configurado y que, aunque
 | Servidor | Ubuntu `ubuntuserver` | 172.16.181.132 | Nginx + app + MariaDB en Docker |
 | Interfaz | `enp2s0` | — | Por donde entra el cliente. Es la que escucha Suricata (`- interface: enp2s0`) |
 
-Scripts usados: [`scripts/fase4-mac.sh`](../../scripts/fase4-mac.sh) y [`scripts/fase4-vm.sh`](../../scripts/fase4-vm.sh). Salidas en [`evidencias/fase4-mac.txt`](evidencias/fase4/fase4-mac.txt), [`evidencias/fase4-vm.txt`](evidencias/fase4/fase4-vm.txt) (aún con las alertas duplicadas) y [`evidencias/fase4-correlacion-02.txt`](evidencias/fase4/fase4-correlacion-02.txt) (prueba final ya arreglada).
+Scripts usados: [`scripts/fase4-mac.sh`](../../scripts/fase4-mac.sh) y [`scripts/fase4-vm.sh`](../../scripts/fase4-vm.sh). Salidas en [`fase4-intento1-vm.txt`](evidencias/fase4/fase4-intento1-vm.txt) (primer intento, con los fallos de §10), [`fase4-mac.txt`](evidencias/fase4/fase4-mac.txt), [`fase4-vm.txt`](evidencias/fase4/fase4-vm.txt) (aún con las alertas duplicadas), [`tcpdump-80.txt`](evidencias/fase4/tcpdump-80.txt), [`suricata-config.txt`](evidencias/fase4/suricata-config.txt) y [`fase4-correlacion-02.txt`](evidencias/fase4/fase4-correlacion-02.txt) (prueba final ya arreglada).
 
 ## 2. Conexión HTTPS real
 
@@ -59,7 +59,7 @@ $ docker compose exec reverse-proxy nginx -T | grep ssl_protocols
 | Protocolo | Resultado real | ¿Cumple? |
 |---|---|---|
 | TLS 1.3 | `TLS_AES_256_GCM_SHA384`, `Verification: OK`, grupo `X25519MLKEM768` | ✅ |
-| TLS 1.2 | `ECDHE-RSA-AES256-GCM-SHA384`, `Verification: OK`, clave temporal X25519 | ✅ |
+| TLS 1.2 | `ECDHE-RSA-AES256-GCM-SHA384`, `Verification: OK`, `Peer Temp Key: X25519` | ✅ |
 | TLS 1.1 | El servidor contesta `alert protocol version` (alerta 70) | ✅ rechazado |
 
 **¿Por qué dos pruebas de TLS 1.1?** Con el comando del enunciado sale `no protocols available`. Eso lo dice **mi** OpenSSL 3.5, que ya no deja usar TLS 1.1, así que no demuestra nada del servidor. Repetí bajando el nivel de seguridad del cliente (`-cipher DEFAULT@SECLEVEL=0`). Así el cliente sí manda el saludo en TLS 1.1 y es **Nginx** quien lo rechaza con la alerta 70. Suricata también registró ese intento como `"version":"TLS 1.1"`.
@@ -91,13 +91,13 @@ Capturé `enp2s0` con `tcpdump` mientras el Mac pedía `/mf0489-prueba-http` (pu
 **HTTPS no lo esconde todo.** Se siguen viendo IPs, puertos, tamaños, horas y el nombre del servidor (SNI), que va en claro en el saludo. El certificado no se ve porque en TLS 1.3 viaja cifrado.
 
 ```
-# tcpdump -i enp2s0 -A 'tcp port 80'  → se lee todo
+# tcpdump -i enp2s0 -A 'tcp port 80'  → se lee todo (tcpdump-80.txt)
 08:31:08.191339 IP 172.16.181.1.64842 > 172.16.181.132.80: ... HTTP: HEAD /mf0489-prueba-http HTTP/1.1
 Host: portal.opsmatrix.test
 08:31:08.192249 IP 172.16.181.132.80 > 172.16.181.1.64842: ... HTTP: HTTP/1.1 301 Moved Permanently
 Location: https://portal.opsmatrix.test/mf0489-prueba-http
 
-# tcpdump -i enp2s0 -A 'tcp port 443' → 485 líneas, la ruta 0 veces, solo el SNI legible
+# tcpdump -i enp2s0 -A 'tcp port 443' → 485 líneas, la ruta 0 veces, solo el SNI legible (fase4-vm.txt §3)
 08:31:08.043740 IP 172.16.181.1.64837 > 172.16.181.132.443: Flags [SEW] ...
 .........portal.opsmatrix.test.......
 ```
@@ -106,7 +106,7 @@ Que la ruta no salga en la captura no es por sí sola una prueba de cifrado. Lo 
 
 ## 5. Regla de Suricata
 
-En [`layer1-telemetry/suricata/rules/local.rules`](../../layer1-telemetry/suricata/rules/local.rules), instalada en `/var/lib/suricata/rules/local.rules`. Es el archivo que carga Suricata: en `suricata.yaml` están `default-rule-path: /var/lib/suricata/rules` y `rule-files: - local.rules`.
+En [`layer1-telemetry/suricata/rules/local.rules`](../../layer1-telemetry/suricata/rules/local.rules), instalada en `/var/lib/suricata/rules/local.rules`. Es el archivo que carga Suricata: en `suricata.yaml` están `default-rule-path: /var/lib/suricata/rules` y, en `rule-files`, `local.rules`. El log confirma `1 rule files processed. 3 rules successfully loaded` ([`suricata-config.txt`](evidencias/fase4/suricata-config.txt)).
 
 ```
 alert tcp any any -> $HOME_NET 443 (msg:"MF0489 - Conexion HTTPS observada"; flow:to_server; flags:S,CE; sid:1000003; rev:2;)
@@ -121,8 +121,9 @@ alert tcp any any -> $HOME_NET 443 (msg:"MF0489 - Conexion HTTPS observada"; flo
 
 ```
 $ sudo suricata -T -c /etc/suricata/suricata.yaml
-Configuration provided was successfully loaded.
-3 rules successfully loaded, 0 rules failed
+i: suricata: Configuration provided was successfully loaded. Exiting.
+$ sudo grep "rules successfully loaded" /var/log/suricata/suricata.log | tail -1
+… Info: detect: 1 rule files processed. 3 rules successfully loaded, 0 rules failed, 0 rules skipped
 ```
 
 Es una regla de laboratorio: un SYN al 443 es una conexión normal, **no un ataque**. En una red con tráfico real haría mucho ruido.
@@ -190,7 +191,7 @@ Una alerta solo dice "ha pasado algo que coincide con una regla". Para que sea i
 | 2 | HTTPS se verifica con `--cacert`, sin `-k` | ✅ |
 | 3 | El nombre coincide con el certificado | ✅ `Verified peername` |
 | 4 | Solo TLS 1.2 y 1.3 | ✅ |
-| 5 | App y BBDD funcionan y conservan datos | ✅ 9 visitas guardadas |
+| 5 | App y BBDD funcionan y conservan datos | ✅ 9 visitas guardadas (`fase4-vm.txt` §10) |
 | 6 | Solo 80 y 443 publicados, BBDD no expuesta | ✅ |
 | 7 | Clave del servidor con 600 y montajes en solo lectura | ✅ `rw=false` en los tres montajes |
 | 8 | `ca.key` fuera de Ubuntu y nada secreto en GitHub | ✅ |
@@ -201,15 +202,15 @@ Una alerta solo dice "ha pasado algo que coincide con una regla". Para que sea i
 | Problema | Causa | Solución |
 |---|---|---|
 | Las reglas activas de Suricata no eran las del repo | En el MF0488 se instalaron unas reglas en la VM y en GitHub quedaron otras | El `local.rules` del repo es ahora copia exacta de las activas más la nueva, y se instala con `sudo install` |
-| La regla 1000003 no saltaba (rev:1 con `flags:S`) | `tcpdump` mostró que el Mac manda el SYN con `[SEW]`: SYN + bits ECN (CWR y ECE). `flags:S` exige SYN **solo** | `flags:S,CE` (rev:2). Antes de llevarlo a la VM lo probé con Suricata y una captura hecha a mano: un SYN normal y uno con ECN saltan, un SYN-ACK no |
-| Aviso de `suricata -T`: `SYN-only … w/o direction specified` | La regla no decía la dirección | `flow:to_server` |
+| La regla 1000003 no saltaba (rev:1 con `flags:S`): 0 alertas en el primer intento | `tcpdump` mostró que el Mac manda el SYN con `[SEW]`: SYN + bits ECN (CWR y ECE). `flags:S` exige SYN **solo** | `flags:S,CE` (rev:2). Antes de llevarlo a la VM lo probé con Suricata y una captura hecha a mano: un SYN normal y uno con ECN saltan, un SYN-ACK no |
+| Aviso de `suricata -T`: `SYN-only … w/o direction specified` | La regla no decía la dirección | `flow:to_server`. Probado en local: mismas alertas y sin el aviso |
 | TLS 1.1 daba `no protocols available` | Es el cliente (OpenSSL 3.5) quien se niega, no el servidor | Repetir con `SECLEVEL=0` para que la respuesta sea del servidor |
 | `tcpdump` del 80 salía casi vacío | Con la salida en texto redirigida a un archivo, tcpdump guarda en memoria y escribe al terminar. Leí el archivo antes de que acabara (`-U` solo sirve con `-w`) | Leerlo cuando termina el `timeout`, o usar `-l` |
 | Cada alerta salía **dos veces**, también las del MF0488 | Las dos copias tenían el mismo `flow_id`: era el mismo paquete procesado dos veces. El servicio arrancaba con `--af-packet -i enp2s0`, que monta dos capturas sobre `enp2s0` (en el log, `creating 1 thread` dos veces y `W: 2`). Lo reproduje en local con `--af-packet -i lo` | Drop-in de systemd ([`override.conf`](../../layer1-telemetry/suricata/override.conf)) que arranca solo con `--af-packet`. Ahora sale `W: 1` y una alerta por conexión. No toco el servicio del paquete, así no se pierde al actualizar. Sigue saliendo un aviso de `fanout` al arrancar, pero con una sola captura no afecta |
 | `systemctl cat suricata` decía `Permission denied` con el override | Otra vez el `umask 077`: `sudo install -D` creó la carpeta `suricata.service.d` con 700 | systemd (root) la lee bien. Para verla: `sudo systemctl cat suricata` |
-| Nginx no cogía el `default.conf` nuevo tras `git merge` | El archivo está montado suelto en el contenedor y git lo sustituye por uno nuevo | `docker compose restart reverse-proxy` |
+| Después de cada `git merge` Nginx puede seguir con el `default.conf` viejo | El archivo está montado suelto y git no lo edita: escribe uno nuevo (otro inodo). El montaje sigue en el viejo. Lo reproduje en local ([`montaje-default-conf.txt`](evidencias/fase4/montaje-default-conf.txt)) | `docker compose restart reverse-proxy` después de cada cambio, y comprobarlo con `nginx -T` |
 
-Salidas reales: [`alertas-duplicadas.txt`](evidencias/fase4/alertas-duplicadas.txt) y la prueba de la regla con la captura hecha a mano en [`prueba-regla-pcap.txt`](evidencias/extras/prueba-regla-pcap.txt).
+Salidas reales: [`fase4-intento1-vm.txt`](evidencias/fase4/fase4-intento1-vm.txt) (reglas distintas, 0 alertas de la 1000003 y aviso `SYN-only`), [`alertas-duplicadas.txt`](evidencias/fase4/alertas-duplicadas.txt), [`suricata-config.txt`](evidencias/fase4/suricata-config.txt) (`Permission denied`), [`tcpdump-80.txt`](evidencias/fase4/tcpdump-80.txt) y la prueba de la regla con la captura hecha a mano en [`prueba-regla-pcap.txt`](evidencias/extras/prueba-regla-pcap.txt).
 
 ## 11. Conclusión
 
@@ -247,7 +248,7 @@ $ ping -c 4 172.16.181.132
 | Qué se ve | Explicación |
 |---|---|
 | `icmp_type 8` del Mac a la VM y `icmp_type 0` de vuelta | Petición (echo request) y respuesta (echo reply) |
-| 4 pings pero 2 alertas | La regla solo mira IPs y protocolo (Suricata la marca como *IP-only*), así que se evalúa una vez por flujo y sentido, no por paquete |
+| 4 pings pero 2 alertas | La regla solo mira IPs y protocolo. Suricata la clasifica como *IP-only* (`2 are IP-only rules` en su log) y la evalúa una vez por flujo y sentido, no por paquete. Lo repetí en local: 8 paquetes → 2 alertas ([`prueba-regla-icmp.txt`](evidencias/extras/prueba-regla-icmp.txt)) |
 | Otras alertas `IPv6-ICMP` tipo 133 desde `fe80::…` | Son mensajes de la propia VM buscando router en IPv6. La regla es `icmp any any -> any any` y también los coge. Es ruido esperado |
 
 **3. `suricata -T` y `HOME_NET`:**

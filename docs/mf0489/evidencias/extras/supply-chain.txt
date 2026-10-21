@@ -4,7 +4,10 @@
 $ pip-audit -r layer3-services/app/requirements.txt
 Found 2 known vulnerabilities in 1 package
 Name  Version ID              Fix Versions
+----- ------- --------------- ------------
 flask 3.0.3   PYSEC-2026-2151 3.1.3
+flask 3.0.3   PYSEC-2026-2151 3.1.3
+(pip-audit cuenta 2 pero es la misma vulnerabilidad repetida: mismo ID)
 Alias: CVE-2026-27205 / GHSA-68rp-wp8r-4726
 Qué es: en algunos accesos a `session` Flask no añade la cabecera `Vary: Cookie`,
 y un proxy con caché podría guardar una respuesta con datos de un usuario.

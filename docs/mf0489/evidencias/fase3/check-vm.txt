@@ -100,7 +100,7 @@ docker_backend_net
 docker_frontend_net
 docker_red_backend
 docker_red_frontend
-22
+22      <- líneas de /etc/iptables/rules.v4 con el bridge viejo br-e2efeb52c253 o redes 10.0.x (grep -c)
 mariadb_data-2026-10-19.tgz
 
 ===== FIN =====

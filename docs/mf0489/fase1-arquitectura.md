@@ -35,7 +35,7 @@ Actualizo el diagrama de OpsMatrix (MF0488) para añadir HTTPS. Nginx pasa a ser
 flowchart LR
     subgraph MAC["Mac — Entorno A (fuera de la VM CTF)"]
         CA["CA de laboratorio<br/>~/ca_root-pki/ca/private/ca.key (AES-256, 600)<br/>ca.crt"]
-        CLI["Cliente de pruebas<br/>curl / openssl s_client<br/>ca.crt + /etc/hosts"]
+        CLI["Cliente de pruebas<br/>curl / openssl s_client<br/>ca.crt + curl --resolve"]
     end
 
     subgraph VM["Ubuntu Server — Entorno B (futura VM CTF) · enp2s0"]

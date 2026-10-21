@@ -18,11 +18,11 @@ Laboratorio que simula el portal de una gestoría. La web es mínima a propósit
 | 4. Auditoría TLS y monitorización | 2,50 | [fase4-auditoria-tls-monitorizacion.md](docs/mf0489/fase4-auditoria-tls-monitorizacion.md) · incluye las [evidencias pedidas en el feedback del MF0488](docs/mf0489/fase4-auditoria-tls-monitorizacion.md#evidencias-pedidas-en-el-feedback-del-mf0488) |
 | 5. Entrega final | — | [fase5-entrega-final.md](docs/mf0489/fase5-entrega-final.md) |
 | Guía de despliegue y recuperación | — | [guia-despliegue.md](docs/mf0489/guia-despliegue.md) |
-| Evidencias (salidas reales) | — | [`evidencias/`](docs/mf0489/evidencias/): `fase3/`, `fase4/`, `fase5/`, `extras/` |
+| Evidencias (salidas reales) | — | [`evidencias/`](docs/mf0489/evidencias/): `fase2/`, `fase3/`, `fase4/`, `fase5/`, `extras/` |
 | Extras (criterio, CVE de Flask, revocación, inventario) | — | [extras.md](docs/mf0489/extras.md) |
 | Pasos y dificultades | — | [WORKLOG.md](docs/mf0489/WORKLOG.md) |
 
-Cada documento empieza con la tabla de criterios de la rúbrica y dónde está la evidencia de cada uno.
+Las fases 1-4 empiezan con la tabla de criterios de la rúbrica y dónde está la evidencia de cada uno. Lo que dicen los docs está comprobado contra el código en [`coherencia-docs-codigo.txt`](docs/mf0489/evidencias/fase5/coherencia-docs-codigo.txt).
 
 Lo del MF0488 sigue en [`docs/WORKLOG.md`](docs/WORKLOG.md) y [`docs/adr/`](docs/adr/). Es la foto de entonces: donde no coincida con lo de arriba (por ejemplo "solo TLS 1.3" o el compose de `layer3-services/docker`), manda lo del MF0489.
 
@@ -132,8 +132,7 @@ Mantengo la estructura por capas del MF0488. Equivalencia con la estructura orie
 | `nginx/default.conf` | `layer2-perimeter/nginx/default.conf` |
 | `pki/` | `layer2-perimeter/pki/` |
 | `suricata/local.rules` | `layer1-telemetry/suricata/rules/local.rules` |
-| `docs/mf0489/evidencias/fase2/` | Las salidas de la Fase 2 van dentro de [fase2-pki.md](docs/mf0489/fase2-pki.md) |
-| `docs/mf0489/evidencias/fase3/`, `fase4/`, `fase5/` | Igual, más `extras/` |
+| `docs/mf0489/evidencias/fase2/` … `fase5/` | Igual, más `extras/` |
 
 ## Lo que no está en el repo
 
@@ -143,7 +142,7 @@ Mantengo la estructura por capas del MF0488. Equivalencia con la estructura orie
 
 | Referencia | Dónde se aplica |
 |---|---|
-| ENS (RD 311/2022) mp.com.1-3 | Redes separadas y cifrado en tránsito |
+| ENS (RD 311/2022) mp.com.1-4 | Perímetro, cifrado en tránsito y redes separadas |
 | ENS op.mon.1 / op.exp.8 | Suricata y logs de Nginx |
 | ISO 27001 A.8.24 | Criptografía y custodia de claves |
 | ISO 27001 A.8.22 | Segregación de redes |

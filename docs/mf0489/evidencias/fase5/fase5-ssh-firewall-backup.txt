@@ -5,6 +5,8 @@ authorized_keys: 0 líneas (nunca hubo una clave autorizada)
 /etc/ssh/sshd_config.d/50-cloud-init.conf -> PasswordAuthentication yes
 /etc/iptables/rules.v4: 44 líneas, todas de Docker (ninguna regla propia)
 redes docker_backend_net, docker_frontend_net, docker_red_backend, docker_red_frontend: 0 contenedores, proyecto=docker
+$ ls ~/infra-lab        (otro proyecto en la misma VM, no es de OpsMatrix)
+docker-compose.yml  docker-compose.yml.bak  docker-lab  reverse-proxy  wordpress  wordpress_data
 
 ## Mac: autorizar la clave
 $ ssh-copy-id -i ~/.ssh/id_ed25519.pub server@172.16.181.132
@@ -53,3 +55,7 @@ visitas en la copia restaurada:
 $ sudo reboot
 $ ssh server@172.16.181.132        (entra sin pedir contraseña)
 Welcome to Ubuntu 26.04 LTS (GNU/Linux 7.0.0-38-generic aarch64)
+ System information as of Tue Oct 20 09:43:49 AM UTC 2026
+68 updates can be applied immediately.
+4 of these updates are standard security updates.
+1 additional security update can be applied with ESM Apps.

@@ -1,0 +1,58 @@
+===== 1. CA (Entorno A) =====
+miércoles, 21 de octubre de 2026, 10:47:03 CEST
+/opt/homebrew/bin/openssl
+OpenSSL 3.5.9 29 Sep 2026 (Library: OpenSSL 3.5.9 29 Sep 2026)
+-rw-------@ 1 xaviermargalef  staff  3446 19 oct.  12:21 private/ca.key
+-rw-------@ 1 xaviermargalef  staff  1964 19 oct.  12:21 ca.crt
+-rw-------@ 1 xaviermargalef  staff  1809 19 oct.  12:23 emitidos/servidor.crt
+subject=C=ES, O=OpsMatrix Lab, CN=OpsMatrix Lab Root CA
+notAfter=Oct 16 10:21:23 2036 GMT
+ca.crt: OK
+emitidos/servidor.crt: OK
+
+===== 2. PUERTOS DE LA VM VISTOS DESDE FUERA =====
+22 abierto
+80 abierto
+443 abierto
+3306 cerrado
+5000 cerrado
+
+===== 3. HTTP -> HTTPS =====
+HTTP/1.1 301 Moved Permanently
+Server: nginx
+Location: https://portal.opsmatrix.test/prueba
+
+===== 4. HTTPS CON LA CA =====
+<h1>Portal OpsMatrix</h1><p>Visitas guardadas en MariaDB: 14</p><p>Has llegado por: https</p>
+codigo=200 tls=0
+
+===== 5. SIN LA CA (debe fallar, exit 60) =====
+exit 60
+
+===== 6. NOMBRE EQUIVOCADO (debe fallar) =====
+exit 60
+
+===== 7. OPENSSL S_CLIENT =====
+Connecting to 172.16.181.132
+CONNECTION ESTABLISHED
+Protocol version: TLSv1.3
+Ciphersuite: TLS_AES_256_GCM_SHA384
+Peer certificate: CN=portal.opsmatrix.test
+Hash used: SHA256
+Signature type: rsa_pss_rsae_sha256
+Verification: OK
+Verified peername: portal.opsmatrix.test
+Negotiated TLS1.3 group: X25519MLKEM768
+DONE
+
+===== 8. VERSIONES TLS =====
+-- tls1_3
+Protocol version: TLSv1.3
+Ciphersuite: TLS_AES_256_GCM_SHA384
+-- tls1_2
+Protocol version: TLSv1.2
+Ciphersuite: ECDHE-RSA-AES256-GCM-SHA384
+-- tls1_1
+803F5CF001000000:error:0A00042E:SSL routines:ssl3_read_bytes:tlsv1 alert protocol version:ssl/record/rec_layer_s3.c:918:SSL alert number 70
+
+===== FIN =====

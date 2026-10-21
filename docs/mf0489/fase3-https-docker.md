@@ -42,7 +42,7 @@ El diagrama completo está en la [Fase 1](fase1-arquitectura.md#diagrama) y el f
 
 ## 2. Antes y después
 
-**Antes** (Actividad 8, 19/10 10:33 UTC):
+**Antes** (Actividad 8, 19/10 10:33 UTC). Notas completas: [`actividad8.txt`](evidencias/fase3/actividad8.txt).
 
 ```
 $ docker compose ls
@@ -78,20 +78,20 @@ curl: (56) Recv failure: Connection reset by peer
 | `db` | `mariadb:10.11` | `backend_net` | 3306 | ❌ |
 
 ```
-$ sudo ss -tulnp | grep -E ':(22|80|443|3306|5000)\b'
-0.0.0.0:80   docker-proxy
-0.0.0.0:22   sshd
-0.0.0.0:443  docker-proxy
+$ sudo ss -tulnp | grep -E ':(22|80|443|3306|5000)\b'      # recortado, completo en check-vm.txt §8
+0.0.0.0:80    docker-proxy
+0.0.0.0:22    sshd
+0.0.0.0:443   docker-proxy
 ```
 
 ```
 $ docker compose config --quiet && echo "compose OK"
 compose OK
-$ docker compose ps                     # columnas recortadas
+$ docker compose ps                     # columnas recortadas (persistencia.txt)
 NAME              IMAGE               SERVICE         STATUS          PORTS
 opsmatrix-app     opsmatrix-lab-app   app             Up 15 seconds   5000/tcp
-opsmatrix-db      mariadb:10.11       db              Up 4 minutes    3306/tcp
-opsmatrix-proxy   nginx:1.28-alpine   reverse-proxy   Up 54 seconds   0.0.0.0:80->80/tcp, 0.0.0.0:443->443/tcp
+opsmatrix-db      mariadb:10.11       db              Up 15 seconds   3306/tcp
+opsmatrix-proxy   nginx:1.28-alpine   reverse-proxy   Up 15 seconds   0.0.0.0:80->80/tcp, [::]:80->80/tcp, 0.0.0.0:443->443/tcp, [::]:443->443/tcp
 # montajes del proxy (comprobado el 20/10 en la Fase 4)
 $ docker inspect opsmatrix-proxy -f '{{range .Mounts}}{{.Destination}} rw={{.RW}}{{"\n"}}{{end}}'
 /etc/nginx/conf.d/default.conf rw=false
@@ -166,23 +166,27 @@ Archivo: [`layer2-perimeter/nginx/default.conf`](../../layer2-perimeter/nginx/de
 
 ```
 $ docker compose exec reverse-proxy nginx -t
+nginx: the configuration file /etc/nginx/nginx.conf syntax is ok
 nginx: configuration file /etc/nginx/nginx.conf test is successful
-$ docker compose logs --tail=5 app reverse-proxy
-opsmatrix-app    |  * Running on http://172.23.0.2:5000
-opsmatrix-proxy  | [notice] 1#1: start worker processes
+$ docker compose logs --tail=5 app reverse-proxy      # recortado
+opsmatrix-proxy  | 172.16.181.1 - - [19/Oct/2026:11:18:29 +0000] "HEAD /algo HTTP/1.1" 301 0 "-" "curl/8.7.1" "-"
+opsmatrix-proxy  | 172.16.181.1 - - [19/Oct/2026:11:18:29 +0000] "GET / HTTP/1.1" 200 92 "-" "curl/8.7.1" "-"
+opsmatrix-app  | 172.23.0.3 - - [19/Oct/2026 11:18:29] "GET / HTTP/1.0" 200 -
 ```
+
+La app ve las peticiones desde `172.23.0.3`, que es Nginx dentro de `frontend_net`, no desde el Mac. Por eso la IP real del cliente le llega en `X-Real-IP`. Salida completa en [`check-vm.txt`](evidencias/fase3/check-vm.txt) §7 y §12.
 
 ## 6. Pruebas desde el Mac
 
 **¿Cómo resuelvo el nombre?** Con `curl --resolve portal.opsmatrix.test:443:172.16.181.132`, sin tocar `/etc/hosts`. Para el navegador habría que añadir `172.16.181.132 portal.opsmatrix.test` en `/etc/hosts`. Entrar por IP no vale porque el certificado solo tiene el nombre DNS.
 
-Todas las pruebas están en [`scripts/check-mac.sh`](../../scripts/check-mac.sh). Salida completa en [`evidencias/check-mac.txt`](evidencias/fase3/check-mac.txt).
+Todas las pruebas están en [`scripts/check-mac.sh`](../../scripts/check-mac.sh). Salida completa en [`evidencias/fase3/check-mac.txt`](evidencias/fase3/check-mac.txt).
 
 ```
-$ curl -sI -H "Host: portal.opsmatrix.test" http://172.16.181.132/algo
+$ curl -sI --resolve portal.opsmatrix.test:80:172.16.181.132 http://portal.opsmatrix.test/prueba
 HTTP/1.1 301 Moved Permanently
 Server: nginx
-Location: https://portal.opsmatrix.test/algo
+Location: https://portal.opsmatrix.test/prueba
 
 $ curl -s -w "\ncodigo=%{http_code} tls=%{ssl_verify_result}\n" --cacert ca.crt \
     --resolve portal.opsmatrix.test:443:172.16.181.132 https://portal.opsmatrix.test/
@@ -217,7 +221,7 @@ Negotiated TLS1.3 group: X25519MLKEM768
 
 La app guarda en la tabla `visitas` la fecha y la IP de cada visita y enseña el total.
 
-**¿Se conservan los datos al reiniciar?** Sí. Hice `docker compose down` y `up` (sin `-v`) y consulté la tabla:
+**¿Se conservan los datos al reiniciar?** Sí. Hice `docker compose down` y `up` (sin `-v`) y consulté la tabla ([`persistencia.txt`](evidencias/fase3/persistencia.txt)):
 
 ```
 | id | fecha               | ip           |
@@ -229,13 +233,13 @@ Después de reiniciar, la siguiente visita sumó sobre las anteriores en vez de 
 
 | Comprobación | Resultado |
 |---|---|
-| Navegación | La app tiene una sola página (`/`): `200`. Cualquier otra ruta da `404`, sin `502` |
+| Navegación | La app tiene una sola página (`/`): `200`. Cualquier otra ruta da `404`, sin `502` (rutas `/mf0489-…` en la [Fase 4](fase4-auditoria-tls-monitorizacion.md#6-log-de-nginx)) |
 | Sin `502 Bad Gateway` | Nginx encuentra la app por su nombre `app` |
 | La app escribe en MariaDB | Cada visita es una fila nueva |
-| Los datos sobreviven a `down` / `up` | Se guardan en el volumen `mariadb_data` |
+| Los datos sobreviven a `down` / `up` | Se guardan en el volumen `mariadb_data`. La primera visita (19/10 11:14:06) sigue ahí el 21/10, después de reiniciar la VM ([`check-vm-github.txt`](evidencias/fase5/check-vm-github.txt) §11) |
 | La IP guardada es la del Mac (`172.16.181.1`) | La cabecera `X-Real-IP` llega bien |
 
-**Aislamiento** (con [`scripts/check-vm.sh`](../../scripts/check-vm.sh), salida en [`evidencias/check-vm.txt`](evidencias/fase3/check-vm.txt)):
+**Aislamiento** (con [`scripts/check-vm.sh`](../../scripts/check-vm.sh), salida en [`evidencias/fase3/check-vm.txt`](evidencias/fase3/check-vm.txt)):
 
 | Prueba | Resultado |
 |---|---|
@@ -255,7 +259,7 @@ Después de reiniciar, la siguiente visita sumó sobre las anteriores en vez de 
 | El puerto 80 enseñaba `Server: nginx/1.28.3` | `curl -I` | `server_tokens off` solo estaba en el bloque del 443 | Lo puse también en el 80 |
 | Había un `ca.key` en la VM | La revisión final avisó. Comparé el hash del archivo con el de la CA del Mac y eran distintos | Era la CA antigua del MF0488, en `layer2-perimeter/pki/`, junto con un `server.key` viejo en `nginx/ssl/`. Nunca llegaron a git | Borrados con `shred -u`. Ahora `find` no encuentra ningún `ca.key` y la única clave es `/etc/ssl/private/servidor.key` |
 
-Salidas reales de estas incidencias: [`incidencias.txt`](evidencias/fase3/incidencias.txt).
+Salidas reales de estas incidencias: [`incidencias.txt`](evidencias/fase3/incidencias.txt) y [`actividad8.txt`](evidencias/fase3/actividad8.txt) (BBDD sin `.env`). El `ca.key` viejo sale como `ALERTA` en [`check-vm.txt`](evidencias/fase3/check-vm.txt) §5 y ya no en [`check-vm-final.txt`](evidencias/fase5/check-vm-final.txt).
 
 **Contraseñas en el historial de git:** el compose que borré tenía contraseñas de laboratorio y siguen en commits antiguos. No sirven para nada: la BBDD se creó por primera vez con las nuevas del `.env`. Poner algo en `.gitignore` después no lo quita del historial.
 
@@ -277,7 +281,7 @@ Paso a paso, copias y problemas conocidos en la [guía de despliegue](guia-despl
 | Referencia | Relación |
 |---|---|
 | ENS (RD 311/2022) mp.com.2 y mp.com.3 | Cifrado de las comunicaciones: TLS en el tramo externo |
-| ENS mp.com.1 / ISO 27001 A.8.22 | Separar redes: `frontend_net` y `backend_net`, solo 80 y 443 abiertos |
+| ENS mp.com.1 y mp.com.4 / ISO 27001 A.8.22 | Separar redes: `frontend_net` y `backend_net`, solo 80 y 443 abiertos |
 | ISO 27001 A.8.24 | Uso de criptografía y cuidado de las claves |
 | ISO 27001 A.5.17 | Contraseñas fuera del código, en `.env` |
 | RGPD art. 32 | Cifrado en tránsito para un portal con datos de clientes |
