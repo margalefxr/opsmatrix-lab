@@ -1,3 +1,5 @@
+# Salida real de scripts/check-mac.sh en el Mac (21/10/2026 10:47 CEST), lanzado desde un clon nuevo del repo de GitHub
+
 ===== 1. CA (Entorno A) =====
 miércoles, 21 de octubre de 2026, 10:47:03 CEST
 /opt/homebrew/bin/openssl

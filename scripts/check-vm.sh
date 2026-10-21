@@ -1,6 +1,6 @@
 #!/bin/bash
 # Revisión completa de la VM (OpsMatrix · MF0489)
-# Solo lee: no cambia nada ni muestra claves ni contraseñas.
+# Solo lee y no muestra claves ni contraseñas. Lo único que cambia: la prueba proxy -> app (§10) suma una visita al contador.
 # Uso (desde la raíz del repo): bash scripts/check-vm.sh 2>&1 | tee check-vm.txt
 
 D=portal.opsmatrix.test

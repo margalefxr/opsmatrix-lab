@@ -71,7 +71,7 @@ Verification: OK
 
 El revocado se rechaza (error 23) y el real sigue valiendo, también en la conexión a Nginx. Salida completa: [`pki-revocacion.txt`](evidencias/extras/pki-revocacion.txt).
 
-**Qué hacer si se filtra una clave:**
+**Qué hacer si se filtra una clave** (procedimiento. Lo probado es el paso 1, revocar y publicar la CRL, con el certificado de prueba):
 
 | Se filtra | Pasos |
 |---|---|

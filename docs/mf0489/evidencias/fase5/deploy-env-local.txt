@@ -1,0 +1,19 @@
+# deploy.sh: el trozo que crea el .env, probado en el entorno de pruebas (21/10/2026)
+# En la VM el .env ya existía (se creó a mano con los mismos comandos, ver fase3/env-creado.txt), así que ahí este camino no se ejecuta
+
+$ sed -n "/if \[ ! -f .env \]/,/^fi/p" scripts/deploy.sh > bloque.sh
+
+-- 1ª vez (no hay .env)
+$ bash bloque.sh
+[+] Creando .env con contraseñas nuevas
+$ ls -l .env
+-rw------- 304 .env
+$ las contraseñas ya no son CAMBIAR (solo se enseña el nombre y la longitud, nunca el valor)
+DB_ROOT_PASSWORD longitud=32 cambiada
+DB_PASSWORD longitud=32 cambiada
+
+-- 2ª vez (ya hay .env): no lo toca
+$ bash bloque.sh
+[=] Ya hay .env, no lo toco
+
+-> 304 bytes, igual que el .env de la VM (fase3/env-creado.txt): mismo método. base64 de 24 bytes = 32 caracteres
