@@ -46,6 +46,9 @@ echo "exit $?"
 echo
 echo "===== 7. OPENSSL S_CLIENT ====="
 openssl s_client -connect $IP:443 -servername $D -CAfile ca.crt -verify_hostname $D -verify_return_error -brief </dev/null 2>&1
+echo "-- ¿Nginx entrega el mismo certificado que firmó la CA? (huella SHA-256)"
+echo "entregado: $(openssl s_client -connect $IP:443 -servername $D </dev/null 2>/dev/null | openssl x509 -noout -fingerprint -sha256)"
+echo "emitido:   $(openssl x509 -in emitidos/servidor.crt -noout -fingerprint -sha256)"
 
 echo
 echo "===== 8. VERSIONES TLS ====="
