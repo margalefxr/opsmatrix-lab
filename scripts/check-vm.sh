@@ -106,6 +106,9 @@ echo "redes docker_* viejas: $(docker network ls --format '{{.Name}}' | grep -cE
 echo "netfilter-persistent: $(systemctl is-enabled netfilter-persistent 2>/dev/null)"
 echo "reglas viejas cargadas: $(sudo iptables-save | grep -cE 'br-e2efeb52c253|10\.0\.[123]\.')"
 ls ~/backups/ 2>/dev/null
+echo "-- volúmenes de Docker (los que no use nadie pueden guardar datos viejos en la OVA)"
+docker volume ls --format '{{.Name}}'
+echo "sin usar: $(docker volume ls -q -f dangling=true | wc -l)"
 
 echo
 echo "===== FIN ====="

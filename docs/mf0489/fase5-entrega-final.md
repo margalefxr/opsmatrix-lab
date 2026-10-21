@@ -108,7 +108,7 @@ Para montarlo en otra máquina: [guía de despliegue](guia-despliegue.md). No ne
 |---|---|
 | Claves, `.env` o copias en el repo | Ninguno (`git ls-files`) |
 | Claves en todo el historial de git | Ninguna (`git log --all --name-only`). Salida: [`secretos.txt`](evidencias/fase5/secretos.txt) |
-| Contraseñas en el historial | Las del compose antiguo de `layer3` (MF0488). No sirven: la BBDD se creó con las nuevas del `.env` |
+| Contraseñas en el historial | Las del compose antiguo de `layer3` (MF0488, el que creó las redes `docker_*`). No dan acceso a la BBDD actual: se creó con las nuevas del `.env` ([`secretos.txt`](evidencias/fase5/secretos.txt)). No reescribo el historial: el enunciado lo pide para claves privadas publicadas y no hay ninguna. Reescribirlo obligaría a un `push --force` y cambiaría los commits que se corrigieron en el MF0488 |
 | Público a propósito | `ca.crt`, `servidor.crt`, `servidor.csr`, `servidor.ext`, `.env.example` |
 
 ## 7. Pruebas finales

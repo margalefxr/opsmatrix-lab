@@ -263,7 +263,7 @@ Los controles se añadieron el 21/10, después de la revisión final: sin ellos,
 
 Salidas reales de estas incidencias: [`incidencias.txt`](evidencias/fase3/incidencias.txt) y [`actividad8.txt`](evidencias/fase3/actividad8.txt) (BBDD sin `.env`). El `ca.key` viejo sale como `ALERTA` en [`check-vm.txt`](evidencias/fase3/check-vm.txt) §5 y ya no en [`check-vm-final.txt`](evidencias/fase5/check-vm-final.txt).
 
-**Contraseñas en el historial de git:** el compose que borré tenía contraseñas de laboratorio y siguen en commits antiguos. No sirven para nada: la BBDD se creó por primera vez con las nuevas del `.env`. Poner algo en `.gitignore` después no lo quita del historial.
+**Contraseñas en el historial de git:** el compose que borré tenía contraseñas de laboratorio y siguen en commits antiguos. No dan acceso a la BBDD actual: se creó por primera vez con las nuevas del `.env`. Poner algo en `.gitignore` después no lo quita del historial.
 
 **Para la Fase 5:** SSH sigue aceptando contraseña, `/etc/iptables/rules.v4` carga 22 reglas de bridges de Docker que ya no existen y quedan 4 redes `docker_*` vacías. Resuelto en la [Fase 5](fase5-entrega-final.md#2-qué-corre-de-verdad).
 
