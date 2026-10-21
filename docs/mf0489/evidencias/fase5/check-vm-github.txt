@@ -1,4 +1,5 @@
 # Salida real de scripts/check-vm.sh en la VM ya en main = 71887bf, igual que GitHub (21/10/2026 08:45 UTC)
+# Ojo: uptime se queda corto en esta VM (probablemente por las pausas de la VM). El arranque real es el 20/10 a las 09:40:25 UTC: ver arranques.txt
 
 ===== 1. SISTEMA =====
 Wed Oct 21 08:45:59 AM UTC 2026

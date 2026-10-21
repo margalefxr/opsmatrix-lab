@@ -1,0 +1,5 @@
+# Carpeta del Mac desde la que se lanzó check-mac-github.txt (21/10/2026). Salida real
+
+$ git -C ~/Downloads/opsmatrix-lab-github remote -v
+origin	https://github.com/margalefxr/opsmatrix-lab (fetch)
+origin	https://github.com/margalefxr/opsmatrix-lab (push)

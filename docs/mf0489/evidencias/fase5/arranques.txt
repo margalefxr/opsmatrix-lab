@@ -1,0 +1,20 @@
+# Arranques de la VM y reloj (21/10/2026 11:26 UTC). Salida real
+# El arranque actual empezó el 20/10 a las 09:40:25 UTC: es el reinicio de la Fase 5 (Suricata 'since 09:40:31').
+# uptime da ~67 min menos que eso (check-vm-github.txt: 'up 21 hours, 58 minutes' el 21/10 a las 08:45).
+# uptime no cuenta el tiempo que la VM está en pausa (Mac en reposo) y luego VMware corrige la hora;
+# chronyd lo ve como 'System clock interference'. Es la explicación probable: no tengo una línea que diga 'pausa'.
+# Pasa lo mismo antes: el arranque anterior va del 14/09 al 20/10, pero el 19/10 uptime decía 'up 2 days' (fase3/check-vm.txt).
+# O sea, uptime se queda corto siempre en esta VM. No afecta a ninguna prueba: Docker y systemd usan la hora real.
+
+server@ubuntuserver:~/opsmatrix-lab$ journalctl --list-boots --no-pager | tail -2 | tee ~/arranques.txt
+journalctl -b --no-pager | grep -iE "clock|time has been|jump|resum" | tail -8 | tee -a ~/arranques.txt
+ -1 1e6cf6e6389c47558ae5eb40e8715b1f Mon 2026-09-14 10:36:35 UTC Tue 2026-10-20 09:40:20 UTC
+  0 32a1a9cfde9b4b15bc88d2556f11d32d Tue 2026-10-20 09:40:25 UTC Wed 2026-10-21 11:26:19 UTC
+Oct 21 11:09:38 ubuntuserver chronyd[1226]: System clock interference detected (another NTP client?)
+Oct 21 11:12:06 ubuntuserver chronyd[1226]: System clock interference detected (another NTP client?)
+Oct 21 11:14:16 ubuntuserver chronyd[1226]: System clock interference detected (another NTP client?)
+Oct 21 11:16:25 ubuntuserver chronyd[1226]: System clock interference detected (another NTP client?)
+Oct 21 11:20:42 ubuntuserver chronyd[1226]: System clock interference detected (another NTP client?)
+Oct 21 11:22:53 ubuntuserver chronyd[1226]: System clock interference detected (another NTP client?)
+Oct 21 11:24:28 ubuntuserver chronyd[1226]: System clock interference detected (another NTP client?)
+Oct 21 11:26:16 ubuntuserver systemd[1]: docker-f0a43f39d995c25146c9870c9c2bfb83aed93f3d21b5f3ccf62bf3406e428c33.scope: Consumed 18.421s CPU time over 23h 29min 31.610s wall clock time, 44.7M memory peak, 2.7M read from disk.

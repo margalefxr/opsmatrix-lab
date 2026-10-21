@@ -1,4 +1,5 @@
 # Salida real de scripts/check-vm.sh (19/10/2026 11:50 UTC).
+# Ojo: uptime se queda corto en esta VM (probablemente por las pausas de la VM). El arranque real es del 14/09: ver fase5/arranques.txt
 # Se ejecutó ANTES de borrar la ca.key antigua del MF0488: por eso sale la ALERTA (ver fase3 §8).
 
 ===== 1. SISTEMA =====

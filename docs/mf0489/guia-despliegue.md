@@ -32,7 +32,7 @@ cd opsmatrix-lab
 bash scripts/deploy.sh
 ```
 
-[`deploy.sh`](../../scripts/deploy.sh) comprueba que estén los certificados, crea el `.env` con contraseñas aleatorias si no existe, valida el compose y levanta los tres contenedores.
+[`deploy.sh`](../../scripts/deploy.sh) comprueba que estén los certificados, crea el `.env` con contraseñas aleatorias si no existe, valida el compose y levanta los tres contenedores. Probado en la VM con el `.env` ya creado ([`deploy-vm.txt`](evidencias/fase5/deploy-vm.txt)) y la creación del `.env` en local ([`deploy-env-local.txt`](evidencias/fase5/deploy-env-local.txt)). No lo he probado en una VM vacía.
 
 **Suricata** (si se usa):
 
