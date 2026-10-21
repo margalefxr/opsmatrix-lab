@@ -1,0 +1,25 @@
+# Prueba en local antes de llevar la Fase 3 a la VM (entorno de pruebas aislado)
+# Nginx con default.conf del repo (solo cambian las rutas de los certificados de prueba), app Flask y MariaDB locales.
+# Repetida el 21/10/2026 con la versión final de default.conf y Flask 3.1.3.
+
+$ nginx -t
+nginx: configuration file <pruebas>/nginx.conf test is successful
+
+$ curl -sI --resolve portal.opsmatrix.test:80:127.0.0.1 http://portal.opsmatrix.test/algo?x=1
+HTTP/1.1 301 Moved Permanently
+Server: nginx
+Location: https://portal.opsmatrix.test/algo?x=1
+
+$ curl --cacert ca.crt (dos veces)
+<h1>Portal OpsMatrix</h1><p>Visitas guardadas en MariaDB: 5</p><p>Has llegado por: https</p>
+codigo=200 tls=0
+<h1>Portal OpsMatrix</h1><p>Visitas guardadas en MariaDB: 6</p><p>Has llegado por: https</p>
+codigo=200 tls=0
+
+$ openssl s_client -tls1_3 ... -verify_hostname portal.opsmatrix.test
+Protocol version: TLSv1.3
+Ciphersuite: TLS_AES_256_GCM_SHA384
+Verification: OK
+
+$ openssl s_client -tls1_1 -cipher DEFAULT@SECLEVEL=0
+error:0A00042E:SSL routines:ssl3_read_bytes:tlsv1 alert protocol version:../ssl/record/rec_layer_s3.c:1599:SSL alert number 70

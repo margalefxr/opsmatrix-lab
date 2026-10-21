@@ -133,6 +133,16 @@ X509v3 Subject Alternative Name:
 
 `servidor.ext` se pone en la firma porque la CA decide qué extensiones lleva el certificado final. Las de la CSR no se copian solas.
 
+Transferencias (solo archivos públicos):
+
+```
+# VM → Mac
+servidor.csr                          100% 1322
+# Mac → VM, a ~/mf0489/
+servidor.crt                          100% 1809
+ca.crt                                100% 1964
+```
+
 ## 5. Instalación y verificación (VM)
 
 ```bash
@@ -158,7 +168,7 @@ drwxr-xr-x 2 root root 4096 Oct 19 10:26 /etc/ssl/mf0489
 | Vigencia | `notAfter=Oct 19 10:23:24 2027 GMT` · `Certificate will not expire` | Vigente |
 | Clave ↔ certificado | `4a232ee3d9b7e1e4…172ae4` en los dos | La clave instalada es la del certificado |
 
-Después borré la copia temporal: `rm ~/mf0489/servidor.key`. En `~/mf0489/` solo quedan `ca.crt`, `servidor.crt` y `servidor.csr`.
+Después borré la copia temporal: `rm ~/mf0489/servidor.key`. En `~/mf0489/` solo quedan `ca.crt`, `servidor.crt` y `servidor.csr` (comprobado después con `ls`, en [`check-vm.txt`](evidencias/fase3/check-vm.txt)).
 
 ## Archivos públicos en el repo
 

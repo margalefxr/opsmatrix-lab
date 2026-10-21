@@ -8,7 +8,7 @@ Rama `mf0489-https`. Trabajo hecho del 19 al 21/10/2026 entre el Mac (CA y clien
 | 2 | Fase 2: CA en el Mac, CSR en la VM, firma e instalación en `/etc/ssl/` | `servidor.crt: OK`. [fase2-pki.md](fase2-pki.md) |
 | 3 | Revisión de cómo estaba la VM (Actividad 8) | BBDD en bucle sin `.env`, Nginx por defecto, compose con contraseñas |
 | 4 | Copia del volumen y `docker compose down` (sin `-v`) | Volumen vacío (131 bytes) |
-| 5 | Compose nuevo, Nginx, app Flask y `.env.example`, probados primero en local | `nginx -t` OK, 301, TLS 1.3 |
+| 5 | Compose nuevo, Nginx, app Flask y `.env.example`, probados primero en local | `nginx -t` OK, 301, TLS 1.3. [prueba-local.txt](evidencias/fase3/prueba-local.txt) |
 | 6 | Paso de la rama a la VM con `git bundle` (sin subir a GitHub) | Rama en la VM |
 | 7 | `.env` con `openssl rand`, `docker compose up -d --build` | Los 3 contenedores `Up` |
 | 8 | Pruebas desde el Mac y reinicio para ver si se guardan los datos | Todo OK. [fase3-https-docker.md](fase3-https-docker.md) |
@@ -18,7 +18,7 @@ Rama `mf0489-https`. Trabajo hecho del 19 al 21/10/2026 entre el Mac (CA y clien
 | 12 | Reinicio de la VM y revisión final con `check-vm.sh` y `check-mac.sh` | Todo vuelve solo. [fase5-entrega-final.md](fase5-entrega-final.md) |
 | 13 | Extra: `pip-audit`, SBOM y `detect-secrets` | CVE en Flask 3.0.3: no explotable aquí, actualizado igual a 3.1.3 y dependencias fijadas. [extras.md](extras.md#1-software-de-terceros-cve-de-flask) |
 | 14 | Extra: revocación con CRL e inventario criptográfico | Revocado → `error 23`, real → `OK`. SSH aún sin post-cuántica. [extras.md](extras.md) |
-| 15 | Revisión final con herramientas: `shellcheck`, `pyflakes`, `docker compose config`, `nginx -t`, `suricata -T`, `sshd -t`, OpenSSL y enlaces | Sin errores |
+| 15 | Revisión final con herramientas: `shellcheck`, `pyflakes`, `docker compose config`, `nginx -t`, `suricata -T`, `sshd -t`, OpenSSL y enlaces | Sin errores. [validacion-herramientas.txt](evidencias/fase5/validacion-herramientas.txt) |
 | 16 | CI con GitHub Actions y justificación HTTP/HTTPS en la Fase 1 | Las comprobaciones de la Fase 5 se repiten solas en cada push |
 | 17 | Evidencias pedidas en el feedback del MF0488: ping, SID 1000001, `suricata -T`, `HOME_NET` y línea base de actividad | Todo real. [Fase 4](fase4-auditoria-tls-monitorizacion.md#evidencias-pedidas-en-el-feedback-del-mf0488) |
 

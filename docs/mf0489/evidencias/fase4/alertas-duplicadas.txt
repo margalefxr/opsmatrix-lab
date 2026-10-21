@@ -1,0 +1,32 @@
+# Alertas duplicadas en Suricata (20/10/2026). Salidas reales, recortadas
+
+## Antes: cada alerta sale dos veces (fase4-vm.txt)
+10/20/2026-08:31:08.176012  [**] [1:1000003:2] MF0489 - Conexion HTTPS observada [**] [Classification: (null)] [Priority: 3] {TCP} 172.16.181.1:64841 -> 172.16.181.132:443
+10/20/2026-08:31:08.176012  [**] [1:1000003:2] MF0489 - Conexion HTTPS observada [**] [Classification: (null)] [Priority: 3] {TCP} 172.16.181.1:64841 -> 172.16.181.132:443
+10/20/2026-08:31:08.204242  [**] [1:1000003:2] MF0489 - Conexion HTTPS observada [**] [Classification: (null)] [Priority: 3] {TCP} 172.16.181.1:64843 -> 172.16.181.132:443
+10/20/2026-08:31:08.204242  [**] [1:1000003:2] MF0489 - Conexion HTTPS observada [**] [Classification: (null)] [Priority: 3] {TCP} 172.16.181.1:64843 -> 172.16.181.132:443
+
+## Diagnóstico
+$ sudo jq -c 'select(.event_type=="alert" and .src_port==64852) | {timestamp, flow_id, in_iface}' /var/log/suricata/eve.json
+{"timestamp":"2026-10-20T08:31:11.257841+0000","flow_id":2233319000653258,"in_iface":"enp2s0","pkt_src":"wire/pcap"}
+{"timestamp":"2026-10-20T08:31:11.257841+0000","flow_id":2233319000653258,"in_iface":"enp2s0","pkt_src":"wire/pcap"}
+-> mismo flow_id: es el mismo paquete procesado dos veces
+$ systemctl cat suricata | grep ExecStart
+ExecStart=/usr/bin/suricata -D --af-packet -i enp2s0 -c /etc/suricata/suricata.yaml --pidfile /var/run/suricata/suricata.pid
+$ sudo grep -iE "creating|fanout|Threads created" /var/log/suricata/suricata.log
+Error: af-packet: fanout not supported by kernel: Kernel too old or cluster-id 99 already in use.
+Info: runmodes: enp2s0: creating 1 thread
+Error: af-packet: fanout not supported by kernel: Kernel too old or cluster-id 99 already in use.
+Info: runmodes: enp2s0: creating 1 thread
+Notice: threads: Threads created -> W: 2 FM: 1 FR: 1   Engine started.
+-> dos capturas sobre enp2s0
+
+## Prueba en local (Suricata 7, interfaz lo)
+suricata --af-packet -i lo  -> "lo: creating 2 threads" sale DOS veces
+suricata --af-packet        -> sale UNA vez
+
+## Después del override (layer1-telemetry/suricata/override.conf)
+Info: runmodes: enp2s0: creating 1 thread
+Notice: threads: Threads created -> W: 1 FM: 1 FR: 1   Engine started.
+$ sudo grep ":50093 -> " /var/log/suricata/fast.log | wc -l
+1

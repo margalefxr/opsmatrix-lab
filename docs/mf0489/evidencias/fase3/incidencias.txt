@@ -1,0 +1,64 @@
+# Incidencias reales de la Fase 3 (19/10/2026). Salidas copiadas tal cual, recortadas
+
+## 1. pip sin red al construir la app
+ => ERROR [app 4/5] RUN pip install --no-cache-dir -r requirements.txt    94.6s
+------
+ > [app 4/5] RUN pip install --no-cache-dir -r requirements.txt:
+13.18 WARNING: Retrying (Retry(total=4, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<pip._vendor.urllib3.connection.HTTPSConnection object at 
+25.96 WARNING: Retrying (Retry(total=3, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<pip._vendor.urllib3.connection.HTTPSConnection object at 
+39.26 WARNING: Retrying (Retry(total=2, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<pip._vendor.urllib3.connection.HTTPSConnection object at 
+53.57 WARNING: Retrying (Retry(total=1, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<pip._vendor.urllib3.connection.HTTPSConnection object at 
+69.84 WARNING: Retrying (Retry(total=0, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<pip._vendor.urllib3.connection.HTTPSConnection object at 
+82.17 ERROR: Could not find a version that satisfies the requirement Flask==3.0.3 (from versions: none)
+94.52 ERROR: No matching distribution found for Flask==3.0.3
+
+## 2. Diagnóstico: se descarta DNS, NAT y firewall; docker0 sin IP
+$ cat /etc/resolv.conf            -> nameserver 127.0.0.53
+$ resolvectl status               -> Current DNS Server: 172.16.181.2
+$ docker run --rm python:3.12-slim python -c "...gethostbyname('pypi.org')"
+socket.gaierror: [Errno -3] Temporary failure in name resolution
+$ docker run --rm --network host python:3.12-slim python -c "...gethostbyname('pypi.org')"
+151.101.192.223
+$ sudo iptables -t nat -S POSTROUTING
+-A POSTROUTING -s 172.17.0.0/16 ! -o docker0 -j MASQUERADE
+$ docker run --rm python:3.12-slim python -c "...create_connection(('151.101.192.223',443),5)"
+OSError: [Errno 113] No route to host
+$ sudo iptables -L FORWARD -n -v
+Chain FORWARD (policy DROP 0 packets, 0 bytes)
+    0     0 DOCKER-USER ...
+    0     0 DOCKER-FORWARD ...
+$ grep copy-mode /etc/suricata/suricata.yaml   -> copy-mode: none (Suricata solo escucha)
+$ ip -br link show type bridge
+docker0          DOWN           2a:b9:73:d7:85:63 <NO-CARRIER,BROADCAST,MULTICAST,UP>
+$ ip -4 -br addr
+lo               UNKNOWN        127.0.0.1/8
+enp2s0           UP             172.16.181.132/24      <- docker0 no tiene IP
+$ networkctl list                -> docker0 bridge no-carrier unmanaged
+$ cat /etc/netplan/*.yaml        -> solo enp2s0
+
+## 3. Arreglo
+$ sudo systemctl restart docker
+$ ip -4 -br addr show docker0
+docker0          DOWN           172.17.0.1/16
+$ docker run --rm python:3.12-slim python -c "...gethostbyname('pypi.org')"
+151.101.0.223
+(30 s después)
+docker0          DOWN           172.17.0.1/16
+
+## 4. La app no arranca (umask 077) y Nginx no encuentra 'app'
+opsmatrix-app     opsmatrix-lab-app   "python app.py"          app             40 seconds ago   Restarting (2) 13 seconds ago
+opsmatrix-db      mariadb:10.11       "docker-entrypoint.s…"   db              40 seconds ago   Up 40 seconds                   3306/tcp
+opsmatrix-app  | python: can't open file '/app/app.py': [Errno 13] Permission denied
+opsmatrix-proxy  | 2026/10/19 11:05:36 [emerg] 1#1: host not found in upstream "app" in /etc/nginx/conf.d/default.conf:21
+opsmatrix-proxy  | nginx: [emerg] host not found in upstream "app" in /etc/nginx/conf.d/default.conf:21
+$ ls -l layer3-services/app/
+total 12
+-rw------- 1 server server  467 Oct 19 11:10 Dockerfile
+-rw------- 1 server server 1629 Oct 19 10:52 app.py
+-rw------- 1 server server   28 Oct 19 10:52 requirements.txt
+Arreglo: RUN chmod 644 en el Dockerfile (commit 573f621)
+
+## 5. Versión de Nginx en el puerto 80
+HTTP/1.1 301 Moved Permanently
+Server: nginx/1.28.3            <- antes
+Server: nginx                   <- después de server_tokens off en el bloque 80

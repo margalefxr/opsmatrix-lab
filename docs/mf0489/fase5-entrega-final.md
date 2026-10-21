@@ -48,6 +48,8 @@ $ ssh -o PubkeyAuthentication=no -o PreferredAuthentications=password server@172
 server@172.16.181.132: Permission denied (publickey).
 ```
 
+Salida completa de SSH, firewall y copia: [`fase5-ssh-firewall-backup.txt`](evidencias/fase5/fase5-ssh-firewall-backup.txt).
+
 **Firewall y redes viejas.** `rules.v4` no protegía nada. Al arrancar volvía a cargar reglas de Docker de bridges que ya no existen. Lo guardé en `~/backups/`, desactivé `netfilter-persistent` y borré las 4 redes `docker_*` del compose antiguo (0 contenedores). Tras reiniciar: `reglas viejas cargadas: 0`.
 
 Lo que protege los puertos ahora es la propia arquitectura: solo se publican 22, 80 y 443, y Docker pone sus reglas para las redes internas. Un firewall de host propio (nftables solo con 22/80/443 de entrada) queda como mejora.
@@ -105,7 +107,7 @@ Para montarlo en otra máquina: [guía de despliegue](guia-despliegue.md). No ne
 | Comprobación | Resultado |
 |---|---|
 | Claves, `.env` o copias en el repo | Ninguno (`git ls-files`) |
-| Claves en todo el historial de git | Ninguna (`git log --all --name-only`) |
+| Claves en todo el historial de git | Ninguna (`git log --all --name-only`). Salida: [`secretos.txt`](evidencias/fase5/secretos.txt) |
 | Contraseñas en el historial | Las del compose antiguo de `layer3` (MF0488). No sirven: la BBDD se creó con las nuevas del `.env` |
 | Público a propósito | `ca.crt`, `servidor.crt`, `servidor.csr`, `servidor.ext`, `.env.example` |
 
@@ -130,14 +132,14 @@ Cada cambio lo probé antes y después de llevarlo a la VM.
 
 | Tipo de prueba | Qué hice | Dónde |
 |---|---|---|
-| Antes de desplegar (shift-left) | Nginx, la app y MariaDB montados en local: `nginx -t`, 301, TLS 1.3 y TLS 1.1 rechazado | Fase 3 |
-| Validar la regla del IDS sin tocar la VM | Captura hecha a mano con un SYN normal, uno con ECN y un SYN-ACK, pasada por Suricata con `flags:S` y con `flags:S,CE` | Fase 4 |
+| Antes de desplegar (shift-left) | Nginx, la app y MariaDB montados en local: `nginx -t`, 301, TLS 1.3 y TLS 1.1 rechazado | [`prueba-local.txt`](evidencias/fase3/prueba-local.txt) |
+| Validar la regla del IDS sin tocar la VM | Captura hecha a mano con un SYN normal, uno con ECN y un SYN-ACK, pasada por Suricata con `flags:S` y con `flags:S,CE` | [`prueba-regla-pcap.txt`](evidencias/extras/prueba-regla-pcap.txt) |
 | Pruebas de humo | `check-vm.sh` y `check-mac.sh` después de cada cambio | `scripts/` |
 | Pruebas negativas | Sin CA, nombre equivocado, TLS 1.1, puertos 3306/5000, proxy → BBDD, BBDD → internet, SSH con contraseña. Todas tienen que **fallar** | Fases 3, 4 y 5 |
 | Persistencia y recuperación | `down` / `up`, reinicio de la VM y copia restaurada en una base aparte | Fases 3 y 5 |
 | Búsqueda de secretos | `git ls-files` y `git log --all` buscando `.key`, `.env`, `.pem` | Fase 5 |
 | Coherencia docs = código | Cada directiva que nombran los docs, buscada con `grep` en el código | Fase 5 |
-| Validación con herramientas | `shellcheck` (scripts), `pyflakes` (app), `docker compose config`, `nginx -t`, `suricata -T`, `sshd -t` y `openssl verify` con la CRL. Sin errores | Fase 5 |
+| Validación con herramientas | `shellcheck` (scripts), `pyflakes` (app), `docker compose config`, `nginx -t`, `suricata -T`, `sshd -t` y `openssl verify` con la CRL. Sin errores | [`validacion-herramientas.txt`](evidencias/fase5/validacion-herramientas.txt) |
 | Revocación | Certificado de prueba revocado → `error 23`. El real sigue `OK` | [Extra](extras.md) |
 | Automatizadas (CI) | `shellcheck`, `docker compose config`, `pip-audit` y `detect-secrets` en cada push | [`checks.yml`](../../.github/workflows/checks.yml) |
 

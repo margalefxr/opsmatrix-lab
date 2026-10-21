@@ -1,0 +1,29 @@
+# Prueba de la regla 1000003 antes de llevarla a la VM (20/10/2026)
+# Captura hecha a mano con scapy y pasada por Suricata en local (suricata -r)
+
+## Paquetes de la captura
+1. 172.16.181.1:50001 -> .132:443  flags S     (SYN normal)
+2. 172.16.181.1:50002 -> .132:443  flags SEC   (SYN + ECE + CWR, como manda el Mac)
+3. .132:443 -> 172.16.181.1:50001  flags SA    (SYN-ACK del servidor)
+4. 172.16.181.1:50003 -> .132:443  flags A     (ACK)
+
+## Reglas probadas
+alert tcp any any -> $HOME_NET 443 (msg:"A flags:S"; flags:S; sid:1; rev:1;)
+alert tcp any any -> $HOME_NET 443 (msg:"B flags:S,CE"; flags:S,CE; sid:2; rev:1;)
+alert tcp any any -> $HOME_NET 443 (msg:"C flags:S+"; flags:S+; sid:3; rev:1;)
+alert tcp any any -> $HOME_NET 443 (msg:"D flags:S,12"; flags:S,12; sid:4; rev:1;)
+
+## Resultado (fast.log)
+This is Suricata version 7.0.3 RELEASE
+10/20/2026-10:29:14.174777 [1:1:1] A flags:S {TCP} 172.16.181.1:50001 -> 172.16.181.132:443
+10/20/2026-10:29:14.174777 [1:2:1] B flags:S,CE {TCP} 172.16.181.1:50001 -> 172.16.181.132:443
+10/20/2026-10:29:14.174777 [1:3:1] C flags:S+ {TCP} 172.16.181.1:50001 -> 172.16.181.132:443
+10/20/2026-10:29:14.174777 [1:4:1] D flags:S,12 {TCP} 172.16.181.1:50001 -> 172.16.181.132:443
+10/20/2026-10:29:14.175037 [1:2:1] B flags:S,CE {TCP} 172.16.181.1:50002 -> 172.16.181.132:443
+10/20/2026-10:29:14.175037 [1:3:1] C flags:S+ {TCP} 172.16.181.1:50002 -> 172.16.181.132:443
+10/20/2026-10:29:14.175037 [1:4:1] D flags:S,12 {TCP} 172.16.181.1:50002 -> 172.16.181.132:443
+
+## Conclusión
+A (flags:S) solo salta con el SYN normal (50001): con el SYN del Mac (50002) no.
+B (flags:S,CE) salta con los dos SYN y no con el SYN-ACK ni con el ACK. Es la que se usa (rev:2).
+C y D también funcionan, pero B dice justo lo que quiero: SYN, ignorando solo los bits ECN.

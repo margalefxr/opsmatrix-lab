@@ -1,0 +1,27 @@
+# Validación con herramientas (21/10/2026, en el entorno de pruebas, no en la VM)
+
+$ shellcheck -S warning scripts/*.sh
+(sin avisos)
+
+$ pyflakes layer3-services/app/app.py
+(sin errores)
+
+$ docker compose config --quiet   (con .env.example)
+OK
+
+$ nginx -t   (default.conf con las rutas de los certificados de prueba)
+nginx: configuration file <pruebas>/nginx.conf test is successful
+
+$ suricata -T -S layer1-telemetry/suricata/rules/local.rules
+i: suricata: Configuration provided was successfully loaded. Exiting.
+
+$ sshd -T con layer2-perimeter/ssh/00-opsmatrix.conf incluido antes que "PasswordAuthentication yes"
+permitrootlogin no
+pubkeyauthentication yes
+passwordauthentication no
+
+$ openssl verify -crl_check -CAfile pki/ca.crt -CRLfile pki/ca.crl -purpose sslserver -verify_hostname portal.opsmatrix.test pki/servidor.crt
+layer2-perimeter/pki/servidor.crt: OK
+
+$ pip-audit -r layer3-services/app/requirements.txt
+No known vulnerabilities found
