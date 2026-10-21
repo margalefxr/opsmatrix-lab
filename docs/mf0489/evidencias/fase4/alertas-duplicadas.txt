@@ -21,9 +21,21 @@ Info: runmodes: enp2s0: creating 1 thread
 Notice: threads: Threads created -> W: 2 FM: 1 FR: 1   Engine started.
 -> dos capturas sobre enp2s0
 
-## Prueba en local (Suricata 7, interfaz lo)
-suricata --af-packet -i lo  -> "lo: creating 2 threads" sale DOS veces
-suricata --af-packet        -> sale UNA vez
+## Prueba en local (Suricata 7, interfaz lo). Salida real
+=== suricata --af-packet -i lo
+Info: runmodes: lo: creating 2 threads
+Info: runmodes: lo: creating 2 threads
+Error: af-packet: lo: Frame size bigger than block size
+Error: af-packet: lo: ring parameters are incorrect. Please file a bug report
+Error: af-packet: lo: failed to init socket for interface
+Error: threads: thread "W#01-lo" failed to start: flags 0423
+=== suricata --af-packet
+Info: runmodes: lo: creating 2 threads
+Error: af-packet: lo: Frame size bigger than block size
+(...mismos errores)
+-> con "-i" monta la captura DOS veces, sin "-i" UNA. En el entorno de pruebas la captura no llega a
+   arrancar (errores de "lo"), así que esto solo demuestra lo de montar dos veces. Que se arregla de
+   verdad lo demuestra la VM: "W: 1" y una sola alerta por conexión (abajo)
 
 ## Después del override (layer1-telemetry/suricata/override.conf)
 Error: af-packet: fanout not supported by kernel: Kernel too old or cluster-id 99 already in use.   <- sale una vez; con una sola captura no afecta

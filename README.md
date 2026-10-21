@@ -77,7 +77,7 @@ Lo del MF0488 sigue en [`docs/WORKLOG.md`](docs/WORKLOG.md) y [`docs/adr/`](docs
 | Qué hice yo | Ejecutar todo en mi laboratorio, pegar las salidas reales y decidir. Lo que no entendía, lo pregunté hasta poder explicarlo |
 | Cómo lo verifiqué | Nada se documenta sin una salida real. Lo propuesto se probaba primero en local y luego en la VM |
 | Qué no le pasé | Ninguna clave privada, contraseña ni `.env`. Solo salidas y archivos públicos |
-| Paquetes sugeridos | Comprobados en PyPI y con `pip-audit` antes de usarlos. Las IA a veces inventan nombres de paquetes y alguien los registra con malware (*slopsquatting*) |
+| Paquetes sugeridos | Comprobados con `pip-audit` (que los busca en PyPI) antes de usarlos. Las IA a veces inventan nombres de paquetes y alguien los registra con malware (*slopsquatting*) |
 
 ## Extra: más allá de la rúbrica
 
@@ -88,7 +88,7 @@ Temas que hoy pesan en el sector y que he aplicado al laboratorio. El criterio p
 | Software de terceros (supply chain) | `pip-audit` encontró CVE-2026-27205 en Flask 3.0.3. No era explotable aquí (no uso `session` ni caché), pero subí a 3.1.3, fijé todas las dependencias y generé el SBOM | El Cyber Resilience Act (UE 2024/2847) pedirá SBOM y gestión de vulnerabilidades. ISO 27001 A.5.21 |
 | Criptografía post-cuántica | Nginx y OpenSSL 3.5 ya negocian `X25519MLKEM768` | Riesgo "harvest now, decrypt later". La hoja de ruta PQC de la UE pide empezar la migración en 2026 |
 | Vida de los certificados | Certificado de 1 año y fecha de renovación anotada | El CA/B Forum baja los certificados públicos a 47 días en 2029: renovar a mano deja de ser viable (ACME) |
-| Detección como código | Reglas de Suricata en git y probadas con una captura antes de desplegarlas | Una regla que no se ha probado puede no saltar nunca (me pasó con `flags:S`) |
+| Detección como código | Reglas de Suricata en git. La nueva (1000003) probada con una captura antes de desplegarla | Una regla que no se ha probado puede no saltar nunca (me pasó con `flags:S`) |
 | Huella TLS (JA4) | Suricata la registra en `eve.json` sin descifrar nada | Permite reconocer clientes o malware por cómo saludan en TLS |
 | Secretos | `detect-secrets`: 0 hallazgos. Historial revisado | Las claves subidas a git son una de las fugas más comunes |
 | Revocación (CRL) | Revoqué un certificado de prueba como "clave comprometida", publiqué la CRL y el cliente lo rechaza (`error 23`). Procedimiento si se filtra una clave | Let's Encrypt apagó OCSP en agosto de 2025: la revocación vuelve a ir por CRL |
