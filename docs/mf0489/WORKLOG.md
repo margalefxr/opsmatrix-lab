@@ -47,7 +47,8 @@ Rama `mf0489-https`. Trabajo hecho del 19 al 21/10/2026 entre el Mac (CA y clien
 | 19 | Extra | `pip-audit` encontró CVE-2026-27205 en Flask 3.0.3 | No explotable aquí (sin `session` ni caché). Subido a 3.1.3, todas las dependencias fijadas, probado en local y reconstruido en la VM |
 | 20 | Extra | En la prueba local, `openssl ca` dio `Serial number … has already been issued` | `ca.srl` guarda el último serial usado por `openssl x509`, pero `openssl ca` lo lee como el siguiente. Uso `rand_serial = yes` |
 | 21 | CI | La primera ejecución en GitHub falló en `detect-secrets` | Con `--all-files` escaneaba el `.env` que crea el paso anterior a partir de `.env.example`. Ahora solo mira los archivos versionados en git |
-| 22 | — | Al copiar comandos se colaba `\;` y alguna vez lancé un bloque en la máquina equivocada | Comandos sin `;` y, al final, scripts en vez de copiar y pegar |
+| 22 | Entrega | En GitHub se veían carpetas vacías `config/`, `docker/` y `suricata/` en la raíz (solo un `.gitkeep` del MF0488). La de `suricata/` podía hacer pensar que faltaban las reglas | Borradas. Las reglas están en `layer1-telemetry/suricata/rules/` (tabla de equivalencias en el README) |
+| 23 | — | Al copiar comandos se colaba `\;` y alguna vez lancé un bloque en la máquina equivocada | Comandos sin `;` y, al final, scripts en vez de copiar y pegar |
 
 ## Pendiente (mejoras)
 
