@@ -39,7 +39,7 @@ Evidencias: [`supply-chain.txt`](evidencias/extras/supply-chain.txt) y [`sbom-ap
 
 | Comprobación | Resultado |
 |---|---|
-| `detect-secrets scan --all-files` | 0 hallazgos |
+| `detect-secrets scan` (archivos de git) | 0 hallazgos, también en cada push ([`ci.txt`](evidencias/fase5/ci.txt)) |
 | `git ls-files` / `git log --all` buscando `.key`, `.env`, `.pem` | Ninguno, nunca |
 | Contraseñas en el historial | Solo las del compose antiguo del MF0488, ya sin uso |
 | Claves privadas en la VM | Solo `/etc/ssl/private/servidor.key`. Ningún `ca.key` (la vieja del MF0488 se borró con `shred`) |

@@ -252,7 +252,7 @@ Después de reiniciar, la siguiente visita sumó sobre las anteriores en vez de 
 
 | Problema | Qué miré | Causa | Solución |
 |---|---|---|---|
-| La BBDD se reiniciaba cada minuto | `docker logs opsmatrix-db` | No había `.env` y además los nombres de las variables no coincidían (`DB_*` en el compose, `MYSQL_*` en el ejemplo) | `.env.example` con los mismos nombres y `.env` creado en la VM con `openssl rand` |
+| La BBDD se reiniciaba cada minuto | `docker logs opsmatrix-db` | No había `.env` y además los nombres de las variables no coincidían (`DB_*` en el compose, `MYSQL_*` en el ejemplo) | `.env.example` con los mismos nombres y `.env` creado en la VM con `openssl rand` ([`env-creado.txt`](evidencias/fase3/env-creado.txt)) |
 | `pip install` fallaba al construir la app (`Temporary failure in name resolution`) | La VM sí tenía internet. Un contenedor con `--network host` también. Uno normal no, ni por IP. La regla de NAT estaba, el firewall no lo tiraba y Suricata solo escucha | `docker0` (la red por defecto de Docker) no tenía IP, así que los contenedores no tenían por dónde salir | `sudo systemctl restart docker`. A los 30 segundos seguía bien |
 | La app se reiniciaba: `Permission denied` en `app.py` | `ls -l` en la VM: los archivos del repo salían con 600 | Tengo `umask 077` en la VM. La app corre como `nobody` y no podía leer el archivo | `RUN chmod 644` en el Dockerfile. No cambio el usuario a root |
 | Nginx: `host not found in upstream "app"` | Salía mientras la app estaba caída | Si la app no arranca, Docker no le da nombre | Se arregló solo al arreglar la app |
