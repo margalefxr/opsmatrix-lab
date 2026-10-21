@@ -73,11 +73,20 @@ echo "-- control: el proxy sí resuelve 'app' (getent funciona)"
 docker compose exec -T reverse-proxy getent hosts app || echo "ALERTA: getent no funciona, la prueba siguiente no vale"
 echo "-- proxy -> db (no debe ni resolver el nombre)"
 docker compose exec -T reverse-proxy getent hosts db || echo "OK: el proxy no ve la BBDD"
+# rc = código de salida de la conexión a 1.1.1.1:443. 0 = sale. 124 = timeout. 127 = falta el comando (prueba no válida)
 echo "-- control: la app (frontend_net) sí sale a internet (la prueba funciona)"
-docker compose exec -T app timeout 3 bash -c "</dev/tcp/1.1.1.1/443" 2>/dev/null && echo "control OK: hay salida desde frontend_net" || echo "ALERTA: tampoco sale la app, la prueba siguiente no vale"
+r=$(docker compose exec -T app bash -c 'timeout 3 bash -c "</dev/tcp/1.1.1.1/443" 2>/dev/null; echo $?' | tr -d '\r')
+[ "$r" = 0 ] && echo "control OK: la app sale (rc=$r)" || echo "ALERTA: la app tampoco sale (rc=$r), la prueba siguiente no vale"
 echo "-- db -> internet (no debe salir)"
-docker compose exec -T db sh -c "command -v bash timeout" | tr '\n' ' '; echo "<- la BBDD tiene bash y timeout"
-docker compose exec -T db timeout 3 bash -c "</dev/tcp/1.1.1.1/443" 2>/dev/null && echo "ALERTA: la BBDD sale a internet" || echo "OK: la BBDD no sale a internet"
+docker compose exec -T db bash -c 'for c in bash timeout; do command -v $c || echo "FALTA $c"; done'
+r=$(docker compose exec -T db bash -c 'timeout 3 bash -c "</dev/tcp/1.1.1.1/443" 2>/dev/null; echo $?' | tr -d '\r')
+case "$r" in
+  0) echo "ALERTA: la BBDD sale a internet (rc=$r)" ;;
+  126|127) echo "ALERTA: prueba no válida (rc=$r)" ;;
+  *) echo "OK: la BBDD no sale a internet (rc=$r)" ;;
+esac
+echo "-- rutas de la BBDD (00000000 = ruta por defecto; no debe haber)"
+docker compose exec -T db cat /proc/net/route | awk '{print $1, $2, $3}'
 echo "-- usuario de la app"
 docker compose exec -T app id
 
