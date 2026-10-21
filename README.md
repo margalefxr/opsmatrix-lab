@@ -56,7 +56,7 @@ Lo del MF0488 sigue en [`docs/WORKLOG.md`](docs/WORKLOG.md) y [`docs/adr/`](docs
 | Secretos fuera del código | `.env` y claves fuera de git. La CA, fuera de la VM |
 | Configuración como código | Compose, Nginx, reglas de Suricata y SSH versionados en el repo |
 | Observabilidad | Suricata en la red + log de Nginx con versión TLS, cruzados por IP y puerto |
-| Reproducible | `deploy.sh` + `check-*.sh`. Comprobado tras reiniciar la VM |
+| Reproducible | `deploy.sh` + `check-*.sh`. Todo vuelve solo tras reiniciar la VM y `deploy.sh` funciona sobre el despliegue ya hecho ([`deploy-vm.txt`](docs/mf0489/evidencias/fase5/deploy-vm.txt)). No probado en una VM vacía |
 | Versiones fijas | Dependencias de Python exactas (`==`), también las transitivas. Imágenes por rama (`nginx:1.28-alpine`, `mariadb:10.11`, `python:3.12-slim`): no cambian de versión mayor, pero sí reciben parches |
 
 ## Cómo lo he hecho

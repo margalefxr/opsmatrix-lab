@@ -25,6 +25,7 @@ Rama `mf0489-https`, ya unida a `main`. Trabajo hecho del 19 al 21/10/2026 entre
 | 19 | Revisión cruzada: cada salida de los docs buscada en las evidencias y cada directiva en el código | 44 OK. Las salidas que solo estaban en mi terminal ahora están en `evidencias/`. [`coherencia-docs-codigo.txt`](evidencias/fase5/coherencia-docs-codigo.txt) |
 | 20 | Revisión de todo el repo, también lo del MF0488 | Tabla de [correcciones del MF0488](../correcciones-mf0488.md), banner en cada documento antiguo, bug de `check_baseline.sh` corregido, carpetas vacías borradas y `shellcheck` de todos los `.sh` en la CI |
 | 21 | Controles positivos en `check-vm.sh`: cada prueba que tiene que fallar, con otra que demuestra que el comando funciona | El proxy resuelve `app` pero no `db`. La app sale (`rc=0`) y la BBDD no (`rc=1`, sin ruta por defecto). [`check-vm-controles.txt`](evidencias/fase5/check-vm-controles.txt) |
+| 22 | `deploy.sh` en la VM y arranques de la VM | `[OK] Desplegado`, `.env` sin tocar, BBDD sin recrear. Arranque actual: 20/10 09:40:25 UTC. [`deploy-vm.txt`](evidencias/fase5/deploy-vm.txt), [`arranques.txt`](evidencias/fase5/arranques.txt) |
 
 ## Dificultades
 

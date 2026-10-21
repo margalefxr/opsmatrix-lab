@@ -1,4 +1,4 @@
-# Salida real de scripts/check-mac.sh en el Mac (21/10/2026 10:47 CEST), lanzado desde un clon nuevo del repo de GitHub
+# Salida real de scripts/check-mac.sh en el Mac (21/10/2026 10:47 CEST), lanzado desde ~/Downloads/opsmatrix-lab-github, cuyo origin es GitHub (ver clon-mac.txt)
 
 ===== 1. CA (Entorno A) =====
 miércoles, 21 de octubre de 2026, 10:47:03 CEST
