@@ -128,7 +128,7 @@ Salidas completas: [`check-vm-final.txt`](evidencias/fase5/check-vm-final.txt) y
 
 ### Cómo he probado (QA)
 
-Los cambios de configuración (compose, Nginx, app, reglas, SSH) los probé en local antes de llevarlos a la VM y otra vez en la VM.
+Los cambios de configuración (compose, Nginx, app, reglas, SSH) se probaron primero en el entorno de pruebas ("en local" en estos documentos; lo lanzaba la IA, ver [Uso de la IA](../../README.md#uso-de-la-ia)) y después en la VM.
 
 | Tipo de prueba | Qué hice | Dónde |
 |---|---|---|

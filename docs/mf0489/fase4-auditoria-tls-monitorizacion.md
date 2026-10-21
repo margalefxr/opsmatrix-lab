@@ -161,7 +161,7 @@ HTTP 404 puerto_origen=50093
 
 | Campo | Cliente (Mac) | Suricata | Nginx |
 |---|---|---|---|
-| Hora (UTC) | 08:45:25 | 08:45:25.120 | 08:45:25 |
+| Hora (UTC) | 08:45:25 (prompt: 10:45:25 CEST) | 08:45:25.120 | 08:45:25 |
 | IP cliente | — | 172.16.181.1 | 172.16.181.1 |
 | **Puerto de origen** | **50093** | **50093** | **50093** |
 | Destino | 172.16.181.132:443 | 172.16.181.132:443 | — |
@@ -169,7 +169,7 @@ HTTP 404 puerto_origen=50093
 | Resultado | HTTP 404 | Alerta de laboratorio | `status=404` |
 | TLS / HTTP visible | — | Conexión al 443. En el evento `tls`: versión y SNI. Sin ruta | TLS 1.3, `TLS_CHACHA20_POLY1305_SHA256`, ruta completa |
 
-**¿Por qué son la misma prueba?** No me fío solo de la hora. Coinciden la IP, la hora al segundo y, sobre todo, el **puerto de origen 50093**, que el Mac elige al azar para cada conexión. Las tres fuentes están en UTC, así que no hubo que convertir horas. Docker no cambia la IP ni el puerto que recibe Nginx (la redirección la hace iptables y conserva el origen). La primera prueba (`/mf0489-correlacion-01`, puerto 64852) también cuadraba, pero con la alerta repetida.
+**¿Por qué son la misma prueba?** No me fío solo de la hora. Coinciden la IP, la hora al segundo y, sobre todo, el **puerto de origen 50093**, que el Mac elige al azar para cada conexión. Suricata y Nginx escriben en UTC. La hora del Mac sale del prompt de la terminal, en hora de Madrid (CEST, UTC+2): 10:45:25 − 2 h = 08:45:25. Docker no cambia la IP ni el puerto que ve Nginx: aunque en el host escucha `docker-proxy` (check-vm §8), Nginx ve `172.16.181.1:50093` y no la puerta de enlace de Docker. Eso indica que la conexión entra por la regla NAT de iptables, que conserva el origen. La primera prueba (`/mf0489-correlacion-01`, puerto 64852) también cuadraba, pero con la alerta repetida.
 
 Suricata no vio la ruta: ve la conexión y sus metadatos. La ruta solo la ve Nginx, que es quien descifra. Por eso hacen falta las dos fuentes.
 

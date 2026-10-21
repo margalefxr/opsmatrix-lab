@@ -76,13 +76,13 @@ En el navegador: añadir `IP_VM portal.opsmatrix.test` a `/etc/hosts` e importar
 bash scripts/backup-db.sh
 ```
 
-**Restaurar de verdad**:
+**Restaurar de verdad** (no lo he hecho sobre la BBDD buena para no arriesgarla; lo probado es la misma restauración en `restore_test`, que hace `backup-db.sh`):
 
 ```bash
 gunzip -c ~/backups/opsmatrix-FECHA.sql.gz | docker compose exec -T db sh -c 'mariadb -uroot -p"$MARIADB_ROOT_PASSWORD" "$MARIADB_DATABASE"'
 ```
 
-**Volver a la configuración anterior** si un cambio rompe algo:
+**Volver a la configuración anterior** si un cambio rompe algo (procedimiento, no lo he necesitado):
 
 ```bash
 git log --oneline            # elegir el commit bueno

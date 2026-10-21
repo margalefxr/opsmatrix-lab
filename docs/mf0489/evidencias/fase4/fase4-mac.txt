@@ -1,3 +1,5 @@
+# Salida real de scripts/fase4-mac.sh en el Mac (20/10/2026 08:31 UTC)
+
 ===== 1. CONEXION HTTPS REAL (curl -v) =====
 2026-10-20T08:31:08Z
 * SSL connection using TLSv1.3 / AEAD-CHACHA20-POLY1305-SHA256 / [blank] / UNDEF

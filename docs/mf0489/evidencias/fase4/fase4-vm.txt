@@ -1,3 +1,5 @@
+# Salida real de scripts/fase4-vm.sh en la VM (20/10/2026, justo después de fase4-mac.sh). Aún con las alertas duplicadas
+
 ===== 1. CONFIGURACION ACTIVA =====
 enp2s0           UP             172.16.181.132/24 metric 100 fe80::20c:29ff:fe54:2392/64 
 660:  - interface: enp2s0

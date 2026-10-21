@@ -64,7 +64,7 @@ Lo del MF0488 sigue en [`docs/WORKLOG.md`](docs/WORKLOG.md) y [`docs/adr/`](docs
 | | |
 |---|---|
 | **Método** | MSA / lean: lo mínimo que funcione y se pueda comprobar. Tablas antes que texto, una decisión = un motivo |
-| **Pruebas** | Primero en local, luego en la VM. Pruebas positivas y negativas (lo que tiene que fallar, falla), cada negativa con un control que demuestra que el comando funciona. Matriz completa en la [Fase 5](docs/mf0489/fase5-entrega-final.md#cómo-he-probado-qa) |
+| **Pruebas** | Primero en local (entorno de pruebas), luego en la VM. Pruebas positivas y negativas (lo que tiene que fallar, falla), cada negativa con un control que demuestra que el comando funciona. Matriz completa en la [Fase 5](docs/mf0489/fase5-entrega-final.md#cómo-he-probado-qa) |
 | **Trazabilidad** | Cada paso y cada problema en el [WORKLOG](docs/mf0489/WORKLOG.md). Las salidas de las pruebas son reales y están en [`evidencias/`](docs/mf0489/evidencias/) |
 | **CI** | [GitHub Actions](.github/workflows/checks.yml) repite en cada push `shellcheck` (todos los `.sh`), `docker compose config`, `py_compile`, `pip-audit` y `detect-secrets`. Con permisos de solo lectura y la acción fijada por commit |
 | **IA** | Ver abajo |
@@ -73,9 +73,9 @@ Lo del MF0488 sigue en [`docs/WORKLOG.md`](docs/WORKLOG.md) y [`docs/adr/`](docs
 
 | | |
 |---|---|
-| Qué hizo la IA | Preparar scripts y comandos, proponer la estructura de los docs y revisar coherencia |
-| Qué hice yo | Ejecutar todo en mi laboratorio, pegar las salidas reales y decidir. Lo que no entendía, lo pregunté hasta poder explicarlo |
-| Cómo lo verifiqué | Nada se documenta sin una salida real. Lo propuesto se probaba primero en local y luego en la VM |
+| Qué hizo la IA | Preparar scripts y comandos, proponer la estructura de los docs y revisar coherencia. También lanzó las pruebas que no necesitan la VM en su propio entorno de pruebas (Nginx, app y MariaDB en local, Suricata con capturas hechas a mano, `shellcheck`, `pip-audit`…). Esas evidencias lo dicen en su cabecera ("entorno de pruebas") |
+| Qué hice yo | Ejecutar en mi laboratorio (Mac y VM) todo lo que toca la CA, la VM y la red, pegar las salidas reales y decidir. Lo que no entendía, lo pregunté hasta poder explicarlo |
+| Cómo lo verifiqué | Nada se documenta sin una salida real. Los cambios de configuración se probaban primero en el entorno de pruebas y luego en la VM |
 | Qué no le pasé | Ninguna clave privada, contraseña ni `.env`. Solo salidas y archivos públicos |
 | Paquetes sugeridos | Comprobados con `pip-audit` (que los busca en PyPI) antes de usarlos. Las IA a veces inventan nombres de paquetes y alguien los registra con malware (*slopsquatting*) |
 
