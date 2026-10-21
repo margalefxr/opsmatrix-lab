@@ -64,7 +64,7 @@ Lo del MF0488 sigue en [`docs/WORKLOG.md`](docs/WORKLOG.md) y [`docs/adr/`](docs
 | | |
 |---|---|
 | **Método** | MSA / lean: lo mínimo que funcione y se pueda comprobar. Tablas antes que texto, una decisión = un motivo |
-| **Pruebas** | Primero en local, luego en la VM. Pruebas positivas y negativas (lo que tiene que fallar, falla). Matriz completa en la [Fase 5](docs/mf0489/fase5-entrega-final.md#cómo-he-probado-qa) |
+| **Pruebas** | Primero en local, luego en la VM. Pruebas positivas y negativas (lo que tiene que fallar, falla), cada negativa con un control que demuestra que el comando funciona. Matriz completa en la [Fase 5](docs/mf0489/fase5-entrega-final.md#cómo-he-probado-qa) |
 | **Trazabilidad** | Cada paso y cada problema en el [WORKLOG](docs/mf0489/WORKLOG.md). Las salidas de las pruebas son reales y están en [`evidencias/`](docs/mf0489/evidencias/) |
 | **CI** | [GitHub Actions](.github/workflows/checks.yml) repite en cada push `shellcheck` (todos los `.sh`), `docker compose config`, `py_compile`, `pip-audit` y `detect-secrets`. Con permisos de solo lectura y la acción fijada por commit |
 | **IA** | Ver abajo |

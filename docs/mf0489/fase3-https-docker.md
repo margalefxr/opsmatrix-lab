@@ -241,12 +241,14 @@ Después de reiniciar, la siguiente visita sumó sobre las anteriores en vez de 
 
 **Aislamiento** (con [`scripts/check-vm.sh`](../../scripts/check-vm.sh), salida en [`evidencias/fase3/check-vm.txt`](evidencias/fase3/check-vm.txt)):
 
-| Prueba | Resultado |
-|---|---|
-| Nginx → app | Responde |
-| Nginx → BBDD | Ni siquiera encuentra el nombre `db` |
-| BBDD → internet | No puede salir |
-| Usuario de la app | `uid=65534(nobody)` |
+| Prueba | Control (demuestra que la prueba funciona) | Resultado |
+|---|---|---|
+| Nginx → app | — | Responde |
+| Nginx → BBDD | `getent hosts app` sí resuelve (`172.23.0.3`) | Ni siquiera encuentra el nombre `db` |
+| BBDD → internet | La app sí sale (`rc=0`) y la BBDD tiene `bash` y `timeout` | No sale (`rc=1`). Su tabla de rutas no tiene ruta por defecto, solo `backend_net` |
+| Usuario de la app | — | `uid=65534(nobody)` |
+
+Los controles se añadieron el 21/10, después de la revisión final: sin ellos, un "OK" también podía salir porque fallara el comando. El primer intento tenía un fallo en el propio control y lo dejo a la vista ([`check-vm-controles-intento1.txt`](evidencias/fase5/check-vm-controles-intento1.txt)). Salida buena: [`check-vm-controles.txt`](evidencias/fase5/check-vm-controles.txt) §10.
 
 ## 8. Dificultades
 
