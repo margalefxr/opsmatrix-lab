@@ -1,0 +1,81 @@
+# Salidas reales de la Fase 2 (19/10/2026). Copiadas tal cual de la terminal, recortadas
+# Horas de OpenSSL en UTC; las de ls del Mac en hora local (CEST)
+
+== Paso 0 ==
+VM: OpenSSL 3.5.5 27 Jan 2026 | hostname ubuntuserver | enp2s0 172.16.181.132/24 | user server
+Mac: OpenSSL 3.5.9 29 Sep 2026
+== Paso 1 (Mac) ==
+-rw-------@ 1 xaviermargalef  staff  3446 19 oct.  12:21 private/ca.key
+Key is valid
+subject=C=ES, O=OpsMatrix Lab, CN=OpsMatrix Lab Root CA
+issuer=C=ES, O=OpsMatrix Lab, CN=OpsMatrix Lab Root CA
+notBefore=Oct 19 10:21:23 2026 GMT
+notAfter=Oct 16 10:21:23 2036 GMT
+X509v3 Basic Constraints: critical
+    CA:TRUE, pathlen:0
+X509v3 Key Usage: critical
+    Certificate Sign, CRL Sign
+        Signature Algorithm: sha256WithRSAEncryption
+                Public-Key: (4096 bit)
+ca.crt: OK
+
+== Paso 2 (VM) evidencia ==
+-rw------- 1 server server 1322 Oct 19 10:22 servidor.csr
+-rw------- 1 server server 2484 Oct 19 10:22 servidor.key
+Certificate request self-signature verify OK
+subject=CN=portal.opsmatrix.test
+                X509v3 Subject Alternative Name:
+                    DNS:portal.opsmatrix.test
+                Public-Key: (3072 bit)
+
+== Paso 2b (Mac) scp CSR ==
+(2 intentos con contraseña incorrecta) Permission denied (publickey,password).
+servidor.csr 100% 1322
+-rw-------@ 1 xaviermargalef staff 1322 19 oct. 12:22 servidor.csr
+== Paso 3 (Mac) ==
+Certificate request self-signature verify OK
+subject=CN=portal.opsmatrix.test
+Certificate request self-signature ok
+subject=CN=portal.opsmatrix.test
+subject=CN=portal.opsmatrix.test
+issuer=C=ES, O=OpsMatrix Lab, CN=OpsMatrix Lab Root CA
+notBefore=Oct 19 10:23:24 2026 GMT
+notAfter=Oct 19 10:23:24 2027 GMT
+X509v3 Basic Constraints: critical
+    CA:FALSE
+X509v3 Key Usage: critical
+    Digital Signature, Key Encipherment
+X509v3 Extended Key Usage:
+    TLS Web Server Authentication
+X509v3 Subject Alternative Name:
+    DNS:portal.opsmatrix.test
+servidor.crt 100% 1809 | ca.crt 100% 1964  -> VM ~/mf0489/
+
+== Paso 4 (VM) ==
+sudo: 1 intento de contraseña fallido
+-rw------- 1 root root 2484 Oct 19 10:26 /etc/ssl/private/servidor.key
+ls: cannot open file '/etc/ssl/mf0489/ca.crt': Permission denied   <- dificultad umask 077 heredado por sudo mkdir
+-rw-r--r-- 1 root root 1809 Oct 19 10:26 /etc/ssl/certs/servidor.crt
+--- 1. Sin confiar en la CA
+CN=portal.opsmatrix.test
+error 20 at 0 depth lookup: unable to get local issuer certificate
+error /etc/ssl/certs/servidor.crt: verification failed
+--- 4. Vigencia
+notBefore=Oct 19 10:23:24 2026 GMT
+notAfter=Oct 19 10:23:24 2027 GMT
+Certificate will not expire
+--- 5. Clave y certificado
+SHA2-256(stdin)= 4a232ee3d9b7e1e49c0713d2566598530dcd71ec005240db559b8c8260172ae4
+SHA2-256(stdin)= 4a232ee3d9b7e1e49c0713d2566598530dcd71ec005240db559b8c8260172ae4
+== Arreglo ==
+sudo chmod 755 /etc/ssl/mf0489
+drwxr-xr-x 2 root root 4096 Oct 19 10:26 /etc/ssl/mf0489
+-rw-r--r-- 1 root root 1964 Oct 19 10:26 /etc/ssl/mf0489/ca.crt
+--- 2. Con la CA del laboratorio
+/etc/ssl/certs/servidor.crt: OK
+--- 3. Nombre equivocado
+CN=portal.opsmatrix.test
+error 62 at 0 depth lookup: hostname mismatch
+error /etc/ssl/certs/servidor.crt: verification failed
+== Limpieza ==
+rm ~/mf0489/servidor.key -> quedan ca.crt servidor.crt servidor.csr

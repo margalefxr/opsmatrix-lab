@@ -1,0 +1,32 @@
+# Configuración real de Suricata en la VM (20/10/2026). Salidas copiadas tal cual
+
+$ grep -nE "default-rule-path|^\s*- .*\.rules|HOME_NET:" /etc/suricata/suricata.yaml | head
+18:    HOME_NET: "[192.168.0.0/16,10.0.0.0/8,172.16.0.0/12]"
+19:    #HOME_NET: "[192.168.0.0/16]"
+20:    #HOME_NET: "[10.0.0.0/8]"
+21:    #HOME_NET: "[172.16.0.0/12]"
+22:    #HOME_NET: "any"
+2308:default-rule-path: /var/lib/suricata/rules
+2311:  - suricata.rules
+2350:  - local.rules
+$ sudo find / -xdev -name "local.rules"
+/home/server/opsmatrix-lab/layer1-telemetry/suricata/rules/local.rules
+/etc/suricata/rules/local.rules
+/var/lib/suricata/rules/local.rules
+-> carga /var/lib/suricata/rules/local.rules (default-rule-path + rule-files)
+$ sudo grep -E "rules successfully loaded|signatures processed" /var/log/suricata/suricata.log | tail -2
+[628365 - Suricata-Main] 2026-10-20 08:26:43 Info: detect: 1 rule files processed. 3 rules successfully loaded, 0 rules failed, 0 rules skipped
+[628365 - Suricata-Main] 2026-10-20 08:26:43 Info: detect: 3 signatures processed. 2 are IP-only rules, 0 are inspecting packet payload, 0 inspect application layer, 0 are decoder event only
+-> 1 solo archivo de reglas (local.rules) con 3 reglas. 2 son IP-only (cuáles: prueba-regla-icmp.txt en extras/)
+(salida completa en fase4-intento1-vm.txt)
+
+## Interfaz de captura (af-packet)
+--- config de captura
+af-packet:
+  - interface: enp2s0
+    cluster-id: 99
+    cluster-type: cluster_flow
+    defrag: yes
+
+## Override instalado: systemctl cat sin sudo no puede leerlo (umask 077 -> carpeta 700)
+Failed to chase '/etc/systemd/system/suricata.service.d/override.conf': Permission denied

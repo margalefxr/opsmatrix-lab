@@ -1,0 +1,26 @@
+# Actividad 8 (estado previo de la VM) y notas del primer despliegue de la Fase 3 (19/10/2026)
+# Resumen tomado en el momento a partir de las salidas reales
+
+== Actividad 8: estado previo (19/10/2026 ~10:33 UTC) ==
+find: /home/server/opsmatrix-lab/docker-compose.yml (EN USO), layer3-services/docker/docker-compose.yml (sin usar), /home/server/infra-lab/docker-compose.yml (otro proyecto)
+docker compose ls: opsmatrix-lab  restarting(1), running(1)  /home/server/opsmatrix-lab/docker-compose.yml
+opsmatrix-web   nginx:alpine    Up 3 weeks   0.0.0.0:80->80/tcp, 0.0.0.0:443->443/tcp
+opsmatrix-db    mariadb:10.11   Restarting (1)
+redes: opsmatrix-lab_frontend_net, opsmatrix-lab_backend_net + restos docker_frontend_net, docker_backend_net, docker_red_frontend, docker_red_backend
+volúmenes: opsmatrix-lab_mariadb_data (+ anónimos, db-primaria-datos, db-replica-datos de infra-lab)
+ss: 22 sshd, 80 docker-proxy, 443 docker-proxy (3306 no publicado)
+curl http://localhost/ -> curl: (56) Recv failure: Connection reset by peer
+mounts db: volume opsmatrix-lab_mariadb_data -> /var/lib/mysql
+git VM: 604c5b2 (main) — 3 commits por detrás de GitHub (e116e54)
+.env: NO HAY .env
+docker logs opsmatrix-db: [ERROR] Database is uninitialized and password option is not specified (bucle cada 60 s)
+docker logs opsmatrix-web: última petición 21/Sep/2026 19:22 (HEAD / 200, /no-existe 404) -> config por defecto de nginx (/usr/share/nginx/html)
+conf.d: default.conf (el de la imagen, sin montar el del repo)
+
+== Fase 3 despliegue real (19/10 13:03-13:14) ==
+- build fallo: pip sin DNS. docker0 sin IP (DOWN, sin ruta 172.17). systemctl restart docker -> 172.17.0.1/16, resuelve pypi. netplan solo enp2s0, networkd unmanaged. Restos: rules.v4 con reglas docker antiguas (br-e2efeb52c253, 10.0.x), redes docker_* sin contenedores -> Fase 5
+- app Permission denied /app/app.py: umask 077 en VM -> ficheros 600, USER nobody. Fix RUN chmod 644 (573f621)
+- nginx host not found upstream app (consecuencia)
+- ps: app Up 5000/tcp, db Up 3306/tcp, proxy 0.0.0.0:80,443. nginx -t ok. ss: 22,80,443
+- Mac: 301 (Server: nginx/1.28.3 -> server_tokens off en 80, commit siguiente); visitas 1,2 https; 404; sin CA exit 60; s_client TLSv1.3 TLS_AES_256_GCM_SHA384 CN=portal Verification OK peername ok, grupo X25519MLKEM768, rsa_pss_rsae_sha256; nc 3306/5000 refused
+- backup volumen: 131 bytes, volumen vacio

@@ -1,0 +1,19 @@
+# ¿Por qué 4 pings dan solo 2 alertas de la regla 1000001? (21/10/2026)
+# Prueba en el entorno de pruebas con Suricata 7.0.3 (en la VM es 8.0.3) y local.rules del repo
+
+$ suricata -S local.rules --engine-analysis   (tipo de cada regla)
+1000001 ip_only
+1000002 ip_only
+1000003 pkt
+
+# Captura hecha a mano: 4 echo request (Mac -> VM) y 4 echo reply (VM -> Mac) = 8 paquetes
+$ suricata -S local.rules -r ping.pcap
+i: pcap: read 1 file, 8 packets, 336 bytes
+$ wc -l fast.log
+2
+$ cat fast.log   (la fecha es 1970 porque la captura es sintética)
+01/01/1970-01:16:40.000000  [**] [1:1000001:1] [SEC-ALERT] Traza ICMP Detectada en enp2s0 [**] [Classification: (null)] [Priority: 3] {ICMP} 172.16.181.1:8 -> 172.16.181.132:0
+01/01/1970-01:16:40.500000  [**] [1:1000001:1] [SEC-ALERT] Traza ICMP Detectada en enp2s0 [**] [Classification: (null)] [Priority: 3] {ICMP} 172.16.181.132:0 -> 172.16.181.1:0
+
+-> ip_only: Suricata la evalúa una vez por flujo y sentido, no por paquete.
+   8 paquetes = 1 flujo ICMP = 2 alertas (ida y vuelta). Igual que en la VM (feedback-mf0488.txt).

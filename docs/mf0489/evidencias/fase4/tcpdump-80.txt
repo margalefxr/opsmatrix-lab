@@ -1,0 +1,22 @@
+# tcpdump del puerto 80 leído cuando ya había terminado (20/10/2026, UTC)
+# En fase4-vm.txt sale casi vacío porque se leyó antes de tiempo (ver Fase 4 §10)
+
+server@ubuntuserver:~/opsmatrix-lab$ echo "--- tcpdump 80 (ya terminado)"
+grep -c "" ~/f4/tcpdump-80.txt
+grep -aE "HEAD |GET |Host:|Location:|HTTP/1.1 301" ~/f4/tcpdump-80.txt | head -6
+echo "--- procesos de Suricata"
+pgrep -a suricata
+systemctl status suricata --no-pager | head -12
+echo "--- config de captura"
+sudo sed -n '655,700p' /etc/suricata/suricata.yaml | grep -vE "^\s*#|^\s*$"
+grep -nE "^\s*- (fast|eve-log):" -A2 /etc/suricata/suricata.yaml | head -12
+--- tcpdump 80 (ya terminado)
+[1]-  Exit 124                   sudo timeout 90 tcpdump -U -i enp2s0 -nn -s 0 -A 'tcp port 80' > ~/f4/tcpdump-80.txt 2>&1
+[2]+  Exit 124                   sudo timeout 90 tcpdump -U -i enp2s0 -nn -s 0 -A 'tcp port 443' > ~/f4/tcpdump-443.txt 2>&1
+53
+08:31:08.191339 IP 172.16.181.1.64842 > 172.16.181.132.80: Flags [P.], seq 1:104, ack 1, win 2059, options [nop,nop,TS val 2316330298 ecr 2547988928], length 103: HTTP: HEAD /mf0489-prueba-http HTTP/1.1
+..e:..9.HEAD /mf0489-prueba-http HTTP/1.1
+Host: portal.opsmatrix.test
+08:31:08.192249 IP 172.16.181.132.80 > 172.16.181.1.64842: Flags [P.], seq 1:217, ack 104, win 128, options [nop,nop,TS val 2547988929 ecr 2316330298], length 216: HTTP: HTTP/1.1 301 Moved Permanently
+..9...e:HTTP/1.1 301 Moved Permanently
+Location: https://portal.opsmatrix.test/mf0489-prueba-http

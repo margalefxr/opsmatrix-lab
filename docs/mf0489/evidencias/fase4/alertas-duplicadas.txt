@@ -26,6 +26,7 @@ suricata --af-packet -i lo  -> "lo: creating 2 threads" sale DOS veces
 suricata --af-packet        -> sale UNA vez
 
 ## Después del override (layer1-telemetry/suricata/override.conf)
+Error: af-packet: fanout not supported by kernel: Kernel too old or cluster-id 99 already in use.   <- sale una vez; con una sola captura no afecta
 Info: runmodes: enp2s0: creating 1 thread
 Notice: threads: Threads created -> W: 1 FM: 1 FR: 1   Engine started.
 $ sudo grep ":50093 -> " /var/log/suricata/fast.log | wc -l

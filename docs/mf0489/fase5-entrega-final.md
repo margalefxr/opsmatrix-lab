@@ -90,10 +90,10 @@ Pasos completos de recuperación y vuelta atrás en la [guía de despliegue](gui
 | Comprobación tras el reinicio | Resultado |
 |---|---|
 | Contenedores | Los 3 `Up` (`restart: unless-stopped`) |
-| `docker0` con IP | ✅ `172.17.0.1/16` (el fallo de la Fase 3 no se repitió) |
-| Suricata | `active`, con el override (`Drop-In: …/suricata.service.d/override.conf` en `systemctl status`) |
-| SSH | Entré con clave, sin contraseña |
-| Datos | 10 visitas, la primera del 19/10 |
+| `docker0` con IP | ✅ `172.17.0.1/16` (el fallo de la Fase 3 no se repitió). [`check-vm-final.txt`](evidencias/fase5/check-vm-final.txt) §4 |
+| Suricata | `active` desde el reinicio (20/10 09:40:31), con el override (`Drop-In: …/suricata.service.d` → `override.conf` en `systemctl status`). Ver [`feedback-mf0488.txt`](evidencias/fase4/feedback-mf0488.txt) §1 |
+| SSH | Entré con clave, sin contraseña ([`fase5-ssh-firewall-backup.txt`](evidencias/fase5/fase5-ssh-firewall-backup.txt), final) |
+| Datos | 10 visitas, la primera del 19/10 ([`check-vm-final.txt`](evidencias/fase5/check-vm-final.txt) §11) |
 | Reglas viejas del firewall | 0 |
 
 Para montarlo en otra máquina: [guía de despliegue](guia-despliegue.md). No necesita ninguna clave mía, cada uno genera la suya.
@@ -113,7 +113,7 @@ Para montarlo en otra máquina: [guía de despliegue](guia-despliegue.md). No ne
 
 ## 7. Pruebas finales
 
-Salidas completas: [`check-vm-final.txt`](evidencias/fase5/check-vm-final.txt) y [`check-mac-final.txt`](evidencias/fase5/check-mac-final.txt).
+Salidas completas: [`check-vm-final.txt`](evidencias/fase5/check-vm-final.txt) y [`check-mac-final.txt`](evidencias/fase5/check-mac-final.txt) (20/10). Repetido el 21/10 con la versión publicada en GitHub (`71887bf`, clon limpio en el Mac): [`check-vm-github.txt`](evidencias/fase5/check-vm-github.txt) y [`check-mac-github.txt`](evidencias/fase5/check-mac-github.txt). Mismo resultado.
 
 | Prueba | Resultado |
 |---|---|
@@ -138,8 +138,8 @@ Cada cambio lo probé antes y después de llevarlo a la VM.
 | Pruebas negativas | Sin CA, nombre equivocado, TLS 1.1, puertos 3306/5000, proxy → BBDD, BBDD → internet, SSH con contraseña. Todas tienen que **fallar** | Fases 3, 4 y 5 |
 | Persistencia y recuperación | `down` / `up`, reinicio de la VM y copia restaurada en una base aparte | Fases 3 y 5 |
 | Búsqueda de secretos | `git ls-files` y `git log --all` buscando `.key`, `.env`, `.pem` | Fase 5 |
-| Coherencia docs = código | Cada directiva que nombran los docs, buscada con `grep` en el código | Fase 5 |
-| Validación con herramientas | `shellcheck` (scripts), `pyflakes` (app), `docker compose config`, `nginx -t`, `suricata -T`, `sshd -t` y `openssl verify` con la CRL. Sin errores | [`validacion-herramientas.txt`](evidencias/fase5/validacion-herramientas.txt) |
+| Coherencia docs = código | Cada directiva que nombran los docs, buscada en el código, más AKI/SKI y hash de la clave pública: 44 OK, 0 fallos | [`coherencia-docs-codigo.txt`](evidencias/fase5/coherencia-docs-codigo.txt) |
+| Validación con herramientas | `shellcheck` (scripts), `pyflakes` (app), `docker compose config`, `nginx -t`, `suricata -T`, `sshd -T` y `openssl verify` con la CRL. Sin errores | [`validacion-herramientas.txt`](evidencias/fase5/validacion-herramientas.txt) |
 | Revocación | Certificado de prueba revocado → `error 23`. El real sigue `OK` | [Extra](extras.md) |
 | Automatizadas (CI) | `shellcheck`, `docker compose config`, `pip-audit` y `detect-secrets` en cada push | [`checks.yml`](../../.github/workflows/checks.yml) |
 
@@ -158,10 +158,10 @@ Cada cambio lo probé antes y después de llevarlo a la VM.
 | Mejora | Motivo |
 |---|---|
 | Firewall de host propio (nftables: entrada solo 22/80/443) | Hoy depende de lo que publica Docker |
-| Aplicar las 68 actualizaciones de Ubuntu (4 de seguridad) | ISO 27001 A.8.8, gestión de vulnerabilidades |
+| Aplicar las 68 actualizaciones de Ubuntu (4 de seguridad, aviso al entrar por SSH el 20/10) | ISO 27001 A.8.8, gestión de vulnerabilidades |
 | Renovar `servidor.crt` antes del 19/10/2027 | Caduca en un año |
 | Cabecera HSTS en Nginx | Que el navegador no vuelva a intentar HTTP. No la puse porque con una CA de laboratorio puede dejar el dominio bloqueado en el navegador si algo falla |
-| Revisar el proyecto `infra-lab` (WordPress) antes de exportar la OVA | No es de OpsMatrix, pero estará en la VM del CTF |
+| Revisar el proyecto `infra-lab` (WordPress, ver [`fase5-ssh-firewall-backup.txt`](evidencias/fase5/fase5-ssh-firewall-backup.txt)) antes de exportar la OVA | No es de OpsMatrix, pero estará en la VM del CTF |
 
 ## Normativa
 

@@ -27,3 +27,12 @@ This is Suricata version 7.0.3 RELEASE
 A (flags:S) solo salta con el SYN normal (50001): con el SYN del Mac (50002) no.
 B (flags:S,CE) salta con los dos SYN y no con el SYN-ACK ni con el ACK. Es la que se usa (rev:2).
 C y D también funcionan, pero B dice justo lo que quiero: SYN, ignorando solo los bits ECN.
+
+## flow:to_server (repetido el 21/10/2026 con la misma captura)
+--- sin flow:to_server
+W: detect: rule 1000003: SYN-only to port(s) 443:443 w/o direction specified, disabling for toclient direction
+alertas: 2
+--- con flow:to_server (la regla final)
+(sin aviso)
+alertas: 2
+-> mismas alertas (los dos SYN) y sin el aviso. En la VM, suricata -T tampoco da avisos (fase4-vm.txt).
