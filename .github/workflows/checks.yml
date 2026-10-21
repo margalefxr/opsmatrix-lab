@@ -26,7 +26,8 @@ jobs:
       - name: Dependencias sin CVE conocidos (pip-audit)
         run: pipx run pip-audit -r layer3-services/app/requirements.txt
 
+      # Solo los archivos que están en git: el .env del paso "Compose válido" no se sube
       - name: Sin secretos en el repo (detect-secrets)
         run: |
-          pipx run detect-secrets scan --all-files > secretos.json
-          python3 -c "import json,sys; r=json.load(open('secretos.json'))['results']; print(r or 'sin secretos'); sys.exit(1 if r else 0)"
+          pipx run detect-secrets scan > /tmp/secretos.json
+          python3 -c "import json,sys; r=json.load(open('/tmp/secretos.json'))['results']; print(r or 'sin secretos'); sys.exit(1 if r else 0)"
