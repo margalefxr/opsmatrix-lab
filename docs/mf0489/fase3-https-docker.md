@@ -229,6 +229,7 @@ Después de reiniciar, la siguiente visita sumó sobre las anteriores en vez de 
 
 | Comprobación | Resultado |
 |---|---|
+| Navegación | La app tiene una sola página (`/`): `200`. Cualquier otra ruta da `404`, sin `502` |
 | Sin `502 Bad Gateway` | Nginx encuentra la app por su nombre `app` |
 | La app escribe en MariaDB | Cada visita es una fila nueva |
 | Los datos sobreviven a `down` / `up` | Se guardan en el volumen `mariadb_data` |
@@ -253,6 +254,8 @@ Después de reiniciar, la siguiente visita sumó sobre las anteriores en vez de 
 | Nginx: `host not found in upstream "app"` | Salía mientras la app estaba caída | Si la app no arranca, Docker no le da nombre | Se arregló solo al arreglar la app |
 | El puerto 80 enseñaba `Server: nginx/1.28.3` | `curl -I` | `server_tokens off` solo estaba en el bloque del 443 | Lo puse también en el 80 |
 | Había un `ca.key` en la VM | La revisión final avisó. Comparé el hash del archivo con el de la CA del Mac y eran distintos | Era la CA antigua del MF0488, en `layer2-perimeter/pki/`, junto con un `server.key` viejo en `nginx/ssl/`. Nunca llegaron a git | Borrados con `shred -u`. Ahora `find` no encuentra ningún `ca.key` y la única clave es `/etc/ssl/private/servidor.key` |
+
+Salidas reales de estas incidencias: [`incidencias.txt`](evidencias/fase3/incidencias.txt).
 
 **Contraseñas en el historial de git:** el compose que borré tenía contraseñas de laboratorio y siguen en commits antiguos. No sirven para nada: la BBDD se creó por primera vez con las nuevas del `.env`. Poner algo en `.gitignore` después no lo quita del historial.
 

@@ -209,6 +209,8 @@ Una alerta solo dice "ha pasado algo que coincide con una regla". Para que sea i
 | `systemctl cat suricata` decía `Permission denied` con el override | Otra vez el `umask 077`: `sudo install -D` creó la carpeta `suricata.service.d` con 700 | systemd (root) la lee bien. Para verla: `sudo systemctl cat suricata` |
 | Nginx no cogía el `default.conf` nuevo tras `git merge` | El archivo está montado suelto en el contenedor y git lo sustituye por uno nuevo | `docker compose restart reverse-proxy` |
 
+Salidas reales: [`alertas-duplicadas.txt`](evidencias/fase4/alertas-duplicadas.txt) y la prueba de la regla con la captura hecha a mano en [`prueba-regla-pcap.txt`](evidencias/extras/prueba-regla-pcap.txt).
+
 ## 11. Conclusión
 
 **¿Cómo vigilo una web si no puedo leer sus peticiones HTTPS desde la red?** Con dos fuentes que se complementan:
