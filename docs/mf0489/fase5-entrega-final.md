@@ -89,7 +89,7 @@ Pasos completos de recuperación y vuelta atrás en la [guía de despliegue](gui
 |---|---|
 | Contenedores | Los 3 `Up` (`restart: unless-stopped`) |
 | `docker0` con IP | ✅ `172.17.0.1/16` (el fallo de la Fase 3 no se repitió) |
-| Suricata | `active` |
+| Suricata | `active`, con el override (`Drop-In: …/suricata.service.d/override.conf` en `systemctl status`) |
 | SSH | Entré con clave, sin contraseña |
 | Datos | 10 visitas, la primera del 19/10 |
 | Reglas viejas del firewall | 0 |

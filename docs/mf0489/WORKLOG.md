@@ -1,6 +1,6 @@
 # WORKLOG — ExP 89 (MF0489)
 
-Rama `mf0489-https`. Trabajo hecho el 19 y 20/10/2026 entre el Mac (CA y cliente) y la VM Ubuntu (servidor).
+Rama `mf0489-https`. Trabajo hecho del 19 al 21/10/2026 entre el Mac (CA y cliente) y la VM Ubuntu (servidor).
 
 | # | Paso | Resultado |
 |---|---|---|
@@ -20,6 +20,7 @@ Rama `mf0489-https`. Trabajo hecho el 19 y 20/10/2026 entre el Mac (CA y cliente
 | 14 | Extra: revocación con CRL e inventario criptográfico | Revocado → `error 23`, real → `OK`. SSH aún sin post-cuántica. [extras.md](extras.md) |
 | 15 | Revisión final con herramientas: `shellcheck`, `pyflakes`, `docker compose config`, `nginx -t`, `suricata -T`, `sshd -t`, OpenSSL y enlaces | Sin errores |
 | 16 | CI con GitHub Actions y justificación HTTP/HTTPS en la Fase 1 | Las comprobaciones de la Fase 5 se repiten solas en cada push |
+| 17 | Evidencias pedidas en el feedback del MF0488: ping, SID 1000001, `suricata -T`, `HOME_NET` y línea base de actividad | Todo real. [Fase 4](fase4-auditoria-tls-monitorizacion.md#evidencias-pedidas-en-el-feedback-del-mf0488) |
 
 ## Dificultades
 

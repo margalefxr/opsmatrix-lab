@@ -220,6 +220,58 @@ Una alerta solo dice "ha pasado algo que coincide con una regla". Para que sea i
 
 Se unen por IP, hora y puerto de origen. El IDS no necesita descifrar nada y el contenido solo se ve en el punto donde ya es legítimo verlo.
 
+## Evidencias pedidas en el feedback del MF0488
+
+En la corrección del MF0488 me pidieron tres evidencias para esta entrega. Las saqué con [`feedback-mf0488-vm.sh`](../../scripts/feedback-mf0488-vm.sh) después de hacer `ping -c 4` y un SSH con contraseña desde el Mac. Salida completa: [`feedback-mf0488.txt`](evidencias/fase4/feedback-mf0488.txt).
+
+**1. Ping desde otra máquina** (Mac `172.16.181.1` → VM):
+
+```
+$ ping -c 4 172.16.181.132
+4 packets transmitted, 4 packets received, 0.0% packet loss
+```
+
+**2. Alerta SID 1000001 en `fast.log` y en `eve.json`:**
+
+```
+# fast.log
+10/21/2026-07:58:46.490828 [1:1000001:1] [SEC-ALERT] Traza ICMP Detectada en enp2s0 {ICMP} 172.16.181.1:8 -> 172.16.181.132:0
+10/21/2026-07:58:46.490907 [1:1000001:1] [SEC-ALERT] Traza ICMP Detectada en enp2s0 {ICMP} 172.16.181.132:0 -> 172.16.181.1:0
+# eve.json
+{"timestamp":"2026-10-21T07:58:46.490828+0000","src_ip":"172.16.181.1","dest_ip":"172.16.181.132","proto":"ICMP","icmp_type":8,"sid":1000001}
+{"timestamp":"2026-10-21T07:58:46.490907+0000","src_ip":"172.16.181.132","dest_ip":"172.16.181.1","proto":"ICMP","icmp_type":0,"sid":1000001}
+```
+
+| Qué se ve | Explicación |
+|---|---|
+| `icmp_type 8` del Mac a la VM y `icmp_type 0` de vuelta | Petición (echo request) y respuesta (echo reply) |
+| 4 pings pero 2 alertas | La regla solo mira IPs y protocolo (Suricata la marca como *IP-only*), así que se evalúa una vez por flujo y sentido, no por paquete |
+| Otras alertas `IPv6-ICMP` tipo 133 desde `fe80::…` | Son mensajes de la propia VM buscando router en IPv6. La regla es `icmp any any -> any any` y también los coge. Es ruido esperado |
+
+**3. `suricata -T` y `HOME_NET`:**
+
+```
+$ sudo suricata -T -c /etc/suricata/suricata.yaml
+i: suricata: This is Suricata version 8.0.3 RELEASE running in SYSTEM mode
+i: suricata: Configuration provided was successfully loaded. Exiting.
+$ grep -n "HOME_NET:" /etc/suricata/suricata.yaml
+18:    HOME_NET: "[192.168.0.0/16,10.0.0.0/8,172.16.0.0/12]"
+```
+
+`HOME_NET` incluye `172.16.0.0/12`, que contiene la VM (`172.16.181.132`).
+
+**Línea base de actividad (eventos esperados).** En el MF0488 la línea base era de salud del sistema y no de actividad. Esto es lo que se espera ver ahora en los registros cuando todo va bien:
+
+| Acción | Registro | Evento real |
+|---|---|---|
+| Entrar por SSH con clave | `journalctl -u ssh` | `Accepted publickey for server from 172.16.181.1 … ED25519` |
+| Intentar SSH con contraseña | `journalctl -u ssh` | `Connection closed by authenticating user server 172.16.181.1 … [preauth]` (rechazado: el servidor ya no ofrece contraseña) |
+| Ping | `fast.log` / `eve.json` | SID 1000001 |
+| Visitar la web | Log de Nginx | `GET / … status=200 tls=TLSv1.3` |
+| Ruta que no existe | Log de Nginx | `GET /mf0489-correlacion-02 … status=404` |
+| Conexión HTTPS | `fast.log` / `eve.json` | SID 1000003 |
+| HTTP | `fast.log` / `eve.json` | SID 1000002 + evento `http` con la ruta |
+
 ## Normativa
 
 | Referencia | Relación |
