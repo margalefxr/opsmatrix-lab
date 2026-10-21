@@ -76,7 +76,7 @@ Temas que hoy pesan en el sector y que he aplicado al laboratorio. El criterio p
 | Revocación (CRL) | Revoqué un certificado de prueba como "clave comprometida", publiqué la CRL y el cliente lo rechaza (`error 23`). Procedimiento si se filtra una clave | Let's Encrypt apagó OCSP en 2025: la revocación vuelve a ir por CRL. Casi nadie la prueba en una PKI de laboratorio |
 | Inventario criptográfico | Tabla con cada clave, algoritmo, caducidad y si aguanta la post-cuántica. Hallazgo: TLS ya es post-cuántico, SSH todavía no | Es el primer paso de cualquier migración post-cuántica |
 
-Evidencias: [`supply-chain.txt`](docs/mf0489/evidencias/supply-chain.txt), [`sbom-app.cdx.json`](docs/mf0489/evidencias/sbom-app.cdx.json) y [`pki-revocacion.txt`](docs/mf0489/evidencias/pki-revocacion.txt).
+Evidencias: [`supply-chain.txt`](docs/mf0489/evidencias/extras/supply-chain.txt), [`sbom-app.cdx.json`](docs/mf0489/evidencias/extras/sbom-app.cdx.json) y [`pki-revocacion.txt`](docs/mf0489/evidencias/extras/pki-revocacion.txt).
 
 ## Desplegar
 
@@ -122,6 +122,16 @@ opsmatrix-lab/
 ├── scripts/                      ← deploy, backup-db, check-vm, check-mac, fase4-*, pki-revocacion y sync_ops (MF0488)
 └── docs/mf0489/                  ← fases, guía, WORKLOG y evidencias
 ```
+
+Mantengo la estructura por capas del MF0488. Equivalencia con la estructura orientativa del enunciado:
+
+| Enunciado | Aquí |
+|---|---|
+| `nginx/default.conf` | `layer2-perimeter/nginx/default.conf` |
+| `pki/` | `layer2-perimeter/pki/` |
+| `suricata/local.rules` | `layer1-telemetry/suricata/rules/local.rules` |
+| `docs/mf0489/evidencias/fase2/` | Las salidas de la Fase 2 van dentro de [fase2-pki.md](docs/mf0489/fase2-pki.md) |
+| `docs/mf0489/evidencias/fase3/`, `fase4/`, `fase5/` | Igual, más `extras/` |
 
 ## Lo que no está en el repo
 

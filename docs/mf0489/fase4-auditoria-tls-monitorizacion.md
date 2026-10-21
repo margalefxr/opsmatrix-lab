@@ -21,7 +21,7 @@ Compruebo que el HTTPS montado en la Fase 3 está bien configurado y que, aunque
 | Servidor | Ubuntu `ubuntuserver` | 172.16.181.132 | Nginx + app + MariaDB en Docker |
 | Interfaz | `enp2s0` | — | Por donde entra el cliente. Es la que escucha Suricata (`- interface: enp2s0`) |
 
-Scripts usados: [`scripts/fase4-mac.sh`](../../scripts/fase4-mac.sh) y [`scripts/fase4-vm.sh`](../../scripts/fase4-vm.sh). Salidas en [`evidencias/fase4-mac.txt`](evidencias/fase4-mac.txt), [`evidencias/fase4-vm.txt`](evidencias/fase4-vm.txt) (aún con las alertas duplicadas) y [`evidencias/fase4-correlacion-02.txt`](evidencias/fase4-correlacion-02.txt) (prueba final ya arreglada).
+Scripts usados: [`scripts/fase4-mac.sh`](../../scripts/fase4-mac.sh) y [`scripts/fase4-vm.sh`](../../scripts/fase4-vm.sh). Salidas en [`evidencias/fase4-mac.txt`](evidencias/fase4/fase4-mac.txt), [`evidencias/fase4-vm.txt`](evidencias/fase4/fase4-vm.txt) (aún con las alertas duplicadas) y [`evidencias/fase4-correlacion-02.txt`](evidencias/fase4/fase4-correlacion-02.txt) (prueba final ya arreglada).
 
 ## 2. Conexión HTTPS real
 
