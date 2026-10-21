@@ -1,5 +1,9 @@
-# Carpeta del Mac desde la que se lanzó check-mac-github.txt (21/10/2026). Salida real
+# Carpeta del Mac desde la que se lanzan check-mac-github.txt y check-mac-final2.txt (21/10/2026). Salida real
 
 $ git -C ~/Downloads/opsmatrix-lab-github remote -v
 origin	https://github.com/margalefxr/opsmatrix-lab (fetch)
 origin	https://github.com/margalefxr/opsmatrix-lab (push)
+
+$ git -C ~/Downloads/opsmatrix-lab-github reflog | tail -1
+71887bf HEAD@{1}: clone: from https://github.com/margalefxr/opsmatrix-lab
+-> la carpeta es un clon de GitHub hecho en 71887bf. Después se actualizó con git pull a 25302cc (check-mac-final2.txt)
