@@ -20,6 +20,27 @@ bash scripts/validacion-atacante.sh 172.16.181.132 portal.opsmatrix.test
 | 6 | Conectar directo a 3306 y 5000 | Segmentación | No alcanzables: la BBDD y la app no salen al exterior | — (ni llegan al puerto) |
 | 7 | Mirar la cabecera `Server` | Fuga de información | `Server: nginx`, sin versión (`server_tokens off`) | 1000002 |
 
+## Resultado real (22/10/2026)
+
+Lo lancé desde Kali, en `172.16.181.128` (otra máquina de la red, no el Mac). Salió todo como esperaba: [`validacion-atacante.txt`](evidencias/extras/validacion-atacante.txt).
+
+| Paso | Resultado |
+|---|---|
+| 2 escaneo | `22/80/443 open`, `3306/5000 closed` |
+| 3 HTTPS sin CA | `codigo=000 verificacion_tls=20`, `exit 60` |
+| 4 `curl -k` | `codigo=200` (ve la web, pero no es mi servidor) |
+| 5 TLS 1.0 y 1.1 | `alert number 70` en los dos: el servidor corta |
+| 6 BBDD y app | `3306 no alcanzable`, `5000 no alcanzable` |
+| 7 banner | `Server: nginx`, sin versión |
+
+Y lo cacé en Suricata ([`validacion-suricata.txt`](evidencias/extras/validacion-suricata.txt)): las alertas con la IP de Kali (`172.16.181.128`) a las 09:43:06-08 coinciden con el ping (SID 1000001), el escaneo al 80 (1000002) y las conexiones al 443 (1000003). La IP del atacante en el IDS es la misma desde la que lancé el script (paso 0).
+
+```
+09:43:06.929372  [1:1000001:1] ... {ICMP} 172.16.181.128:8 -> 172.16.181.132:0
+09:43:08.520581  [1:1000002:1] ... {TCP} 172.16.181.128:35050 -> 172.16.181.132:80
+09:43:08.520581  [1:1000003:2] ... {TCP} 172.16.181.128:35050 -> 172.16.181.132:443
+```
+
 ## Lo importante de esta prueba
 
 - **La confianza no se puede falsificar.** Sin mi `ca.crt`, el atacante no puede validar el certificado (prueba 3). Y aunque use `-k` para ignorarlo (prueba 4), eso solo afecta a su propio cliente: no le da `servidor.key`, así que no puede hacerse pasar por mi servidor ante nadie que sí verifique. La clave privada nunca sale de la VM (Fase 2).

@@ -1,0 +1,24 @@
+# Suricata en la VM durante la validación desde Kali (22/10/2026 09:43 UTC). Salida real
+# Las alertas con 172.16.181.128 (Kali) se corresponden con los pasos del script.
+# Las IPv6-ICMP (fe80::, ff02::) son ruido de descubrimiento de red, ya documentado en la Fase 4.
+
+10/22/2026-09:12:47.744818  [**] [1:1000001:1] [SEC-ALERT] Traza ICMP Detectada en enp2s0 [**] [Classification: (null)] [Priority: 3] {IPv6-ICMP} fe80:0000:0000:0000:020c:29ff:fe54:2392:143 -> ff02:0000:0000:0000:0000:0000:0000:0016:0
+10/22/2026-09:13:48.797092  [**] [1:1000001:1] [SEC-ALERT] Traza ICMP Detectada en enp2s0 [**] [Classification: (null)] [Priority: 3] {IPv6-ICMP} fe80:0000:0000:0000:020c:29ff:fe54:2392:133 -> ff02:0000:0000:0000:0000:0000:0000:0002:0
+10/22/2026-09:14:55.073959  [**] [1:1000001:1] [SEC-ALERT] Traza ICMP Detectada en enp2s0 [**] [Classification: (null)] [Priority: 3] {IPv6-ICMP} fe80:0000:0000:0000:020c:29ff:fe54:2392:133 -> ff02:0000:0000:0000:0000:0000:0000:0002:0
+10/22/2026-09:17:09.684628  [**] [1:1000001:1] [SEC-ALERT] Traza ICMP Detectada en enp2s0 [**] [Classification: (null)] [Priority: 3] {IPv6-ICMP} fe80:0000:0000:0000:020c:29ff:fe54:2392:133 -> ff02:0000:0000:0000:0000:0000:0000:0002:0
+10/22/2026-09:21:45.309008  [**] [1:1000001:1] [SEC-ALERT] Traza ICMP Detectada en enp2s0 [**] [Classification: (null)] [Priority: 3] {IPv6-ICMP} fe80:0000:0000:0000:020c:29ff:fe54:2392:133 -> ff02:0000:0000:0000:0000:0000:0000:0002:0
+10/22/2026-09:31:21.981880  [**] [1:1000001:1] [SEC-ALERT] Traza ICMP Detectada en enp2s0 [**] [Classification: (null)] [Priority: 3] {IPv6-ICMP} fe80:0000:0000:0000:020c:29ff:fe54:2392:133 -> ff02:0000:0000:0000:0000:0000:0000:0002:0
+10/22/2026-09:42:07.076958  [**] [1:1000001:1] [SEC-ALERT] Traza ICMP Detectada en enp2s0 [**] [Classification: (null)] [Priority: 3] {IPv6-ICMP} fe80:0000:0000:0000:d2f1:2e6c:c1a6:7209:143 -> ff02:0000:0000:0000:0000:0000:0000:0016:0
+10/22/2026-09:42:07.556980  [**] [1:1000001:1] [SEC-ALERT] Traza ICMP Detectada en enp2s0 [**] [Classification: (null)] [Priority: 3] {IPv6-ICMP} 0000:0000:0000:0000:0000:0000:0000:0000:143 -> ff02:0000:0000:0000:0000:0000:0000:0016:0
+10/22/2026-09:42:08.396603  [**] [1:1000001:1] [SEC-ALERT] Traza ICMP Detectada en enp2s0 [**] [Classification: (null)] [Priority: 3] {IPv6-ICMP} 0000:0000:0000:0000:0000:0000:0000:0000:135 -> ff02:0000:0000:0000:0000:0001:ffa6:7209:0
+10/22/2026-09:42:09.528484  [**] [1:1000001:1] [SEC-ALERT] Traza ICMP Detectada en enp2s0 [**] [Classification: (null)] [Priority: 3] {IPv6-ICMP} fe80:0000:0000:0000:d2f1:2e6c:c1a6:7209:133 -> ff02:0000:0000:0000:0000:0000:0000:0002:0
+10/22/2026-09:43:06.929372  [**] [1:1000001:1] [SEC-ALERT] Traza ICMP Detectada en enp2s0 [**] [Classification: (null)] [Priority: 3] {ICMP} 172.16.181.128:8 -> 172.16.181.132:0
+10/22/2026-09:43:06.929493  [**] [1:1000001:1] [SEC-ALERT] Traza ICMP Detectada en enp2s0 [**] [Classification: (null)] [Priority: 3] {ICMP} 172.16.181.132:0 -> 172.16.181.128:0
+10/22/2026-09:43:07.346688  [**] [1:1000001:1] [SEC-ALERT] Traza ICMP Detectada en enp2s0 [**] [Classification: (null)] [Priority: 3] {IPv6-ICMP} fe80:0000:0000:0000:d2f1:2e6c:c1a6:7209:133 -> ff02:0000:0000:0000:0000:0000:0000:0002:0
+10/22/2026-09:43:08.520581  [**] [1:1000003:2] MF0489 - Conexion HTTPS observada [**] [Classification: (null)] [Priority: 3] {TCP} 172.16.181.128:35050 -> 172.16.181.132:443
+10/22/2026-09:43:08.520581  [**] [1:1000002:1] [SEC-ALERT] Acceso Web HTTP a Nginx Detectado [**] [Classification: (null)] [Priority: 3] {TCP} 172.16.181.128:35050 -> 172.16.181.132:80
+10/22/2026-09:43:08.587651  [**] [1:1000003:2] MF0489 - Conexion HTTPS observada [**] [Classification: (null)] [Priority: 3] {TCP} 172.16.181.128:49620 -> 172.16.181.132:443
+10/22/2026-09:43:08.601331  [**] [1:1000003:2] MF0489 - Conexion HTTPS observada [**] [Classification: (null)] [Priority: 3] {TCP} 172.16.181.128:49636 -> 172.16.181.132:443
+10/22/2026-09:43:08.633660  [**] [1:1000003:2] MF0489 - Conexion HTTPS observada [**] [Classification: (null)] [Priority: 3] {TCP} 172.16.181.128:49640 -> 172.16.181.132:443
+10/22/2026-09:43:08.646523  [**] [1:1000003:2] MF0489 - Conexion HTTPS observada [**] [Classification: (null)] [Priority: 3] {TCP} 172.16.181.128:49644 -> 172.16.181.132:443
+10/22/2026-09:43:08.656271  [**] [1:1000002:1] [SEC-ALERT] Acceso Web HTTP a Nginx Detectado [**] [Classification: (null)] [Priority: 3] {TCP} 172.16.181.128:48902 -> 172.16.181.132:80

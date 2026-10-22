@@ -1,0 +1,46 @@
+# Validación desde Kali (172.16.181.128, otra máquina de la red), 22/10/2026 09:43 UTC. Salida real
+# Lanzado con: bash scripts/validacion-atacante.sh 172.16.181.132 portal.opsmatrix.test
+
+===== 0. DESDE DÓNDE ATACO =====
+2026-10-22T09:43:06Z
+mi IP: 172.16.181.128/24
+objetivo: 172.16.181.132 (portal.opsmatrix.test)
+
+===== 1. ¿ESTÁ VIVO? (ping -> debe disparar la regla 1000001) =====
+64 bytes from 172.16.181.132: icmp_seq=1 ttl=64 time=0.888 ms
+64 bytes from 172.16.181.132: icmp_seq=2 ttl=64 time=0.346 ms
+2 packets transmitted, 2 received, 0% packet loss, time 1003ms
+
+===== 2. ESCANEO DE PUERTOS (solo deben contestar 22/80/443) =====
+Nmap scan report for 172.16.181.132
+22/tcp   open   ssh
+80/tcp   open   http
+443/tcp  open   https
+3306/tcp closed mysql
+5000/tcp closed upnp
+
+===== 3. HTTPS SIN LA CA (un extraño NO debe confiar en el certificado) =====
+codigo=000 verificacion_tls=20
+exit 60  -> rechazado por no conocer la CA (BIEN). exit 60 = certificado no confiable
+
+===== 4. IGNORAR LA CONFIANZA A LA FUERZA (curl -k): se ve el certificado pero sigue sin ser mío =====
+con -k: codigo=200
+-> -k solo demuestra que un atacante puede saltarse la verificación en SU cliente;
+   no le da la clave del servidor ni le deja suplantarlo ante quien sí verifica.
+
+===== 5. FORZAR TLS OBSOLETO (1.0 y 1.1 -> el servidor debe cortar) =====
+-- tls1
+202D97B2FFFF0000:error:0A00042E:SSL routines:ssl3_read_bytes:tlsv1 alert protocol version:../ssl/record/rec_layer_s3.c:918:SSL alert number 70
+-- tls1_1
+20CD52BCFFFF0000:error:0A00042E:SSL routines:ssl3_read_bytes:tlsv1 alert protocol version:../ssl/record/rec_layer_s3.c:918:SSL alert number 70
+
+===== 6. ATACAR LA BBDD Y LA APP DIRECTAMENTE (3306 y 5000 -> no deben estar) =====
+3306 no alcanzable (BIEN)
+5000 no alcanzable (BIEN)
+
+===== 7. BANNER DE NGINX (no debe decir la versión) =====
+Server: nginx
+
+===== FIN =====
+Ahora, en la VM, correlaciona lo de arriba con Suricata (validacion-ofensiva.md):
+  sudo grep -E '1000001|1000002|1000003' /var/log/suricata/fast.log | tail -20
