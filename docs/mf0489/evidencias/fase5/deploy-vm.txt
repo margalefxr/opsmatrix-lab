@@ -1,6 +1,6 @@
 # deploy.sh en la VM (21/10/2026 11:26 UTC, commit c947846). Salida real, sin recortar
 # Camino "ya hay .env": no toca el .env, valida el compose, reconstruye la app y la BBDD sigue igual (Running, no se recrea).
-# El camino que crea el .env está probado en deploy-env-local.txt. Los 'Authentication failed' son de sudo (contraseña mal tecleada).
+# El camino que crea el .env está probado en replica-desde-cero.txt. Los "Authentication failed" son de sudo (contraseña mal tecleada).
 
 server@ubuntuserver:~/opsmatrix-lab$ cd ~/opsmatrix-lab && git pull && git log --oneline -1
 bash scripts/deploy.sh 2>&1 | tee ~/deploy.txt

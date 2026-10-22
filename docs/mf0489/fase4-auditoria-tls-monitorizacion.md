@@ -21,7 +21,7 @@ Compruebo que el HTTPS montado en la Fase 3 está bien configurado y que, aunque
 | Servidor | Ubuntu `ubuntuserver` | 172.16.181.132 | Nginx + app + MariaDB en Docker |
 | Interfaz | `enp2s0` | — | Por donde entra el cliente. Es la que escucha Suricata (`- interface: enp2s0`) |
 
-Scripts usados: [`scripts/fase4-mac.sh`](../../scripts/fase4-mac.sh) y [`scripts/fase4-vm.sh`](../../scripts/fase4-vm.sh). Salidas en [`fase4-intento1-vm.txt`](evidencias/fase4/fase4-intento1-vm.txt) (primer intento, con los fallos de §10), [`fase4-mac.txt`](evidencias/fase4/fase4-mac.txt), [`fase4-vm.txt`](evidencias/fase4/fase4-vm.txt) (aún con las alertas duplicadas), [`tcpdump-80.txt`](evidencias/fase4/tcpdump-80.txt), [`suricata-config.txt`](evidencias/fase4/suricata-config.txt) y [`fase4-correlacion-02.txt`](evidencias/fase4/fase4-correlacion-02.txt) (prueba final ya arreglada).
+Scripts usados: [`scripts/fase4-mac.sh`](../../scripts/fase4-mac.sh) y [`scripts/fase4-vm.sh`](../../scripts/fase4-vm.sh). Salidas en [`evidencias/fase4/`](evidencias/fase4/): [`fase4-mac.txt`](evidencias/fase4/fase4-mac.txt), [`fase4-vm.txt`](evidencias/fase4/fase4-vm.txt) y la prueba final [`fase4-correlacion-02.txt`](evidencias/fase4/fase4-correlacion-02.txt).
 
 ## 2. Conexión HTTPS real
 
@@ -210,7 +210,7 @@ Una alerta solo dice "ha pasado algo que coincide con una regla". Para que sea i
 | `systemctl cat suricata` decía `Permission denied` con el override | Otra vez el `umask 077`: `sudo install -D` creó la carpeta `suricata.service.d` con 700 | systemd (root) la lee bien. Para verla: `sudo systemctl cat suricata` |
 | Después de cada `git merge` Nginx puede seguir con el `default.conf` viejo | El archivo está montado suelto y git no lo edita: escribe uno nuevo (otro inodo). El montaje sigue en el viejo. Lo reproduje en local ([`montaje-default-conf.txt`](evidencias/fase4/montaje-default-conf.txt)) | `docker compose restart reverse-proxy` después de cada cambio, y comprobarlo con `nginx -T` |
 
-Salidas reales: [`fase4-intento1-vm.txt`](evidencias/fase4/fase4-intento1-vm.txt) (reglas distintas, 0 alertas de la 1000003 y aviso `SYN-only`), [`alertas-duplicadas.txt`](evidencias/fase4/alertas-duplicadas.txt), [`suricata-config.txt`](evidencias/fase4/suricata-config.txt) (`Permission denied`), [`tcpdump-80.txt`](evidencias/fase4/tcpdump-80.txt) y la prueba de la regla con la captura hecha a mano en [`prueba-regla-pcap.txt`](evidencias/extras/prueba-regla-pcap.txt).
+Salidas reales: [`fase4-intento1-vm.txt`](evidencias/fase4/fase4-intento1-vm.txt), [`alertas-duplicadas.txt`](evidencias/fase4/alertas-duplicadas.txt), [`suricata-config.txt`](evidencias/fase4/suricata-config.txt), [`tcpdump-80.txt`](evidencias/fase4/tcpdump-80.txt) y [`prueba-regla-pcap.txt`](evidencias/extras/prueba-regla-pcap.txt).
 
 ## 11. Conclusión
 

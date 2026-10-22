@@ -80,7 +80,7 @@ cd opsmatrix-lab
 bash scripts/deploy.sh
 ```
 
-[`deploy.sh`](../../scripts/deploy.sh) comprueba que estén los certificados, crea el `.env` con contraseñas aleatorias si no existe, valida el compose y levanta los tres contenedores. Probado en la VM con el `.env` ya creado ([`deploy-vm.txt`](evidencias/fase5/deploy-vm.txt)) y desde un clon limpio con claves nuevas ([`replica-desde-cero.txt`](evidencias/fase5/replica-desde-cero.txt)): crea el `.env` y pasa sus comprobaciones. En esa prueba no se pudieron levantar los contenedores (sin acceso a Docker Hub), así que Nginx, la app y MariaDB corrieron sin Docker; `check-mac.sh` dio todo bien. Lo que queda sin probar es levantar los contenedores en una VM vacía.
+[`deploy.sh`](../../scripts/deploy.sh) comprueba que estén los certificados, crea el `.env` con contraseñas aleatorias si no existe, valida el compose y levanta los tres contenedores. Probado en la VM ([`deploy-vm.txt`](evidencias/fase5/deploy-vm.txt)) y, sin Docker, desde un clon limpio con claves nuevas ([`replica-desde-cero.txt`](evidencias/fase5/replica-desde-cero.txt)).
 
 **Suricata** (si se usa):
 
