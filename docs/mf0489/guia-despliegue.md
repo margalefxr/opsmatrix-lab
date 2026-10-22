@@ -82,14 +82,21 @@ bash scripts/deploy.sh
 
 [`deploy.sh`](../../scripts/deploy.sh) comprueba que estén los certificados, crea el `.env` con contraseñas aleatorias si no existe, valida el compose y levanta los tres contenedores. Probado desde un clon limpio de GitHub, con `.env` y BBDD nuevos ([`prueba-limpia-vm.txt`](evidencias/fase5/prueba-limpia-vm.txt), [`prueba-limpia-mac.txt`](evidencias/fase5/prueba-limpia-mac.txt)).
 
-**Suricata** (si se usa):
+**Suricata** (si se usa). El `suricata.yaml` que trae Ubuntu escucha en `eth0` y no carga `local.rules`: sin estos dos cambios no salta ninguna regla, y `suricata -T` da OK igualmente ([`suricata-desde-cero.txt`](evidencias/fase5/suricata-desde-cero.txt)).
 
 ```bash
+IFAZ=enp2s0                                   # tu interfaz: ip -br a
+sudo sed -i "s/^\(\s*- interface:\) eth0$/\1 $IFAZ/" /etc/suricata/suricata.yaml
+grep -q "^  - local.rules$" /etc/suricata/suricata.yaml || \
+  sudo sed -i 's/^  - suricata.rules$/&\n  - local.rules/' /etc/suricata/suricata.yaml
+grep -n "HOME_NET:" /etc/suricata/suricata.yaml   # tiene que incluir la IP de la VM
 sudo install -m 644 layer1-telemetry/suricata/rules/local.rules /var/lib/suricata/rules/local.rules
 sudo install -D -m 644 layer1-telemetry/suricata/override.conf /etc/systemd/system/suricata.service.d/override.conf
 sudo systemctl daemon-reload
 sudo suricata -T -c /etc/suricata/suricata.yaml && sudo systemctl restart suricata
 ```
+
+Para saber que detecta de verdad: `ping -c 1 IP_VM` desde el cliente y `sudo grep 1000001 /var/log/suricata/fast.log | tail -1` en la VM. Tiene que salir la alerta.
 
 **SSH solo con clave.** Primero copia tu clave con `ssh-copy-id` y comprueba que entras sin contraseña. **Solo entonces**:
 
@@ -116,7 +123,7 @@ En el navegador: añadir `IP_VM portal.opsmatrix.test` a `/etc/hosts` e importar
 | `.env` | Solo en la VM | Si se pierde, se puede crear uno nuevo, pero la BBDD guardada tiene las contraseñas antiguas: restaurar desde copia o cambiar la contraseña en MariaDB |
 | `servidor.key` / `servidor.crt` | Solo en la VM | Si se ha filtrado, revocarlo primero ([procedimiento](extras.md#3-revocación)). Luego clave y CSR nuevas y firmar de nuevo (Fase 2) |
 | `ca.key` | Solo en el equipo de administración | Si se pierde o se filtra: CA nueva, reemitir `servidor.crt` y repartir el nuevo `ca.crt` |
-| `ca.crl` | Equipo de administración y repo | Regenerar cada 30 días: `openssl ca -config ca.cnf -gencrl -crlexts ext_crl -out crl/ca.crl` |
+| `ca.crl` | Equipo de administración y repo | La primera vez la crea [`pki-revocacion.sh`](../../scripts/pki-revocacion.sh) (prepara `ca.cnf`, `index.txt` y `crl/`). Después, regenerar cada 30 días en `~/ca_root-pki/ca`: `openssl ca -config ca.cnf -gencrl -crlexts ext_crl -out crl/ca.crl` |
 
 **Copia de la BBDD** (también comprueba que se puede restaurar en una base aparte):
 

@@ -42,7 +42,7 @@ Evidencias: [`supply-chain.txt`](evidencias/extras/supply-chain.txt) y [`sbom-ap
 | `detect-secrets scan` (archivos de git) | 0 hallazgos, también en cada push ([`ci.txt`](evidencias/fase5/ci.txt)) |
 | `git ls-files` / `git log --all` buscando `.key`, `.env`, `.pem` | Ninguno, nunca |
 | Contraseñas en el historial | Solo las del compose antiguo del MF0488. No dan acceso a la BBDD actual |
-| Claves privadas en la VM | Solo `/etc/ssl/private/servidor.key`. Ningún `ca.key` (la vieja del MF0488 se borró con `shred`) |
+| Claves privadas en la VM | Solo `/etc/ssl/private/servidor.key`. Ningún `ca.key` (la vieja del MF0488 se borró con `shred`). [`incidencias.txt`](evidencias/fase3/incidencias.txt) §7 |
 
 ## 3. Revocación
 

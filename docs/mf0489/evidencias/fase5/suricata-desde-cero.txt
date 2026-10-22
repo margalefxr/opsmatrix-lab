@@ -1,0 +1,25 @@
+# Suricata recién instalado: ¿carga nuestras reglas? (22/10/2026, entorno de pruebas, Suricata 7.0.3, suricata.yaml de Ubuntu sin tocar)
+
+## Tal cual viene
+$ grep -nE "^\s*- interface:|^rule-files|^  - .*\.rules" /etc/suricata/suricata.yaml
+615:  - interface: eth0
+807:  - interface: eth0
+1980:  - interface: eth0
+2152:rule-files:
+2153:  - suricata.rules
+$ suricata -T ...   (con local.rules ya copiado en default-rule-path)
+rc=0  <- suricata -T dice OK
+2026-10-22 10:18:10 Warning: detect: 1 rule files specified, but no rules were loaded!
+2026-10-22 10:18:10 Info: detect: 0 signatures processed. 0 are IP-only rules, 0 are inspecting packet payload, 0 inspect application layer, 0 are decoder event only
+-> 0 reglas: escucha en eth0 y no carga local.rules. suricata -T da OK igualmente: no basta para saber si hay reglas
+
+## Con los 2 cambios de la guía §3 (interfaz y '- local.rules')
+615:  - interface: enp2s0
+807:  - interface: enp2s0
+1980:  - interface: enp2s0
+2153:  - suricata.rules
+2154:  - local.rules
+rc=0
+2026-10-22 10:18:10 Info: detect: 2 rule files processed. 3 rules successfully loaded, 0 rules failed, 0
+2026-10-22 10:18:10 Info: detect: 3 signatures processed. 2 are IP-only rules, 0 are inspecting packet payload, 0 inspect application layer, 0 are decoder event only
+-> las 3 reglas cargadas. En la VM ya estaba así desde el MF0488 (fase4/suricata-config.txt)
