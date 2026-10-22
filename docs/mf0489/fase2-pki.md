@@ -208,7 +208,7 @@ En [`layer2-perimeter/pki/`](../../layer2-perimeter/pki/): `ca.crt`, `servidor.c
 | `Permission denied` al leer `/etc/ssl/mf0489/ca.crt`, aunque el archivo tenía `644` | El `umask 077` de la sesión lo heredó `sudo mkdir`, que creó la carpeta con `700`. Arreglado con `sudo chmod 755 /etc/ssl/mf0489` |
 | El `.gitignore` anterior excluía `*.crt` y no dejaba publicar `ca.crt` ni `servidor.crt` | Cambiado: ahora excluye claves y secretos, no certificados públicos |
 | En el repo había restos de MF0488 (`ca.srl` y un `server.csr` antiguo autofirmado) | Eliminados. Los sustituye la PKI nueva |
-| El `scp` de la VM aceptó contraseña, cuando el README dice "solo Ed25519" | Anotado. Resuelto en la [Fase 5](fase5-entrega-final.md#2-qué-hay-de-verdad-en-la-vm): clave autorizada y `PasswordAuthentication no` |
+| El `scp` de la VM aceptó contraseña, cuando el README decía "solo Ed25519" | Lo dejé anotado y lo arreglé en la [Fase 5](fase5-entrega-final.md#2-qué-hay-de-verdad-en-la-vm): autoricé la clave y puse `PasswordAuthentication no` |
 
 ## Normativa
 
