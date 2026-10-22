@@ -58,6 +58,7 @@ Lo del MF0488 sigue en [`docs/WORKLOG.md`](docs/WORKLOG.md) y [`docs/adr/`](docs
 | Configuración como código | Compose, Nginx, reglas de Suricata y SSH están en el repo |
 | Observabilidad | Suricata en la red y el log de Nginx con la versión TLS. Los cruzo por IP y puerto |
 | Reproducible | [Guía](docs/mf0489/guia-despliegue.md) + `deploy.sh` + `check-*.sh`. Lo he montado desde cero con un clon limpio de GitHub, `.env` y BBDD nuevos ([`prueba-limpia-vm.txt`](docs/mf0489/evidencias/fase5/prueba-limpia-vm.txt)), y la PKI con claves nuevas ([`replica-desde-cero.txt`](docs/mf0489/evidencias/fase5/replica-desde-cero.txt)) |
+| Validado, no supuesto | Cada control lo pruebo después de montarlo, y además desde fuera con Kali. Lo que no puedo demostrar con una salida, lo digo |
 | Versiones fijas | Las dependencias de Python van con versión exacta (`==`), también las que arrastra Flask. Las imágenes van por rama (`nginx:1.28-alpine`, `mariadb:10.11`, `python:3.12-slim`): no cambian de versión mayor, pero los parches sí entran |
 
 ## Cómo lo he hecho
@@ -65,7 +66,7 @@ Lo del MF0488 sigue en [`docs/WORKLOG.md`](docs/WORKLOG.md) y [`docs/adr/`](docs
 | | |
 |---|---|
 | **Método** | MSA / lean: lo mínimo que funcione y que se pueda comprobar. Tablas antes que párrafos, y cada decisión con su motivo |
-| **Pruebas** | Primero en local (en un entorno de pruebas) y luego en la VM. Pruebo lo que tiene que funcionar y lo que tiene que fallar, y cada prueba que tiene que fallar lleva al lado otra que demuestra que el comando funciona. La lista completa está en la [Fase 5](docs/mf0489/fase5-entrega-final.md#cómo-he-probado-qa) |
+| **Pruebas** | No doy un control por bueno hasta que lo pruebo de tres maneras: que funciona, que lo que tiene que fallar falla (y al lado, otra prueba que demuestra que el comando sí funciona), y desde fuera, con Kali, que un extraño sin mi CA se queda en la puerta. La lista completa está en la [Fase 5](docs/mf0489/fase5-entrega-final.md#cómo-he-probado-qa) y la de fuera en la [validación desde Kali](docs/mf0489/validacion-ofensiva.md) |
 | **Trazabilidad** | Cada paso y cada problema están en el [WORKLOG](docs/mf0489/WORKLOG.md). Las salidas de las pruebas son reales y están en [`evidencias/`](docs/mf0489/evidencias/) |
 | **CI** | Con [GitHub Actions](.github/workflows/checks.yml), en cada push se repiten `shellcheck` (todos los `.sh`), `docker compose config`, `py_compile`, `pip-audit` y `detect-secrets`. Con permisos de solo lectura y la acción fijada por commit |
 | **IA** | Abajo |
