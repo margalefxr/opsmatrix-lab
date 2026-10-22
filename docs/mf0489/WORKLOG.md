@@ -28,7 +28,8 @@ Rama `mf0489-https`, ya unida a `main`. Trabajo hecho del 19 al 21/10/2026 entre
 | 22 | `deploy.sh` en la VM y arranques de la VM | `[OK] Desplegado`, `.env` sin tocar, BBDD sin recrear. Arranque actual: 20/10 09:40:25 UTC. [`deploy-vm.txt`](evidencias/fase5/deploy-vm.txt), [`arranques.txt`](evidencias/fase5/arranques.txt) |
 | 23 | Repaso contra el enunciado y la rúbrica | Añadida la huella del certificado entregado frente al emitido (F3.2): iguales. Volúmenes sin usar listados (10). Clon del Mac comprobado con `reflog`. [`check-mac-final2.txt`](evidencias/fase5/check-mac-final2.txt), [`check-vm-final2.txt`](evidencias/fase5/check-vm-final2.txt), [`clon-mac.txt`](evidencias/fase5/clon-mac.txt) |
 | 24 | Borrados los 8 volúmenes anónimos del MF0488 (`docker volume prune`, sin `-a`) | Quedan la BBDD de OpsMatrix y los 2 de `infra-lab`. [`volumenes-limpieza.txt`](evidencias/fase5/volumenes-limpieza.txt) |
-| 25 | Réplica desde un clon limpio de GitHub, con una CA y claves nuevas, siguiendo solo la guía | PKI nueva OK, `deploy.sh` crea el `.env`, `check-mac.sh` todo bien. Sin Docker Hub en el entorno de pruebas: contenedores sin probar. [`replica-desde-cero.txt`](evidencias/fase5/replica-desde-cero.txt) |
+| 25 | Réplica desde un clon limpio de GitHub, con una CA y claves nuevas, siguiendo solo la guía | PKI nueva OK, `deploy.sh` crea el `.env`, `check-mac.sh` todo bien. Sin Docker Hub en el entorno de pruebas: los contenedores se prueban en el paso 26. [`replica-desde-cero.txt`](evidencias/fase5/replica-desde-cero.txt) |
+| 26 | Despliegue desde cero en la VM: clon limpio, `deploy.sh`, `.env` y BBDD nuevos | Todo OK, visitas empiezan en 1. El real vuelve con sus datos (la primera visita sigue siendo del 19/10). [`prueba-limpia-vm.txt`](evidencias/fase5/prueba-limpia-vm.txt), [`prueba-limpia-mac.txt`](evidencias/fase5/prueba-limpia-mac.txt) |
 
 ## Dificultades
 

@@ -68,7 +68,7 @@ Lo que protege los puertos ahora es la propia arquitectura: solo se publican 22,
 
 | Qué se pierde | Cómo se recupera |
 |---|---|
-| Configuración | `git clone` + `bash scripts/deploy.sh` ([`deploy-vm.txt`](evidencias/fase5/deploy-vm.txt): `[OK] Desplegado`, la BBDD no se recrea) |
+| Configuración | `git clone` + `bash scripts/deploy.sh`. Probado desde cero con BBDD nueva ([`prueba-limpia-vm.txt`](evidencias/fase5/prueba-limpia-vm.txt)) y sobre el despliegue ya hecho ([`deploy-vm.txt`](evidencias/fase5/deploy-vm.txt)) |
 | Datos de la BBDD | Copia de `scripts/backup-db.sh` en `~/backups/` |
 | Certificado del servidor | Nueva clave y CSR, firmar otra vez con la CA |
 | CA | CA nueva y reemitir el certificado del servidor |
