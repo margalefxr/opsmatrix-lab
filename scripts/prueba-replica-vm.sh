@@ -51,6 +51,7 @@ for _ in $(seq 1 30); do
   docker compose exec -T db sh -c 'mariadb -u"$MARIADB_USER" -p"$MARIADB_PASSWORD" -e "SELECT 1"' >/dev/null 2>&1 && break
   sleep 2
 done
+sleep 5   # la primera vez MariaDB arranca, crea el usuario y se reinicia: margen para ese reinicio
 echo "-- HTTPS con la CA (2 visitas: tiene que salir 1 y luego 2)"
 for _ in 1 2; do
   curl -s -w "\ncodigo=%{http_code} tls=%{ssl_verify_result}\n" --cacert $CA --resolve $D:8443:127.0.0.1 https://$D:8443/
