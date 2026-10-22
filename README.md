@@ -56,7 +56,7 @@ Lo del MF0488 sigue en [`docs/WORKLOG.md`](docs/WORKLOG.md) y [`docs/adr/`](docs
 | Secretos fuera del código | `.env` y claves fuera de git. La CA, fuera de la VM |
 | Configuración como código | Compose, Nginx, reglas de Suricata y SSH versionados en el repo |
 | Observabilidad | Suricata en la red + log de Nginx con versión TLS, cruzados por IP y puerto |
-| Reproducible | `deploy.sh` + `check-*.sh`. Todo vuelve solo tras reiniciar la VM y `deploy.sh` funciona sobre el despliegue ya hecho ([`deploy-vm.txt`](docs/mf0489/evidencias/fase5/deploy-vm.txt)). No probado en una VM vacía |
+| Reproducible | `deploy.sh` + `check-*.sh`. Todo vuelve solo tras reiniciar la VM y `deploy.sh` funciona sobre el despliegue ya hecho ([`deploy-vm.txt`](docs/mf0489/evidencias/fase5/deploy-vm.txt)). Desde un clon limpio y con claves nuevas, la guía funciona hasta `check-mac.sh` ([`replica-desde-cero.txt`](docs/mf0489/evidencias/fase5/replica-desde-cero.txt)). Sin probar: los contenedores en una VM vacía |
 | Versiones fijas | Dependencias de Python exactas (`==`), también las transitivas. Imágenes por rama (`nginx:1.28-alpine`, `mariadb:10.11`, `python:3.12-slim`): no cambian de versión mayor, pero sí reciben parches |
 
 ## Cómo lo he hecho
@@ -101,7 +101,7 @@ Evidencias: [`supply-chain.txt`](docs/mf0489/evidencias/extras/supply-chain.txt)
 ```bash
 git clone https://github.com/margalefxr/opsmatrix-lab.git
 cd opsmatrix-lab
-bash scripts/deploy.sh        # en la VM, con los certificados ya en /etc/ssl/
+bash scripts/deploy.sh        # en la VM, con TUS certificados ya en /etc/ssl/ (guía §2: cada uno crea su CA)
 bash scripts/check-vm.sh      # comprobar el servidor
 bash scripts/check-mac.sh     # comprobar desde el cliente
 ```

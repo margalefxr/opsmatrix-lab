@@ -28,6 +28,7 @@ Rama `mf0489-https`, ya unida a `main`. Trabajo hecho del 19 al 21/10/2026 entre
 | 22 | `deploy.sh` en la VM y arranques de la VM | `[OK] Desplegado`, `.env` sin tocar, BBDD sin recrear. Arranque actual: 20/10 09:40:25 UTC. [`deploy-vm.txt`](evidencias/fase5/deploy-vm.txt), [`arranques.txt`](evidencias/fase5/arranques.txt) |
 | 23 | Repaso contra el enunciado y la rúbrica | Añadida la huella del certificado entregado frente al emitido (F3.2): iguales. Volúmenes sin usar listados (10). Clon del Mac comprobado con `reflog`. [`check-mac-final2.txt`](evidencias/fase5/check-mac-final2.txt), [`check-vm-final2.txt`](evidencias/fase5/check-vm-final2.txt), [`clon-mac.txt`](evidencias/fase5/clon-mac.txt) |
 | 24 | Borrados los 8 volúmenes anónimos del MF0488 (`docker volume prune`, sin `-a`) | Quedan la BBDD de OpsMatrix y los 2 de `infra-lab`. [`volumenes-limpieza.txt`](evidencias/fase5/volumenes-limpieza.txt) |
+| 25 | Réplica desde un clon limpio de GitHub, con una CA y claves nuevas, siguiendo solo la guía | PKI nueva OK, `deploy.sh` crea el `.env`, `check-mac.sh` todo bien. Sin Docker Hub en el entorno de pruebas: contenedores sin probar. [`replica-desde-cero.txt`](evidencias/fase5/replica-desde-cero.txt) |
 
 ## Dificultades
 
@@ -58,6 +59,7 @@ Rama `mf0489-https`, ya unida a `main`. Trabajo hecho del 19 al 21/10/2026 entre
 | 23 | — | Al copiar comandos se colaba `\;` y alguna vez lancé un bloque en la máquina equivocada | Comandos sin `;` y, al final, scripts en vez de copiar y pegar |
 | 24 | Entrega | En la revisión final vi que algunas salidas citadas en los docs (Fase 2, Actividad 8, tcpdump del 80, primer intento de la Fase 4) estaban en mi terminal pero no en el repo | Copiadas a `evidencias/`. Lo que no pude enseñar con una salida de la VM lo reproduje en local y lo digo (regla ICMP, montaje de `default.conf`) |
 | 25 | Entrega | Las pruebas que tienen que fallar (proxy → BBDD, BBDD → internet) decían "OK" también si fallaba el comando. Y mi primer control tenía su propio fallo: `sh` en la imagen de MariaDB es `dash`, y `command -v bash timeout` solo mira el primer nombre | Control positivo para cada una, código de salida real y tabla de rutas. Los dos intentos están en `evidencias/fase5/` |
+| 26 | Entrega | La guía decía "comandos en la Fase 2", pero ahí faltaban los `mkdir` de la CA y de `/etc/ssl/mf0489`, los `scp` y de dónde sale `servidor.ext`. Otra persona se habría atascado en el primer comando | Procedimiento completo en la guía §2, probado tal cual desde un clon limpio |
 
 ## Pendiente (mejoras)
 

@@ -13,16 +13,64 @@ Probado con Ubuntu 26.04 LTS, Docker 29.1.3, Compose 2.40.3, Suricata 8.0.3 y Op
 
 La CA **nunca** se crea en la VM. La VM se exportará como CTF y no puede llevar `ca.key`.
 
-## 2. PKI (una vez)
+## 2. PKI (una vez, con tus propias claves)
 
-Comandos completos y explicados en [fase2-pki.md](fase2-pki.md). Resumen:
+Cada uno crea su CA y sus claves. Las mías no hacen falta ni se publican. Explicación de cada comando y de cada extensión en [fase2-pki.md](fase2-pki.md). Estos comandos se han probado tal cual desde un clon limpio ([`replica-desde-cero.txt`](evidencias/fase5/replica-desde-cero.txt)). Cambia `USUARIO@IP_VM` por los tuyos.
 
-| Paso | Dónde | Resultado |
-|---|---|---|
-| Crear la CA | Equipo de administración | `ca.key` (cifrada, 600) + `ca.crt` |
-| Clave y CSR del servidor | VM | `servidor.key` (600) + `servidor.csr` con SAN `DNS:portal.opsmatrix.test` |
-| Firmar con [`servidor.ext`](../../layer2-perimeter/pki/servidor.ext) | Equipo de administración | `servidor.crt` (1 año) |
-| Instalar | VM | `/etc/ssl/private/servidor.key` (600), `/etc/ssl/certs/servidor.crt` (644), `/etc/ssl/mf0489/ca.crt` (644) |
+**Equipo de administración: crear la CA**
+
+```bash
+git clone https://github.com/margalefxr/opsmatrix-lab.git ~/opsmatrix-lab
+umask 077
+mkdir -p ~/ca_root-pki/ca/private ~/ca_root-pki/ca/solicitudes ~/ca_root-pki/ca/emitidos
+cd ~/ca_root-pki/ca
+openssl genpkey -algorithm RSA -pkeyopt rsa_keygen_bits:4096 -aes-256-cbc -out private/ca.key   # pide una contraseña
+chmod 600 private/ca.key
+openssl req -x509 -new -sha256 -days 3650 -key private/ca.key -out ca.crt \
+  -subj "/C=ES/O=OpsMatrix Lab/CN=OpsMatrix Lab Root CA" \
+  -addext "basicConstraints=critical,CA:TRUE,pathlen:0" \
+  -addext "keyUsage=critical,keyCertSign,cRLSign" \
+  -addext "subjectKeyIdentifier=hash"
+cp ~/opsmatrix-lab/layer2-perimeter/pki/servidor.ext .
+openssl verify -CAfile ca.crt ca.crt
+```
+
+**VM: clave y CSR del servidor** (la clave no sale de la VM)
+
+```bash
+umask 077
+mkdir -p ~/mf0489 && cd ~/mf0489
+openssl genpkey -algorithm RSA -pkeyopt rsa_keygen_bits:3072 -out servidor.key
+chmod 600 servidor.key
+openssl req -new -sha256 -key servidor.key -out servidor.csr \
+  -subj "/CN=portal.opsmatrix.test" -addext "subjectAltName=DNS:portal.opsmatrix.test"
+```
+
+**Equipo de administración: revisar la CSR, firmarla y devolver el certificado** (solo viajan archivos públicos)
+
+```bash
+cd ~/ca_root-pki/ca
+scp USUARIO@IP_VM:mf0489/servidor.csr solicitudes/
+openssl req -in solicitudes/servidor.csr -noout -verify -subject      # tiene que decir CN=portal.opsmatrix.test
+openssl x509 -req -in solicitudes/servidor.csr -CA ca.crt -CAkey private/ca.key \
+  -CAcreateserial -out emitidos/servidor.crt -days 365 -sha256 -extfile servidor.ext
+scp emitidos/servidor.crt ca.crt USUARIO@IP_VM:mf0489/
+```
+
+**VM: instalar y comprobar**
+
+```bash
+cd ~/mf0489
+sudo install -d -m 755 /etc/ssl/mf0489        # con -d y 755: si no, el umask 077 la deja ilegible (me pasó)
+sudo install -o root -g root -m 600 servidor.key /etc/ssl/private/servidor.key
+sudo install -o root -g root -m 644 servidor.crt /etc/ssl/certs/servidor.crt
+sudo install -o root -g root -m 644 ca.crt       /etc/ssl/mf0489/ca.crt
+openssl verify -CAfile /etc/ssl/mf0489/ca.crt -purpose sslserver \
+  -verify_hostname portal.opsmatrix.test /etc/ssl/certs/servidor.crt   # tiene que dar OK
+rm servidor.key                                # la copia de trabajo ya no hace falta
+```
+
+`check-mac.sh` espera esta misma estructura en el equipo de administración (`private/ca.key`, `ca.crt`, `emitidos/servidor.crt`).
 
 ## 3. Desplegar (VM)
 
@@ -32,7 +80,7 @@ cd opsmatrix-lab
 bash scripts/deploy.sh
 ```
 
-[`deploy.sh`](../../scripts/deploy.sh) comprueba que estén los certificados, crea el `.env` con contraseñas aleatorias si no existe, valida el compose y levanta los tres contenedores. Probado en la VM con el `.env` ya creado ([`deploy-vm.txt`](evidencias/fase5/deploy-vm.txt)) y la creación del `.env` en local ([`deploy-env-local.txt`](evidencias/fase5/deploy-env-local.txt)). No lo he probado en una VM vacía.
+[`deploy.sh`](../../scripts/deploy.sh) comprueba que estén los certificados, crea el `.env` con contraseñas aleatorias si no existe, valida el compose y levanta los tres contenedores. Probado en la VM con el `.env` ya creado ([`deploy-vm.txt`](evidencias/fase5/deploy-vm.txt)) y desde un clon limpio con claves nuevas ([`replica-desde-cero.txt`](evidencias/fase5/replica-desde-cero.txt)): crea el `.env` y pasa sus comprobaciones. En esa prueba no se pudieron levantar los contenedores (sin acceso a Docker Hub), así que Nginx, la app y MariaDB corrieron sin Docker; `check-mac.sh` dio todo bien. Lo que queda sin probar es levantar los contenedores en una VM vacía.
 
 **Suricata** (si se usa):
 

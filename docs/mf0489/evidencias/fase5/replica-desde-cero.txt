@@ -1,0 +1,97 @@
+# ¿Puede otra persona montarlo desde GitHub con sus propias claves? (22/10/2026, entorno de pruebas)
+# Clon limpio de https://github.com/margalefxr/opsmatrix-lab (6602a7d) y solo los comandos de la guía (§2 y §3).
+# Dos carpetas hacen de máquinas: 'mac' (CA y cliente) y 'vm' (servidor). Los scp son cp. La contraseña de la CA va
+# con -pass solo para poder automatizar la prueba; en la guía se teclea.
+# Límite: aquí Docker Hub está bloqueado, así que 'docker compose up' no se puede lanzar. En su lugar Nginx (con el
+# default.conf del repo), la app y MariaDB corren sin Docker. Lo propio de Docker (redes, montajes) está probado en la VM real.
+
+## 1. PKI nueva, con claves que no son las mías
+ca.crt: OK                                   <- CA nueva
+Certificate request self-signature verify OK  <- CSR revisada antes de firmar
+subject=CN = portal.opsmatrix.test
+/etc/ssl/certs/servidor.crt: OK               <- verify -purpose sslserver -verify_hostname
+drwxr-xr-x 2 root root 4096 Oct 22 09:14 /etc/ssl/mf0489
+-rw-r--r-- 1 root root 1809 Oct 22 09:14 /etc/ssl/certs/servidor.crt
+-rw-r--r-- 1 root root 1964 Oct 22 09:14 /etc/ssl/mf0489/ca.crt
+-rw------- 1 root root 2484 Oct 22 09:14 /etc/ssl/private/servidor.key
+subject=CN = portal.opsmatrix.test
+issuer=C = ES, O = OpsMatrix Lab, CN = OpsMatrix Lab Root CA
+X509v3 Basic Constraints: critical
+    CA:FALSE
+X509v3 Extended Key Usage: 
+    TLS Web Server Authentication
+X509v3 Subject Alternative Name: 
+    DNS:portal.opsmatrix.test
+huella nueva:     sha256 Fingerprint=BF:3E:1B:F2:B5:E7:EE:5B:09:34:26:C7:88:B3:49:A6:2F:E2:AE:E1:4A:86:08:77:92:61:10:F1:22:6B:2F:42
+huella de la mía: sha256 Fingerprint=13:2B:31:0E:...:06:EE (check-mac-final2.txt) -> distintas: son otras claves
+
+## 2. deploy.sh desde el clon limpio (sin .env)
+[+] Creando .env con contraseñas nuevas
+[prueba] 'compose up -d --build' omitido: sin acceso a Docker Hub en este entorno
+[prueba] 'compose ps' omitido: sin acceso a Docker Hub en este entorno
+[prueba] 'compose exec -T reverse-proxy nginx -t' omitido: sin acceso a Docker Hub en este entorno
+[OK] Desplegado. Comprobar con: bash scripts/check-vm.sh
+-> pasa sus comprobaciones (certificados en /etc/ssl y docker compose config); .env de 304 bytes, 600, ignorado por git
+
+## 3. Nginx con el default.conf del repo y los certificados nuevos
+nginx: configuration file .../nginx.conf test is successful
+
+## 4. check-mac.sh del repo (solo cambiando IP y CA_DIR, como dice la guía)
+===== 1. CA (Entorno A) =====
+Thu Oct 22 09:16:28 CEST 2026
+/usr/bin/openssl
+OpenSSL 3.0.13 30 Jan 2024 (Library: OpenSSL 3.0.13 30 Jan 2024)
+-rw------- 1 root root 3434 Oct 22 09:14 private/ca.key
+-rw------- 1 root root 1964 Oct 22 09:14 ca.crt
+-rw------- 1 root root 1809 Oct 22 09:14 emitidos/servidor.crt
+subject=C = ES, O = OpsMatrix Lab, CN = OpsMatrix Lab Root CA
+notAfter=Oct 19 07:14:40 2036 GMT
+ca.crt: OK
+emitidos/servidor.crt: OK
+===== 2. PUERTOS DE LA VM VISTOS DESDE FUERA =====
+22 cerrado
+80 abierto
+443 abierto
+3306 abierto
+5000 abierto
+===== 3. HTTP -> HTTPS =====
+HTTP/1.1 301 Moved Permanently
+Server: nginx
+Location: https://portal.opsmatrix.test/prueba
+===== 4. HTTPS CON LA CA =====
+<h1>Portal OpsMatrix</h1><p>Visitas guardadas en MariaDB: 1</p><p>Has llegado por: https</p>
+codigo=200 tls=0
+===== 5. SIN LA CA (debe fallar, exit 60) =====
+exit 60
+===== 6. NOMBRE EQUIVOCADO (debe fallar) =====
+exit 60
+===== 7. OPENSSL S_CLIENT =====
+CONNECTION ESTABLISHED
+Protocol version: TLSv1.3
+Ciphersuite: TLS_AES_256_GCM_SHA384
+Peer certificate: CN = portal.opsmatrix.test
+Hash used: SHA256
+Signature type: RSA-PSS
+Verification: OK
+Verified peername: portal.opsmatrix.test
+Server Temp Key: X25519, 253 bits
+DONE
+-- ¿Nginx entrega el mismo certificado que firmó la CA? (huella SHA-256)
+entregado: sha256 Fingerprint=BF:3E:1B:F2:B5:E7:EE:5B:09:34:26:C7:88:B3:49:A6:2F:E2:AE:E1:4A:86:08:77:92:61:10:F1:22:6B:2F:42
+emitido:   sha256 Fingerprint=BF:3E:1B:F2:B5:E7:EE:5B:09:34:26:C7:88:B3:49:A6:2F:E2:AE:E1:4A:86:08:77:92:61:10:F1:22:6B:2F:42
+===== 8. VERSIONES TLS =====
+-- tls1_3
+Protocol version: TLSv1.3
+Ciphersuite: TLS_AES_256_GCM_SHA384
+-- tls1_2
+Protocol version: TLSv1.2
+Ciphersuite: ECDHE-RSA-AES256-GCM-SHA384
+-- tls1_1
+40D75F52CF7F0000:error:0A00042E:SSL routines:ssl3_read_bytes:tlsv1 alert protocol version:../ssl/record/rec_layer_s3.c:1599:SSL alert number 70
+===== FIN =====
+
+-> 301, 200 con la CA (la app escribe en MariaDB), exit 60 sin la CA y con otro nombre, TLS 1.1 rechazado,
+   y la huella entregada = la emitida por SU CA. 22/3306/5000 salen distinto porque aquí no hay SSH ni Docker
+   (app y MariaDB escuchan en la propia máquina). Esos puertos se comprueban en la VM real (check-vm-controles.txt).
+-> Una diferencia de la prueba sin Docker: la MariaDB nativa trae un usuario anónimo en localhost y hubo que crear
+   el usuario también en 'localhost'. La imagen de Docker no lo trae: en la VM no hace falta.
