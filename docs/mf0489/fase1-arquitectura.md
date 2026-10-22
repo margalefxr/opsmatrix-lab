@@ -27,7 +27,7 @@ Actualizo el diagrama de OpsMatrix (MF0488) para añadir HTTPS. Nginx pasa a ser
 | Pregunta | Respuesta |
 |---|---|
 | ¿Por qué HTTPS y no HTTP? | Con HTTP todo viaja en claro: rutas, cabeceras y, si los hubiera, usuarios, contraseñas y datos de clientes se leen con un `tcpdump` (en la Fase 4 se ven la ruta y las cabeceras del puerto 80). Y nada demuestra que el servidor sea el bueno, así que alguien en medio puede suplantarlo (MITM). HTTPS añade cifrado, integridad y autenticación del servidor |
-| ¿Por qué TLS 1.2 y 1.3? | TLS 1.3 tiene un handshake más corto, solo admite cifrados AEAD y cada handshake completo usa claves de sesión nuevas (forward secrecy). TLS 1.2 se deja por compatibilidad con clientes más antiguos. 1.0 y 1.1 están obsoletos (RFC 8996) |
+| ¿Por qué TLS 1.2 y 1.3? | TLS 1.3 tiene un handshake más corto, solo admite cifrados AEAD y cada handshake completo usa claves de sesión nuevas (forward secrecy). TLS 1.2 lo dejo por compatibilidad con clientes más antiguos. 1.0 y 1.1 están obsoletos (RFC 8996) |
 
 ## Diagrama
 
@@ -106,7 +106,7 @@ Suricata sigue en el host escuchando `enp2s0`, la interfaz por la que entra el t
 | HTTPS :443 | ✅ Parcial | IPs, puertos, handshake TLS, SNI. No ve rutas ni contenido |
 | Nginx → app → MariaDB | ❌ | Va por los bridges de Docker, no por `enp2s0` |
 
-Suricata no ve las rutas HTTPS porque van cifradas. Nginx sí las ve, porque es quien descifra. Por eso en la Fase 4 se cruzan las dos fuentes.
+Suricata no ve las rutas HTTPS porque van cifradas. Nginx sí las ve, porque es quien descifra. Por eso en la Fase 4 cruzo las dos fuentes.
 
 ## Decisiones
 
@@ -123,8 +123,8 @@ Suricata no ve las rutas HTTPS porque van cifradas. Nginx sí las ve, porque es 
 
 | Dificultad | Solución |
 |---|---|
-| En el compose del MF0488 (`layer3-services/docker`) Nginx estaba en las dos redes y devolvía un JSON fijo, sin app real. En la VM corría además otro compose distinto (ver [Fase 3](fase3-https-docker.md#2-antes-y-después)) | Rediseño: Nginx solo en la red web y una app nueva conectada a las dos redes |
-| El README decía "TLS 1.3" pero `default.conf` permitía 1.2 y 1.3 | Se documenta TLS 1.2 + 1.3, que es lo que pide la rúbrica y lo que estará en la configuración |
+| En el compose del MF0488 (`layer3-services/docker`) Nginx estaba en las dos redes y devolvía un JSON fijo, sin app real. En la VM además funcionaba otro compose distinto (ver [Fase 3](fase3-https-docker.md#2-antes-y-después)) | Rediseño: Nginx solo en la red web y una app nueva conectada a las dos redes |
+| El README decía "TLS 1.3" pero `default.conf` permitía 1.2 y 1.3 | Documento TLS 1.2 + 1.3, que es lo que pide la rúbrica y lo que voy a configurar |
 
 ## Normativa
 

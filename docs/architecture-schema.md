@@ -1,6 +1,6 @@
 # OpsMatrix - Topologia de Arquitectura e Infraestructura
 
-> **MF0488.** Documento de entonces, sin cambios. Lo que ya no es cierto está en [correcciones-mf0488.md](correcciones-mf0488.md).
+> **Del MF0488.** Lo dejo como lo entregué. Lo que ya no es verdad lo tengo apuntado en [correcciones-mf0488.md](correcciones-mf0488.md).
 
 ## Diagrama de Capas (Modelo Zero Trust)
 

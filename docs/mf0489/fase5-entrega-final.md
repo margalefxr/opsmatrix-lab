@@ -1,15 +1,15 @@
 # Fase 5 — Entrega final
 
-Último repaso de punta a punta. Aquí compruebo que lo documentado es lo que de verdad corre, que alguien puede montarlo sin mis claves y que se puede recuperar si algo falla. La copia de la BBDD se probó antes de reiniciar. Las pruebas de §5 y §7 se hicieron **después de reiniciar la VM** (20/10/2026).
+Aquí hago el último repaso de principio a fin: que lo que pongo en los documentos es lo que de verdad funciona en la VM, que otra persona puede montarlo sin mis claves y que se puede recuperar si algo falla. La copia de la BBDD se probó antes de reiniciar. Las pruebas de §5 y §7 se hicieron **después de reiniciar la VM** (20/10/2026).
 
 ## Resumen
 
 | Comprobación | Resultado | Evidencia |
 |---|---|---|
 | Diagrama definitivo | ✅ | [arquitectura-final.png](arquitectura-final.png) |
-| Despliegue que se usa de verdad | ✅ `docker-compose.yml` de la raíz, el único | [§2](#2-qué-corre-de-verdad) |
+| Despliegue que se usa de verdad | ✅ `docker-compose.yml` de la raíz, el único | [§2](#2-qué-hay-de-verdad-en-la-vm) |
 | Certificados instalados | ✅ | [§3](#3-certificados-y-claves) |
-| Configuración coherente con el repo | ✅ Corregidas 4 diferencias | [§2](#2-qué-corre-de-verdad) |
+| Configuración coherente con el repo | ✅ Corregidas 4 diferencias | [§2](#2-qué-hay-de-verdad-en-la-vm) |
 | Recuperación | ✅ Copia restaurada y comprobada | [§4](#4-recuperación) |
 | Reproducibilidad | ✅ Vuelve solo tras reiniciar y se monta desde cero con un clon de GitHub | [§5](#5-reproducibilidad) |
 | Claves privadas protegidas | ✅ | [§3](#3-certificados-y-claves) |
@@ -22,18 +22,18 @@
 
 Fuente editable: [arquitectura-final.mmd](arquitectura-final.mmd). Explicación de cada pieza en la [Fase 1](fase1-arquitectura.md) y la [guía](guia-despliegue.md).
 
-## 2. Qué corre de verdad
+## 2. Qué hay de verdad en la VM
 
 **¿Coincide lo documentado con lo que hay en la VM?** Al principio no. Esto es lo que encontré y cómo quedó:
 
 | Qué decía la documentación | Qué había en la VM | Ahora |
 |---|---|---|
 | Compose en `layer3-services/docker/` | Se usaba el de la raíz. El de `layer3` tenía contraseñas escritas | Un solo compose, contraseñas en `.env` (Fase 3) |
-| Reglas de Suricata del repo (`[OPSMATRIX-NIDS]…`) | Corrían otras (`[SEC-ALERT]…`) | El repo tiene las que corren de verdad + la 1000003 (Fase 4) |
+| Reglas de Suricata del repo (`[OPSMATRIX-NIDS]…`) | Las cargadas eran otras (`[SEC-ALERT]…`) | El repo tiene las que de verdad están cargadas + la 1000003 (Fase 4) |
 | "SSH solo con claves Ed25519" | `authorized_keys` **vacío** y `PasswordAuthentication yes` | Clave autorizada y contraseña desactivada (abajo) |
 | Firewall en `rules.v4` | Solo reglas de Docker (44 líneas, 22 de ellas de redes antiguas: `br-e2efeb52c253` y `10.0.x`), ninguna propia | Desactivado `netfilter-persistent`. Docker crea sus reglas al arrancar |
 
-**SSH.** Primero autoricé la clave del Mac (`ssh-copy-id`) y comprobé que entraba sin contraseña. Solo después instalé [`00-opsmatrix.conf`](../../layer2-perimeter/ssh/00-opsmatrix.conf). Se llama `00-` para que sshd lo lea antes que `50-cloud-init.conf`, que pone `PasswordAuthentication yes` (en sshd gana el primer valor que lee).
+**SSH.** Primero autoricé la clave del Mac (`ssh-copy-id`) y comprobé que entraba sin contraseña. Solo después instalé [`00-opsmatrix.conf`](../../layer2-perimeter/ssh/00-opsmatrix.conf). Lo he llamado `00-` para que sshd lo lea antes que `50-cloud-init.conf`, que pone `PasswordAuthentication yes` (en sshd gana el primer valor que lee).
 
 ```
 $ sudo sshd -T | grep -E "^(passwordauthentication|pubkeyauthentication|permitrootlogin) "
@@ -52,7 +52,7 @@ Salida completa de SSH, firewall y copia: [`fase5-ssh-firewall-backup.txt`](evid
 
 **Firewall y redes viejas.** `rules.v4` no protegía nada. Al arrancar volvía a cargar reglas de Docker de redes antiguas. Lo guardé en `~/backups/`, desactivé `netfilter-persistent` y borré las 4 redes `docker_*` del compose antiguo (0 contenedores). Tras reiniciar: `reglas viejas cargadas: 0`.
 
-Lo que protege los puertos ahora es la propia arquitectura: solo se publican 22, 80 y 443, y Docker pone sus reglas para las redes internas. Un firewall de host propio (nftables solo con 22/80/443 de entrada) queda como mejora.
+Lo que protege los puertos ahora es la propia arquitectura: solo se publican 22, 80 y 443, y Docker pone sus reglas para las redes internas. Un firewall de host propio (nftables, con entrada solo por 22/80/443) lo dejo como mejora.
 
 ## 3. Certificados y claves
 
@@ -123,12 +123,12 @@ Salidas: [`check-vm-final.txt`](evidencias/fase5/check-vm-final.txt) y [`check-m
 | TLS 1.3 / 1.2 / 1.1 | ✅ / ✅ / rechazado por el servidor (alerta 70) |
 | App | `Visitas guardadas en MariaDB: 11`, `Has llegado por: https` |
 | Puertos desde fuera | 22, 80 y 443 abiertos. 3306 y 5000 cerrados |
-| Aislamiento | El proxy no ve la BBDD, la BBDD no sale a internet (sin ruta por defecto), la app corre como `nobody`. Con controles positivos: [`check-vm-controles.txt`](evidencias/fase5/check-vm-controles.txt) §10 |
+| Aislamiento | El proxy no ve la BBDD, la BBDD no sale a internet (sin ruta por defecto), la app se ejecuta como `nobody`. Con controles positivos: [`check-vm-controles.txt`](evidencias/fase5/check-vm-controles.txt) §10 |
 | Monitorización | Suricata `active` en `enp2s0` con la regla 1000003 (Fase 4) |
 
 ### Cómo he probado (QA)
 
-Los cambios de configuración (compose, Nginx, app, reglas, SSH) se probaron primero en el entorno de pruebas ("en local" en estos documentos; lo lanzaba la IA, ver [Uso de la IA](../../README.md#uso-de-la-ia)) y después en la VM.
+Los cambios de configuración (compose, Nginx, app, reglas, SSH) los probaba primero en un entorno de pruebas aparte, que en estos documentos llamo "en local" (esas pruebas las lanzaba la IA, ver [Uso de la IA](../../README.md#uso-de-la-ia)), y después en la VM.
 
 | Tipo de prueba | Qué hice | Dónde |
 |---|---|---|
@@ -158,7 +158,7 @@ Los cambios de configuración (compose, Nginx, app, reglas, SSH) se probaron pri
 | Mejora | Motivo |
 |---|---|
 | Firewall de host propio (nftables: entrada solo 22/80/443) | Hoy depende de lo que publica Docker |
-| Cortar la salida a internet de la app | La app sí sale (`rc=0` en [`check-vm-controles.txt`](evidencias/fase5/check-vm-controles.txt)) porque `frontend_net` no puede ser `internal`: publica 80/443. No lo necesita. Se haría con una regla en `DOCKER-USER` |
+| Cortar la salida a internet de la app | La app sí sale (`rc=0` en [`check-vm-controles.txt`](evidencias/fase5/check-vm-controles.txt)) porque `frontend_net` no puede ser `internal`: publica 80/443. No lo necesita. Lo haría con una regla en `DOCKER-USER` |
 | Aplicar las 68 actualizaciones de Ubuntu (4 de seguridad, aviso al entrar por SSH el 20/10) | ISO 27001 A.8.8, gestión de vulnerabilidades |
 | Renovar `servidor.crt` antes del 19/10/2027 | Caduca en un año |
 | Cabecera HSTS en Nginx | Que el navegador no vuelva a intentar HTTP. No la puse porque con una CA de laboratorio puede dejar el dominio bloqueado en el navegador si algo falla |

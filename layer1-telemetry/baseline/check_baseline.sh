@@ -1,5 +1,5 @@
 #!/bin/bash
-# MF0488. No se usa en el MF0489: ver docs/correcciones-mf0488.md
+# Del MF0488. En el MF0489 no lo he usado; solo le arreglé un fallo (ver docs/correcciones-mf0488.md)
 # ==============================================================================
 # Script de Telemetría y Salud de Infraestructura - Layer 1 Baseline
 # ==============================================================================

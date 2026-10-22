@@ -8,7 +8,7 @@ La rúbrica está completa en las Fases 1-4. Esto es lo que añadí por encima, 
 |---|---|
 | No quitar ni cambiar nada de lo que pide la rúbrica | Lo primero es la nota |
 | Solo lo que pueda probar con una salida real | Nada de "se podría". Cada extra tiene su evidencia |
-| Que sea un tema que el sector o la normativa empujan ahora | Es lo que distingue un laboratorio de clase de uno pensado para el trabajo real |
+| Que sea un tema que el sector o la normativa empujan ahora | Quiero que el laboratorio se parezca a lo que me voy a encontrar trabajando |
 | Que quepa en una tabla | Lean: si necesita un documento entero, es otro proyecto |
 
 | Extra | Tendencia detrás |
@@ -31,7 +31,7 @@ La app depende de código que no he escrito (Flask, PyMySQL y lo que instalan po
 | Acción | Flask 3.1.3 y **todas** las dependencias fijadas, también las que instala Flask (`Werkzeug`, `Jinja2`…). SBOM en CycloneDX |
 | Comprobación | `pip-audit`: 0 vulnerabilidades. App probada en local y reconstruida en la VM: `Version: 3.1.3`, `codigo=200 tls=0` |
 
-Dejar escrito **por qué** un CVE no afecta (en vez de solo decir "actualizado") es lo que en el sector se llama VEX: sirve para que el siguiente que audite no repita el análisis.
+Dejar escrito **por qué** un CVE no afecta (en vez de solo decir "actualizado") es lo que se llama VEX: así el siguiente que audite no tiene que repetir el análisis.
 
 Evidencias: [`supply-chain.txt`](evidencias/extras/supply-chain.txt) y [`sbom-app.cdx.json`](evidencias/extras/sbom-app.cdx.json).
 

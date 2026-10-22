@@ -1,6 +1,6 @@
 # ADR-006: Correccion de Montaje de Volumenes y Terminacion TLS 1.3 en Nginx
 
-> **MF0488.** Documento de entonces, sin cambios. Lo que ya no es cierto está en [correcciones-mf0488.md](../correcciones-mf0488.md).
+> **Del MF0488.** Lo dejo como lo entregué. Lo que ya no es verdad lo tengo apuntado en [correcciones-mf0488.md](../correcciones-mf0488.md).
 
 * Fecha: 2026-09-16
 * Estado: Aceptado

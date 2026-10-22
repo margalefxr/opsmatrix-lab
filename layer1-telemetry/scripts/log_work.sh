@@ -1,5 +1,5 @@
 #!/bin/bash
-# MF0488. No se usa en el MF0489: ver docs/correcciones-mf0488.md
+# Del MF0488. En el MF0489 no lo he usado (ver docs/correcciones-mf0488.md)
 # Script de trazabilidad automática para auditar el desarrollo en docs/WORKLOG.md
 
 WORKLOG="docs/WORKLOG.md"

@@ -8,7 +8,7 @@ COPY app.py .
 # y el usuario nobody no lo puede leer. Lo dejo legible para todos.
 RUN chmod 644 requirements.txt app.py
 
-# No correr como root dentro del contenedor
+# No ejecutar como root dentro del contenedor
 USER nobody
 
 # Que los print salgan al momento en docker logs

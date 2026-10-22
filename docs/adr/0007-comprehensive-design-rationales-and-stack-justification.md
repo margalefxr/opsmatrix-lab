@@ -1,6 +1,6 @@
 # ADR-0007: Selección de stack y justificación arquitectónica (Fase 1)
 
-> **MF0488.** Documento de entonces, sin cambios. Lo que ya no es cierto está en [correcciones-mf0488.md](../correcciones-mf0488.md).
+> **Del MF0488.** Lo dejo como lo entregué. Lo que ya no es verdad lo tengo apuntado en [correcciones-mf0488.md](../correcciones-mf0488.md).
 
 * **Estado:** Aprobado
 * **Autor:** Xavier Margalef Riestra

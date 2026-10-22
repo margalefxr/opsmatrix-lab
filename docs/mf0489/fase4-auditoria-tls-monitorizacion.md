@@ -221,7 +221,7 @@ Salidas reales: [`fase4-intento1-vm.txt`](evidencias/fase4/fase4-intento1-vm.txt
 | Suricata en la interfaz | Quién se conecta, cuándo, a qué puerto, con qué versión TLS y a qué nombre (SNI). Alertas por reglas |
 | Log de Nginx (donde termina TLS) | Qué pidió (método, ruta, estado) y con qué cifrado |
 
-Se unen por IP, hora y puerto de origen. El IDS no necesita descifrar nada y el contenido solo se ve en el punto donde ya es legítimo verlo.
+Las uno por IP, hora y puerto de origen. Así el IDS no tiene que descifrar nada, y el contenido solo lo ve Nginx, que es quien ya lo tiene que ver.
 
 ## Evidencias pedidas en el feedback del MF0488
 
