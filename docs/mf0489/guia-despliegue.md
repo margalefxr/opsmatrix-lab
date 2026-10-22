@@ -80,7 +80,7 @@ cd opsmatrix-lab
 bash scripts/deploy.sh
 ```
 
-[`deploy.sh`](../../scripts/deploy.sh) comprueba que estén los certificados, crea el `.env` con contraseñas aleatorias si no existe, valida el compose y levanta los tres contenedores. Probado en la VM ([`deploy-vm.txt`](evidencias/fase5/deploy-vm.txt)) y, sin Docker, desde un clon limpio con claves nuevas ([`replica-desde-cero.txt`](evidencias/fase5/replica-desde-cero.txt)).
+[`deploy.sh`](../../scripts/deploy.sh) comprueba que estén los certificados, crea el `.env` con contraseñas aleatorias si no existe, valida el compose y levanta los tres contenedores. Probado desde un clon limpio de GitHub, con `.env` y BBDD nuevos ([`prueba-limpia-vm.txt`](evidencias/fase5/prueba-limpia-vm.txt), [`prueba-limpia-mac.txt`](evidencias/fase5/prueba-limpia-mac.txt)).
 
 **Suricata** (si se usa):
 

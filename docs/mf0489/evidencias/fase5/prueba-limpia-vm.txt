@@ -1,0 +1,261 @@
+# Despliegue desde cero en la VM (22/10/2026 08:09 UTC, commit 2d24bac). Salida real, sin recortar
+# Paro el despliegue real (down, sin -v), clono GitHub en ~/prueba-limpia y lanzo deploy.sh tal cual: .env nuevo y BBDD nueva
+# (volumen prueba-limpia_mariadb_data). check-vm.sh: todo OK, visitas=1. Después borro la prueba y vuelvo a levantar el real:
+# sigue con sus datos (22 visitas, la primera del 19/10). Usa los certificados de /etc/ssl; la PKI con claves nuevas está en replica-desde-cero.txt
+
+server@ubuntuserver:~/opsmatrix-lab$ cd ~/opsmatrix-lab && git pull && docker compose down
+git clone https://github.com/margalefxr/opsmatrix-lab.git ~/prueba-limpia
+cd ~/prueba-limpia && bash scripts/deploy.sh 2>&1 | tee ~/prueba-limpia.txt
+bash scripts/check-vm.sh 2>&1 | tee -a ~/prueba-limpia.txt
+remote: Enumerating objects: 29, done.
+remote: Counting objects: 100% (29/29), done.
+remote: Compressing objects: 100% (1/1), done.
+remote: Total 15 (delta 14), reused 15 (delta 14), pack-reused 0 (from 0)
+Unpacking objects: 100% (15/15), 2.40 KiB | 188.00 KiB/s, done.
+From https://github.com/margalefxr/opsmatrix-lab
+   b43a926..2d24bac  main         -> origin/main
+   b43a926..2d24bac  mf0489-https -> origin/mf0489-https
+Updating b43a926..2d24bac
+Fast-forward
+ README.md                                         |  4 +-
+ docs/mf0489/WORKLOG.md                            |  2 +-
+ docs/mf0489/evidencias/fase5/deploy-env-local.txt | 19 -----
+ docs/mf0489/evidencias/fase5/deploy-vm.txt        |  2 +-
+ docs/mf0489/fase3-https-docker.md                 |  4 +-
+ docs/mf0489/fase4-auditoria-tls-monitorizacion.md |  4 +-
+ docs/mf0489/fase5-entrega-final.md                |  2 +-
+ docs/mf0489/guia-despliegue.md                    |  2 +-
+ scripts/check-vm.sh                               |  5 +-
+ scripts/prueba-replica-vm.sh                      | 84 -----------------------
+ 10 files changed, 13 insertions(+), 115 deletions(-)
+ delete mode 100644 docs/mf0489/evidencias/fase5/deploy-env-local.txt
+ delete mode 100644 scripts/prueba-replica-vm.sh
+[+] Running 5/5
+ ✔ Container opsmatrix-proxy           Remo...                             0.1s
+ ✔ Container opsmatrix-app             Remove...                          10.1s
+ ✔ Container opsmatrix-db              Removed                             0.1s
+ ✔ Network opsmatrix-lab_frontend_net  Removed                             0.0s
+ ✔ Network opsmatrix-lab_backend_net   Removed                             0.1s
+Cloning into '/home/server/prueba-limpia'...
+remote: Enumerating objects: 911, done.
+remote: Counting objects: 100% (587/587), done.
+remote: Compressing objects: 100% (281/281), done.
+remote: Total 911 (delta 400), reused 459 (delta 285), pack-reused 324 (from 1)
+Receiving objects: 100% (911/911), 553.93 KiB | 3.96 MiB/s, done.
+Resolving deltas: 100% (572/572), done.
+[sudo: authenticate] Password:
+[+] Creando .env con contraseñas nuevas
+time="2026-10-22T08:09:06Z" level=warning msg="Docker Compose is configured to build using Bake, but buildx isn't installed"
+#0 building with "default" instance using docker driver
+
+#1 [app internal] load build definition from Dockerfile
+#1 transferring dockerfile: 506B done
+#1 DONE 0.0s
+
+#2 [app internal] load metadata for docker.io/library/python:3.12-slim
+#2 DONE 0.0s
+
+#3 [app internal] load .dockerignore
+#3 transferring context: 2B done
+#3 DONE 0.0s
+
+#4 [app 1/6] FROM docker.io/library/python:3.12-slim@sha256:a6e34c598f2467ed0e9a8d349809fcd8b5c603269512df273a0bb1784edc11b1
+#4 resolve docker.io/library/python:3.12-slim@sha256:a6e34c598f2467ed0e9a8d349809fcd8b5c603269512df273a0bb1784edc11b1 done
+#4 DONE 0.0s
+
+#5 [app internal] load build context
+#5 transferring context: 1.99kB done
+#5 DONE 0.0s
+
+#6 [app 3/6] COPY requirements.txt .
+#6 CACHED
+
+#7 [app 5/6] COPY app.py .
+#7 CACHED
+
+#8 [app 4/6] RUN pip install --no-cache-dir -r requirements.txt
+#8 CACHED
+
+#9 [app 2/6] WORKDIR /app
+#9 CACHED
+
+#10 [app 6/6] RUN chmod 644 requirements.txt app.py
+#10 CACHED
+
+#11 [app] exporting to image
+#11 exporting layers done
+#11 exporting manifest sha256:8eed933758af0cd34b275c022507a681e764998d90a80551ae2adf91a9f24d6d done
+#11 exporting config sha256:1f6e48f73bfd769114bf8f759fa2c52ef7a18143a224fc46e3ef5931b85a31d0 done
+#11 exporting attestation manifest sha256:bbefc396ab718b8a457612115e802400e6b79cbad0b45843cefc927ad9d78268 done
+#11 exporting manifest list sha256:58062a9b0a173c21daf7039c0e5c646d38f4b4ebb0c6d39c65bd48e0b6f4e8ac done
+#11 naming to docker.io/library/prueba-limpia-app:latest done
+#11 unpacking to docker.io/library/prueba-limpia-app:latest done
+#11 DONE 0.0s
+
+#12 [app] resolving provenance for metadata file
+#12 DONE 0.0s
+ app  Built
+ Network prueba-limpia_backend_net  Creating
+ Network prueba-limpia_backend_net  Created
+ Network prueba-limpia_frontend_net  Creating
+ Network prueba-limpia_frontend_net  Created
+ Volume prueba-limpia_mariadb_data  Creating
+ Volume prueba-limpia_mariadb_data  Created
+ Container opsmatrix-db  Creating
+ Container opsmatrix-db  Created
+ Container opsmatrix-app  Creating
+ Container opsmatrix-app  Created
+ Container opsmatrix-proxy  Creating
+ Container opsmatrix-proxy  Created
+ Container opsmatrix-db  Starting
+ Container opsmatrix-db  Started
+ Container opsmatrix-app  Starting
+ Container opsmatrix-app  Started
+ Container opsmatrix-proxy  Starting
+ Container opsmatrix-proxy  Started
+NAME              IMAGE               COMMAND                  SERVICE         CREATED          STATUS          PORTS
+opsmatrix-app     prueba-limpia-app   "python app.py"          app             10 seconds ago   Up 10 seconds   5000/tcp
+opsmatrix-db      mariadb:10.11       "docker-entrypoint.s…"   db              10 seconds ago   Up 10 seconds   3306/tcp
+opsmatrix-proxy   nginx:1.28-alpine   "/docker-entrypoint.…"   reverse-proxy   10 seconds ago   Up 10 seconds   0.0.0.0:80->80/tcp, [::]:80->80/tcp, 0.0.0.0:443->443/tcp, [::]:443->443/tcp
+nginx: the configuration file /etc/nginx/nginx.conf syntax is ok
+nginx: configuration file /etc/nginx/nginx.conf test is successful
+[OK] Desplegado. Comprobar con: bash scripts/check-vm.sh
+===== 1. SISTEMA =====
+Thu Oct 22 08:09:17 AM UTC 2026
+ubuntuserver
+up 1 day, 19 hours, 19 minutes
+enp2s0           UP             172.16.181.132/24 metric 100 fe80::20c:29ff:fe54:2392/64
+default via 172.16.181.2 dev enp2s0 proto dhcp src 172.16.181.132 metric 100
+
+===== 2. SSH =====
+active
+port 22
+permitrootlogin no
+pubkeyauthentication yes
+passwordauthentication no
+
+===== 3. SURICATA =====
+active
+660:  - interface: enp2s0
+740:  - interface: default
+748:  - interface: default
+
+===== 4. DOCKER =====
+Docker version 29.1.3, build 29.1.3-0ubuntu4.1
+Docker Compose version 2.40.3+ds1-0ubuntu1
+docker0          DOWN           172.17.0.1/16
+
+===== 5. CERTIFICADOS =====
+-rw------- 1 root root 2484 Oct 19 10:26 /etc/ssl/private/servidor.key
+-rw-r--r-- 1 root root 1809 Oct 19 10:26 /etc/ssl/certs/servidor.crt
+-rw-r--r-- 1 root root 1964 Oct 19 10:26 /etc/ssl/mf0489/ca.crt
+/etc/ssl/certs/servidor.crt: OK
+notAfter=Oct 19 10:23:24 2027 GMT
+hash clave:       4a232ee3d9b7e1e49c0713d2566598530dcd71ec005240db559b8c8260172ae4
+hash certificado: 4a232ee3d9b7e1e49c0713d2566598530dcd71ec005240db559b8c8260172ae4
+OK: ningún ca.key en la VM
+
+===== 6. REPO Y SECRETOS =====
+main
+2d24bac Más lean: fuera el script de réplica, frases más cortas y check-vm.sh sin nombre de proyecto fijo
+-rw------- 1 server server 304 Oct 22 08:09 .env
+OK: .env ignorado por git
+OK: ninguna clave ni .env en git
+
+===== 7. COMPOSE =====
+OK: compose válido
+NAME              IMAGE               COMMAND                  SERVICE         CREATED          STATUS          PORTS
+opsmatrix-app     prueba-limpia-app   "python app.py"          app             11 seconds ago   Up 10 seconds   5000/tcp
+opsmatrix-db      mariadb:10.11       "docker-entrypoint.s…"   db              11 seconds ago   Up 10 seconds   3306/tcp
+opsmatrix-proxy   nginx:1.28-alpine   "/docker-entrypoint.…"   reverse-proxy   11 seconds ago   Up 10 seconds   0.0.0.0:80->80/tcp, [::]:80->80/tcp, 0.0.0.0:443->443/tcp, [::]:443->443/tcp
+nginx: the configuration file /etc/nginx/nginx.conf syntax is ok
+nginx: configuration file /etc/nginx/nginx.conf test is successful
+
+===== 8. PUERTOS EN EL HOST =====
+tcp   LISTEN 0      4096                 0.0.0.0:443        0.0.0.0:*    users:(("docker-proxy",pid=65781,fd=7))
+tcp   LISTEN 0      4096                 0.0.0.0:80         0.0.0.0:*    users:(("docker-proxy",pid=65755,fd=7))
+tcp   LISTEN 0      4096                 0.0.0.0:22         0.0.0.0:*    users:(("sshd",pid=2147,fd=3),("systemd",pid=1,fd=111))
+tcp   LISTEN 0      4096                    [::]:443           [::]:*    users:(("docker-proxy",pid=65787,fd=7))
+tcp   LISTEN 0      4096                    [::]:80            [::]:*    users:(("docker-proxy",pid=65764,fd=7))
+tcp   LISTEN 0      4096                    [::]:22            [::]:*    users:(("sshd",pid=2147,fd=4),("systemd",pid=1,fd=112))
+
+===== 9. REDES DOCKER =====
+prueba-limpia_frontend_net internal=false contenedores: opsmatrix-proxy opsmatrix-app
+prueba-limpia_backend_net internal=true contenedores: opsmatrix-db opsmatrix-app
+
+===== 10. AISLAMIENTO ENTRE CONTENEDORES =====
+-- proxy -> app (debe funcionar)
+<h1>Portal OpsMatrix</h1><p>Visitas guardadas en MariaDB: 1</p><p>Has llegado por: http</p>
+-- control: el proxy sí resuelve 'app' (getent funciona)
+172.19.0.2        app  app
+-- proxy -> db (no debe ni resolver el nombre)
+OK: el proxy no ve la BBDD
+-- control: la app (frontend_net) sí sale a internet (la prueba funciona)
+control OK: la app sale (rc=0)
+-- db -> internet (no debe salir)
+/usr/bin/bash
+/usr/bin/timeout
+OK: la BBDD no sale a internet (rc=1)
+-- rutas de la BBDD (00000000 = ruta por defecto; no debe haber)
+Iface Destination Gateway
+eth0 000012AC 00000000
+-- usuario de la app
+uid=65534(nobody) gid=65534(nogroup) groups=65534(nogroup)
+
+===== 11. BASE DE DATOS =====
+prueba-limpia_mariadb_data /var/lib/docker/volumes/prueba-limpia_mariadb_data/_data
+visitas	primera	ultima
+1	2026-10-22 08:09:18	2026-10-22 08:09:18
+
+===== 12. LOGS RECIENTES =====
+opsmatrix-proxy  | 2026/10/22 08:09:07 [notice] 1#1: OS: Linux 7.0.0-38-generic
+opsmatrix-proxy  | 2026/10/22 08:09:07 [notice] 1#1: getrlimit(RLIMIT_NOFILE): 1024:524288
+opsmatrix-proxy  | 2026/10/22 08:09:07 [notice] 1#1: start worker processes
+opsmatrix-proxy  | 2026/10/22 08:09:07 [notice] 1#1: start worker process 21
+opsmatrix-proxy  | 2026/10/22 08:09:07 [notice] 1#1: start worker process 22
+opsmatrix-app  |  * Running on all addresses (0.0.0.0)
+opsmatrix-app  |  * Running on http://127.0.0.1:5000
+opsmatrix-app  |  * Running on http://172.19.0.2:5000
+opsmatrix-app  | Press CTRL+C to quit
+opsmatrix-app  | 172.19.0.3 - - [22/Oct/2026 08:09:18] "GET / HTTP/1.1" 200 -
+
+===== 13. LIMPIEZA (FASE 5) =====
+redes docker_* viejas: 0
+netfilter-persistent: disabled
+reglas viejas cargadas: 0
+mariadb_data-2026-10-19.tgz
+opsmatrix-2026-10-20-0940.sql.gz
+rules.v4.mf0488
+rules.v6.mf0488
+-- volúmenes de Docker (los que no use nadie pueden guardar datos viejos en la OVA)
+db-primaria-datos
+db-replica-datos
+opsmatrix-lab_mariadb_data
+prueba-limpia_mariadb_data
+sin usar: 3
+
+===== FIN =====
+server@ubuntuserver:~/prueba-limpia$ cd ~/prueba-limpia && docker compose down && docker volume rm prueba-limpia_mariadb_data && docker image rm prueba-limpia-app
+cd ~ && rm -rf ~/prueba-limpia
+cd ~/opsmatrix-lab && docker compose up -d
+bash scripts/check-vm.sh 2>&1 | grep -E "Up |ALERTA|^[0-9]+\s+2026"
+[+] Running 5/5
+ ✔ Container opsmatrix-proxy           Remo...                             0.1s
+ ✔ Container opsmatrix-app             Remove...                          10.1s
+ ✔ Container opsmatrix-db              Removed                             0.1s
+ ✔ Network prueba-limpia_backend_net   Removed                             0.1s
+ ✔ Network prueba-limpia_frontend_net  Removed                             0.0s
+prueba-limpia_mariadb_data
+Untagged: prueba-limpia-app:latest
+Deleted: sha256:58062a9b0a173c21daf7039c0e5c646d38f4b4ebb0c6d39c65bd48e0b6f4e8ac
+[+] Running 5/5
+ ✔ Network opsmatrix-lab_backend_net   Created                             0.0s
+ ✔ Network opsmatrix-lab_frontend_net  Created                             0.0s
+ ✔ Container opsmatrix-db              Started                             0.1s
+ ✔ Container opsmatrix-app             Starte...                           0.2s
+ ✔ Container opsmatrix-proxy           Star...                             0.3s
+opsmatrix-app     opsmatrix-lab-app   "python app.py"          app             1 second ago   Up Less than a second   5000/tcp
+opsmatrix-db      mariadb:10.11       "docker-entrypoint.s…"   db              1 second ago   Up Less than a second   3306/tcp
+opsmatrix-proxy   nginx:1.28-alpine   "/docker-entrypoint.…"   reverse-proxy   1 second ago   Up Less than a second   0.0.0.0:80->80/tcp, [::]:80->80/tcp, 0.0.0.0:443->443/tcp, [::]:443->443/tcp
+22	2026-10-19 11:14:06	2026-10-22 08:10:22
+server@ubuntuserver:~/opsmatrix-lab$
