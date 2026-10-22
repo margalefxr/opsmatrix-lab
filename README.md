@@ -20,6 +20,7 @@ Es un laboratorio que simula el portal de una gestoría. La web es mínima a pro
 | Guía de despliegue y recuperación | — | [guia-despliegue.md](docs/mf0489/guia-despliegue.md) |
 | Evidencias (salidas reales) | — | [`evidencias/`](docs/mf0489/evidencias/): `fase2/`, `fase3/`, `fase4/`, `fase5/`, `extras/` |
 | Extras (CVE de Flask, revocación, inventario de claves) | — | [extras.md](docs/mf0489/extras.md) |
+| Validación desde fuera (Kali) | — | [validacion-ofensiva.md](docs/mf0489/validacion-ofensiva.md) |
 | Pasos y dificultades | — | [WORKLOG.md](docs/mf0489/WORKLOG.md) |
 
 Cada fase (de la 1 a la 4) empieza con los criterios de la rúbrica y dónde está la prueba de cada uno. Además he cruzado lo que digo en los documentos con el código: [`coherencia-docs-codigo.txt`](docs/mf0489/evidencias/fase5/coherencia-docs-codigo.txt).
@@ -132,7 +133,7 @@ opsmatrix-lab/
 │   ├── pki/                      ← ca.crt, servidor.crt/.csr/.ext, ca.crl, ca.cnf (todo público)
 │   └── ssh/00-opsmatrix.conf     ← SSH solo con clave
 ├── layer3-services/app/          ← app Flask + Dockerfile
-├── scripts/                      ← deploy, backup-db, check-vm, check-mac, fase4-*, feedback-mf0488-vm, pki-revocacion y sync_ops (del MF0488, ya no lo uso)
+├── scripts/                      ← deploy, backup-db, check-vm, check-mac, fase4-*, validacion-atacante, feedback-mf0488-vm, pki-revocacion y sync_ops (del MF0488, ya no lo uso)
 └── docs/mf0489/                  ← fases, guía, WORKLOG y evidencias
 ```
 

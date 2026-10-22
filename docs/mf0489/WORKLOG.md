@@ -31,6 +31,7 @@ Rama `mf0489-https`, ya unida a `main`. Trabajo hecho del 19 al 22/10/2026 entre
 | 25 | Monto la PKI con una CA y claves nuevas desde un clon limpio, siguiendo solo la guía | La PKI nueva funciona, `deploy.sh` crea el `.env` y `check-mac.sh` sale bien. En el entorno de pruebas no hay Docker Hub, así que los contenedores los pruebo en el paso 26. [`replica-desde-cero.txt`](evidencias/fase5/replica-desde-cero.txt) |
 | 26 | Despliego desde cero en la VM: clon limpio, `deploy.sh`, `.env` y BBDD nuevos | Todo OK y las visitas empiezan en 1. Luego vuelvo al despliegue de siempre y sigue con sus datos (la primera visita es del 19/10). [`prueba-limpia-vm.txt`](evidencias/fase5/prueba-limpia-vm.txt), [`prueba-limpia-mac.txt`](evidencias/fase5/prueba-limpia-mac.txt) |
 | 27 | Me leo el repo entero como si fuera otra persona que lo descarga | Añado a la guía los pasos de Suricata para una instalación nueva, meto las evidencias que faltaban (aviso de Flask, hashes del `ca.key` viejo) y quito frases que decían más de lo que había probado. [`suricata-desde-cero.txt`](evidencias/fase5/suricata-desde-cero.txt) |
+| 28 | Valido las defensas desde una máquina de fuera (Kali), sin mi CA | Solo responden 22/80/443, la BBDD y la app no se alcanzan, el HTTPS sin CA falla, TLS viejo rechazado, y todo sale en Suricata. [validacion-ofensiva.md](validacion-ofensiva.md) |
 
 ## Dificultades
 
