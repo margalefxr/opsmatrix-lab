@@ -1,0 +1,12 @@
+# ¿ca.key está cifrada? (Mac, 22/10/2026). Salida real
+# Solo se enseña la cabecera y el tipo de cifrado. No pide la contraseña ni muestra la clave
+
+$ cd ~/ca_root-pki/ca && head -1 private/ca.key && openssl asn1parse -in private/ca.key | grep -oE "PBES2|PBKDF2|aes-256-cbc|hmacWithSHA256" | sort -u
+-----BEGIN ENCRYPTED PRIVATE KEY-----
+aes-256-cbc
+hmacWithSHA256
+PBES2
+PBKDF2
+
+-> ENCRYPTED: la clave está cifrada. PBES2 + PBKDF2 (con HMAC-SHA256) sacan la llave de la contraseña y aes-256-cbc cifra la clave.
+   Sin la contraseña el archivo no sirve para firmar. Permisos 600: check-mac.txt (§1)

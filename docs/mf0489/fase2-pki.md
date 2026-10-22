@@ -68,7 +68,7 @@ ca.crt: OK
 | Subject = Issuer | `OpsMatrix Lab Root CA` | Coinciden porque es autofirmada: es la raíz, nadie la firma por encima |
 | `CA:TRUE, pathlen:0` | Crítico | Puede firmar certificados de servidor, pero no crear CA intermedias |
 | Key Usage | `keyCertSign, cRLSign` | Solo sirve para firmar certificados y listas de revocación |
-| Clave | RSA 4096, cifrada con AES-256, permisos 600 | Robada sin la contraseña no sirve |
+| Clave | RSA 4096, cifrada con AES-256 ([`ca-key-cifrada.txt`](evidencias/fase2/ca-key-cifrada.txt)), permisos 600 | Robada sin la contraseña no sirve |
 | Firma / validez | SHA-256 / 10 años | Lo habitual en una raíz, que se renueva poco |
 
 `ca.crt: OK` solo confirma que la CA es coherente consigo misma. No significa que ningún navegador u ordenador confíe en ella.
