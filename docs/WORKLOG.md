@@ -1,6 +1,6 @@
 # OpsMatrix-Lab — Audit Log de Desarrollo (Evidencias de Autoría & Registro Técnico)
 
-> **MF0488.** Documento de entonces, sin cambios. Lo que ya no es cierto está en [correcciones-mf0488.md](correcciones-mf0488.md).
+> **Del MF0488.** Lo dejo como lo entregué. Lo que ya no es verdad lo tengo apuntado en [correcciones-mf0488.md](correcciones-mf0488.md).
 
 Este documento recopila la bitácora cronológica de trabajo, comandos ejecutados, decisiones de arquitectura y registros del repositorio. Sirve como evidencia de autoría y progreso lícito del proyecto ante auditoría o evaluación.
 

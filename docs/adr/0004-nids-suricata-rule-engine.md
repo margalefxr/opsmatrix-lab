@@ -1,6 +1,6 @@
 # ADR 0004: Motor de Reglas y Telemetría Pasiva en Suricata NIDS
 
-> **MF0488.** Documento de entonces, sin cambios. Lo que ya no es cierto está en [correcciones-mf0488.md](../correcciones-mf0488.md).
+> **Del MF0488.** Lo dejo como lo entregué. Lo que ya no es verdad lo tengo apuntado en [correcciones-mf0488.md](../correcciones-mf0488.md).
 
 * **Estatus:** Aceptado
 * **Fecha:** 2026-09-15

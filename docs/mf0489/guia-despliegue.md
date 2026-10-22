@@ -23,7 +23,7 @@ La CA **nunca** se crea en la VM. La VM se exportará como CTF y no puede llevar
 
 ## 2. PKI (una vez, con tus propias claves)
 
-Cada uno crea su CA y sus claves. Las mías no hacen falta ni se publican. Explicación de cada comando y de cada extensión en [fase2-pki.md](fase2-pki.md). Estos comandos se han probado tal cual desde un clon limpio ([`replica-desde-cero.txt`](evidencias/fase5/replica-desde-cero.txt)). Cambia `USUARIO@IP_VM` por los tuyos.
+Cada uno crea su CA y sus claves. Las mías no hacen falta ni se publican. Explicación de cada comando y de cada extensión en [fase2-pki.md](fase2-pki.md). Los he probado tal cual desde un clon limpio ([`replica-desde-cero.txt`](evidencias/fase5/replica-desde-cero.txt)). Cambia `USUARIO@IP_VM` por los tuyos.
 
 **Equipo de administración: crear la CA**
 

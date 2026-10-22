@@ -121,7 +121,7 @@ Pesa 131 bytes porque el volumen estaba vacío: la BBDD nunca llegó a arrancar,
 | La app en las dos redes | Es la única que tiene que hablar con la BBDD |
 | `expose` en la app en vez de `ports` | Así solo se ve dentro de Docker. La única entrada es Nginx |
 | Contraseñas en `.env` (600, en `.gitignore`) | En el MF0488 me penalizaron por tenerlas escritas en el compose |
-| La app corre como `nobody` | Si la explotan, no es root dentro del contenedor |
+| La app se ejecuta como `nobody` | Si la explotan, no es root dentro del contenedor |
 | Imágenes por rama (`nginx:1.28-alpine`, `mariadb:10.11`) | Que no entre una versión mayor nueva sin querer, como pasaría con `latest`. Los parches sí entran. Fijarlas por digest (`@sha256:…`) sería lo exacto, pero habría que actualizarlas a mano |
 | Un solo `docker-compose.yml` | Había dos y uno no se usaba. Borré el que sobraba |
 | La app usa el servidor de pruebas de Flask | Basta para un laboratorio con una visita cada vez. En producción iría detrás de un servidor WSGI como gunicorn (Flask avisa de ello en el log: [`incidencias.txt`](evidencias/fase3/incidencias.txt) §6) |
@@ -256,7 +256,7 @@ Sin el control, un "OK" también saldría si fallara el comando. Salida: [`check
 |---|---|---|---|
 | La BBDD se reiniciaba cada minuto | `docker logs opsmatrix-db` | No había `.env` y además los nombres de las variables no coincidían (`DB_*` en el compose, `MYSQL_*` en el ejemplo) | `.env.example` con los mismos nombres y `.env` creado en la VM con `openssl rand` ([`env-creado.txt`](evidencias/fase3/env-creado.txt)) |
 | `pip install` fallaba al construir la app (`Temporary failure in name resolution`) | La VM sí tenía internet. Un contenedor con `--network host` también. Uno normal no, ni por IP. La regla de NAT estaba, el firewall no lo tiraba y Suricata solo escucha | `docker0` (la red por defecto de Docker) no tenía IP, así que los contenedores no tenían por dónde salir | `sudo systemctl restart docker`. A los 30 segundos seguía bien |
-| La app se reiniciaba: `Permission denied` en `app.py` | `ls -l` en la VM: los archivos del repo salían con 600 | Tengo `umask 077` en la VM. La app corre como `nobody` y no podía leer el archivo | `RUN chmod 644` en el Dockerfile. No cambio el usuario a root |
+| La app se reiniciaba: `Permission denied` en `app.py` | `ls -l` en la VM: los archivos del repo salían con 600 | Tengo `umask 077` en la VM. La app se ejecuta como `nobody` y no podía leer el archivo | `RUN chmod 644` en el Dockerfile. No cambio el usuario a root |
 | Nginx: `host not found in upstream "app"` | Salía mientras la app estaba caída | Si la app no arranca, Docker no le da nombre | Se arregló solo al arreglar la app |
 | El puerto 80 enseñaba `Server: nginx/1.28.3` | `curl -I` | `server_tokens off` solo estaba en el bloque del 443 | Lo puse también en el 80 |
 | Había un `ca.key` en la VM | La revisión final avisó. Comparé el hash del archivo con el de la CA del Mac y eran distintos | Era la CA antigua del MF0488, en `layer2-perimeter/pki/`, junto con un `server.key` viejo en `nginx/ssl/`. Nunca llegaron a git | Borrados con `shred -u`. Ahora `find` no encuentra ningún `ca.key` y la única clave es `/etc/ssl/private/servidor.key` |
@@ -265,7 +265,7 @@ Salidas reales de estas incidencias: [`incidencias.txt`](evidencias/fase3/incide
 
 **Contraseñas en el historial de git:** el compose que borré tenía contraseñas de laboratorio y siguen en commits antiguos. No dan acceso a la BBDD actual: se creó por primera vez con las nuevas del `.env`. Poner algo en `.gitignore` después no lo quita del historial.
 
-**Para la Fase 5:** SSH sigue aceptando contraseña, `/etc/iptables/rules.v4` carga 22 reglas de redes Docker antiguas y quedan 4 redes `docker_*` vacías. Resuelto en la [Fase 5](fase5-entrega-final.md#2-qué-corre-de-verdad).
+**Para la Fase 5:** SSH sigue aceptando contraseña, `/etc/iptables/rules.v4` carga 22 reglas de redes Docker antiguas y quedan 4 redes `docker_*` vacías. Resuelto en la [Fase 5](fase5-entrega-final.md#2-qué-hay-de-verdad-en-la-vm).
 
 ## 9. Cómo desplegarlo
 
