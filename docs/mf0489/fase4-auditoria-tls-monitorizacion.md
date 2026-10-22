@@ -17,7 +17,7 @@ Compruebo que el HTTPS montado en la Fase 3 está bien configurado y que, aunque
 
 | | Equipo | IP | Papel |
 |---|---|---|---|
-| Cliente | Mac (está en la misma red que la VM y ya tiene `ca.crt`) | 172.16.181.1 | Lanza las pruebas |
+| Cliente | Mac (está en la misma red que la VM y ya tiene `ca.crt`) | 172.16.181.1 | Lanza las pruebas. El enunciado propone Kali "en lo posible": uso el Mac porque está en la misma red NAT de VMware, así que su tráfico entra por `enp2s0` igual que el de Kali y Suricata lo ve (alertas con `172.16.181.1` en §7) |
 | Servidor | Ubuntu `ubuntuserver` | 172.16.181.132 | Nginx + app + MariaDB en Docker |
 | Interfaz | `enp2s0` | — | Por donde entra el cliente. Es la que escucha Suricata (`- interface: enp2s0`) |
 

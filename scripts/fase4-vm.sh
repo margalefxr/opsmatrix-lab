@@ -3,6 +3,7 @@
 # Lanzar DESPUÉS de fase4-mac.sh.
 # Uso (desde la raíz del repo): bash scripts/fase4-vm.sh 2>&1 | tee fase4-vm.txt
 
+D=portal.opsmatrix.test
 cd "$(dirname "$0")/.." || exit 1
 sudo -v
 
@@ -22,7 +23,7 @@ echo
 echo "===== 3. TCPDUMP PUERTO 443: ¿se ve la ruta? ====="
 grep -c "" ~/f4/tcpdump-443.txt
 grep -ac "mf0489-prueba-https" ~/f4/tcpdump-443.txt
-grep -aE "portal.opsmatrix.test" ~/f4/tcpdump-443.txt | head -2
+grep -aF "$D" ~/f4/tcpdump-443.txt | head -2
 head -3 ~/f4/tcpdump-443.txt
 
 echo
