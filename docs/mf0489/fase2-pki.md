@@ -36,7 +36,10 @@ Monto una CA de laboratorio y emito con ella el certificado del servidor `portal
 
 ```bash
 umask 077
+mkdir -p ~/ca_root-pki/ca/{private,solicitudes,emitidos} && cd ~/ca_root-pki/ca
 openssl genpkey -algorithm RSA -pkeyopt rsa_keygen_bits:4096 -aes-256-cbc -out private/ca.key
+chmod 600 private/ca.key
+openssl pkey -in private/ca.key -check -noout          # "Key is valid"
 openssl req -x509 -new -sha256 -days 3650 -key private/ca.key -out ca.crt \
   -subj "/C=ES/O=OpsMatrix Lab/CN=OpsMatrix Lab Root CA" \
   -addext "basicConstraints=critical,CA:TRUE,pathlen:0" \
@@ -73,9 +76,13 @@ ca.crt: OK
 ## 3. Clave y CSR del servidor (VM)
 
 ```bash
+umask 077
+mkdir -p ~/mf0489 && cd ~/mf0489
 openssl genpkey -algorithm RSA -pkeyopt rsa_keygen_bits:3072 -out servidor.key
+chmod 600 servidor.key
 openssl req -new -sha256 -key servidor.key -out servidor.csr \
   -subj "/CN=portal.opsmatrix.test" -addext "subjectAltName=DNS:portal.opsmatrix.test"
+openssl req -in servidor.csr -text -noout -verify
 ```
 
 ```
@@ -156,6 +163,16 @@ sudo install -o root -g root -m 644 ~/mf0489/ca.crt     /etc/ssl/mf0489/ca.crt
 -rw-r--r-- 1 root root 1809 Oct 19 10:26 /etc/ssl/certs/servidor.crt
 drwxr-xr-x 2 root root 4096 Oct 19 10:26 /etc/ssl/mf0489
 -rw-r--r-- 1 root root 1964 Oct 19 10:26 /etc/ssl/mf0489/ca.crt
+```
+
+```bash
+D=portal.opsmatrix.test
+openssl verify -purpose sslserver -verify_hostname $D /etc/ssl/certs/servidor.crt                    # sin la CA
+openssl verify -CAfile /etc/ssl/mf0489/ca.crt -purpose sslserver -verify_hostname $D /etc/ssl/certs/servidor.crt
+openssl verify -CAfile /etc/ssl/mf0489/ca.crt -purpose sslserver -verify_hostname servidor-equivocado.test /etc/ssl/certs/servidor.crt
+openssl x509 -in /etc/ssl/certs/servidor.crt -noout -dates -checkend 0                               # vigencia
+sudo openssl pkey -in /etc/ssl/private/servidor.key -pubout -outform DER | openssl dgst -sha256   # clave
+openssl x509 -in /etc/ssl/certs/servidor.crt -pubkey -noout | openssl pkey -pubin -outform DER | openssl dgst -sha256
 ```
 
 | Comprobación | Resultado real | Interpretación |

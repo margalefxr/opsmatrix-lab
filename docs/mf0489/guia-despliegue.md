@@ -13,6 +13,14 @@ Probado con Ubuntu 26.04 LTS, Docker 29.1.3, Compose 2.40.3, Suricata 8.0.3 y Op
 
 La CA **nunca** se crea en la VM. La VM se exportará como CTF y no puede llevar `ca.key`.
 
+**Si tu laboratorio es distinto** (todo lo demás funciona igual):
+
+| Si cambias… | Edita |
+|---|---|
+| La IP de la VM (aquí `172.16.181.132`) | `IP=` arriba de `check-mac.sh`, `fase4-mac.sh` y `pki-revocacion.sh` |
+| La carpeta de la CA (aquí `~/ca_root-pki/ca`) | `CA_DIR=` arriba de esos mismos scripts |
+| El nombre (aquí `portal.opsmatrix.test`) | `server_name` en `default.conf`, `subjectAltName` en `servidor.ext`, la CSR y `D=` arriba de los scripts |
+
 ## 2. PKI (una vez, con tus propias claves)
 
 Cada uno crea su CA y sus claves. Las mías no hacen falta ni se publican. Explicación de cada comando y de cada extensión en [fase2-pki.md](fase2-pki.md). Estos comandos se han probado tal cual desde un clon limpio ([`replica-desde-cero.txt`](evidencias/fase5/replica-desde-cero.txt)). Cambia `USUARIO@IP_VM` por los tuyos.
@@ -26,6 +34,7 @@ mkdir -p ~/ca_root-pki/ca/private ~/ca_root-pki/ca/solicitudes ~/ca_root-pki/ca/
 cd ~/ca_root-pki/ca
 openssl genpkey -algorithm RSA -pkeyopt rsa_keygen_bits:4096 -aes-256-cbc -out private/ca.key   # pide una contraseña
 chmod 600 private/ca.key
+openssl pkey -in private/ca.key -check -noout                  # "Key is valid"
 openssl req -x509 -new -sha256 -days 3650 -key private/ca.key -out ca.crt \
   -subj "/C=ES/O=OpsMatrix Lab/CN=OpsMatrix Lab Root CA" \
   -addext "basicConstraints=critical,CA:TRUE,pathlen:0" \
