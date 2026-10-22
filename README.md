@@ -56,7 +56,7 @@ Lo del MF0488 sigue en [`docs/WORKLOG.md`](docs/WORKLOG.md) y [`docs/adr/`](docs
 | Secretos fuera del código | `.env` y claves fuera de git. La CA, fuera de la VM |
 | Configuración como código | Compose, Nginx, reglas de Suricata y SSH versionados en el repo |
 | Observabilidad | Suricata en la red + log de Nginx con versión TLS, cruzados por IP y puerto |
-| Reproducible | `deploy.sh` + `check-*.sh`. Todo vuelve solo tras reiniciar la VM y `deploy.sh` funciona sobre el despliegue ya hecho ([`deploy-vm.txt`](docs/mf0489/evidencias/fase5/deploy-vm.txt)). Desde un clon limpio y con claves nuevas, la guía funciona hasta `check-mac.sh` ([`replica-desde-cero.txt`](docs/mf0489/evidencias/fase5/replica-desde-cero.txt)). Sin probar: los contenedores en una VM vacía |
+| Reproducible | [Guía](docs/mf0489/guia-despliegue.md) + `deploy.sh` + `check-*.sh`. Probado tras reiniciar la VM y, sin Docker, desde un clon limpio con claves nuevas ([`replica-desde-cero.txt`](docs/mf0489/evidencias/fase5/replica-desde-cero.txt)) |
 | Versiones fijas | Dependencias de Python exactas (`==`), también las transitivas. Imágenes por rama (`nginx:1.28-alpine`, `mariadb:10.11`, `python:3.12-slim`): no cambian de versión mayor, pero sí reciben parches |
 
 ## Cómo lo he hecho
@@ -73,7 +73,7 @@ Lo del MF0488 sigue en [`docs/WORKLOG.md`](docs/WORKLOG.md) y [`docs/adr/`](docs
 
 | | |
 |---|---|
-| Qué hizo la IA | Preparar scripts y comandos, proponer la estructura de los docs y revisar coherencia. También lanzó las pruebas que no necesitan la VM en su propio entorno de pruebas (Nginx, app y MariaDB en local, Suricata con capturas hechas a mano, `shellcheck`, `pip-audit`…). Esas evidencias lo dicen en su cabecera ("entorno de pruebas") |
+| Qué hizo la IA | Preparar scripts y comandos, proponer la estructura de los docs, revisar coherencia y lanzar las pruebas que no necesitan la VM ("entorno de pruebas" en la cabecera de esas evidencias) |
 | Qué hice yo | Ejecutar en mi laboratorio (Mac y VM) todo lo que toca la CA, la VM y la red, pegar las salidas reales y decidir. Lo que no entendía, lo pregunté hasta poder explicarlo |
 | Cómo lo verifiqué | Nada se documenta sin una salida real. Los cambios de configuración se probaban primero en el entorno de pruebas y luego en la VM |
 | Qué no le pasé | Ninguna clave privada, contraseña ni `.env`. Solo salidas y archivos públicos |

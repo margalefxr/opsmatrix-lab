@@ -113,7 +113,7 @@ Para montarlo en otra máquina: [guía de despliegue](guia-despliegue.md). No ne
 
 ## 7. Pruebas finales
 
-Salidas completas: [`check-vm-final.txt`](evidencias/fase5/check-vm-final.txt) y [`check-mac-final.txt`](evidencias/fase5/check-mac-final.txt) (20/10). Repetido el 21/10 con la versión publicada en GitHub (`71887bf`, clon limpio en el Mac): [`check-vm-github.txt`](evidencias/fase5/check-vm-github.txt) y [`check-mac-github.txt`](evidencias/fase5/check-mac-github.txt). Mismo resultado.
+Salidas: [`check-vm-final.txt`](evidencias/fase5/check-vm-final.txt) y [`check-mac-final.txt`](evidencias/fase5/check-mac-final.txt) (20/10, tras reiniciar). Repetidas con la versión de GitHub: [`check-vm-final2.txt`](evidencias/fase5/check-vm-final2.txt) y [`check-mac-final2.txt`](evidencias/fase5/check-mac-final2.txt) (21/10).
 
 | Prueba | Resultado |
 |---|---|

@@ -215,7 +215,7 @@ Verified peername: portal.opsmatrix.test
 Negotiated TLS1.3 group: X25519MLKEM768
 ```
 
-`Verification: OK` quiere decir que la firma es de mi CA, y `Verified peername` que el nombre coincide. Además, la huella SHA-256 del certificado que entrega Nginx es la misma que la del `servidor.crt` que firmó la CA (`13:2B:31:0E…06:EE`, [`check-mac-final2.txt`](evidencias/fase5/check-mac-final2.txt) §7): Nginx presenta justo el certificado esperado. El grupo `X25519MLKEM768` es un intercambio de claves que mezcla uno clásico con uno post-cuántico (ML-KEM). No lo configuré yo: lo eligen solos OpenSSL 3.5 del Mac y de la VM.
+`Verification: OK` quiere decir que la firma es de mi CA, y `Verified peername` que el nombre coincide. La huella del certificado que entrega Nginx es la del `servidor.crt` firmado (`13:2B:31:0E…06:EE`, [`check-mac-final2.txt`](evidencias/fase5/check-mac-final2.txt) §7). El grupo `X25519MLKEM768` es un intercambio de claves que mezcla uno clásico con uno post-cuántico (ML-KEM). No lo configuré yo: lo eligen solos OpenSSL 3.5 del Mac y de la VM.
 
 ## 7. App y persistencia
 
@@ -248,7 +248,7 @@ Después de reiniciar, la siguiente visita sumó sobre las anteriores en vez de 
 | BBDD → internet | La app sí sale (`rc=0`) y la BBDD tiene `bash` y `timeout` | No sale (`rc=1`). Su tabla de rutas no tiene ruta por defecto, solo `backend_net` |
 | Usuario de la app | — | `uid=65534(nobody)` |
 
-Los controles se añadieron el 21/10, después de la revisión final: sin ellos, un "OK" también podía salir porque fallara el comando. El primer intento tenía un fallo en el propio control y lo dejo a la vista ([`check-vm-controles-intento1.txt`](evidencias/fase5/check-vm-controles-intento1.txt)). Salida buena: [`check-vm-controles.txt`](evidencias/fase5/check-vm-controles.txt) §10.
+Sin el control, un "OK" también saldría si fallara el comando. Salida: [`check-vm-controles.txt`](evidencias/fase5/check-vm-controles.txt) §10.
 
 ## 8. Dificultades
 

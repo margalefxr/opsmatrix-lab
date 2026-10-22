@@ -5,6 +5,7 @@
 
 D=portal.opsmatrix.test
 cd "$(dirname "$0")/.." || exit 1   # raíz del repo
+P=$(docker compose config | sed -n 's/^name: //p')   # nombre del proyecto (sale de la carpeta)
 sudo -v   # pide la contraseña una sola vez
 
 echo "===== 1. SISTEMA ====="
@@ -61,7 +62,7 @@ sudo ss -tulnp | grep -E ":(22|80|443|3306|5000)\b"
 
 echo
 echo "===== 9. REDES DOCKER ====="
-for n in opsmatrix-lab_frontend_net opsmatrix-lab_backend_net; do
+for n in ${P}_frontend_net ${P}_backend_net; do
   echo "$n internal=$(docker network inspect $n -f '{{.Internal}}') contenedores: $(docker network inspect $n -f '{{range .Containers}}{{.Name}} {{end}}')"
 done
 
@@ -92,7 +93,7 @@ docker compose exec -T app id
 
 echo
 echo "===== 11. BASE DE DATOS ====="
-docker volume inspect opsmatrix-lab_mariadb_data -f '{{.Name}} {{.Mountpoint}}'
+docker volume inspect ${P}_mariadb_data -f '{{.Name}} {{.Mountpoint}}'
 docker compose exec -T db sh -c 'mariadb -u"$MARIADB_USER" -p"$MARIADB_PASSWORD" "$MARIADB_DATABASE" -e "SELECT COUNT(*) AS visitas, MIN(fecha) AS primera, MAX(fecha) AS ultima FROM visitas"'
 
 echo
