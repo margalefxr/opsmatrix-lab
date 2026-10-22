@@ -11,7 +11,7 @@
 | Certificados instalados | ✅ | [§3](#3-certificados-y-claves) |
 | Configuración coherente con el repo | ✅ Corregidas 4 diferencias | [§2](#2-qué-corre-de-verdad) |
 | Recuperación | ✅ Copia restaurada y comprobada | [§4](#4-recuperación) |
-| Reproducibilidad | ✅ Todo vuelve solo tras reiniciar | [§5](#5-reproducibilidad) |
+| Reproducibilidad | ✅ Vuelve solo tras reiniciar y se monta desde cero con un clon de GitHub | [§5](#5-reproducibilidad) |
 | Claves privadas protegidas | ✅ | [§3](#3-certificados-y-claves) |
 | `.gitignore` y lo publicado | ✅ Sin secretos | [§6](#6-qué-hay-publicado) |
 | Confianza HTTPS, redirección, app y monitorización | ✅ | [§7](#7-pruebas-finales) |
@@ -31,7 +31,7 @@ Fuente editable: [arquitectura-final.mmd](arquitectura-final.mmd). Explicación 
 | Compose en `layer3-services/docker/` | Se usaba el de la raíz. El de `layer3` tenía contraseñas escritas | Un solo compose, contraseñas en `.env` (Fase 3) |
 | Reglas de Suricata del repo (`[OPSMATRIX-NIDS]…`) | Corrían otras (`[SEC-ALERT]…`) | El repo tiene las que corren de verdad + la 1000003 (Fase 4) |
 | "SSH solo con claves Ed25519" | `authorized_keys` **vacío** y `PasswordAuthentication yes` | Clave autorizada y contraseña desactivada (abajo) |
-| Firewall en `rules.v4` | Solo reglas de Docker (44 líneas, 22 de ellas de bridges que ya no existen), ninguna propia | Desactivado `netfilter-persistent`. Docker crea sus reglas al arrancar |
+| Firewall en `rules.v4` | Solo reglas de Docker (44 líneas, 22 de ellas de redes antiguas: `br-e2efeb52c253` y `10.0.x`), ninguna propia | Desactivado `netfilter-persistent`. Docker crea sus reglas al arrancar |
 
 **SSH.** Primero autoricé la clave del Mac (`ssh-copy-id`) y comprobé que entraba sin contraseña. Solo después instalé [`00-opsmatrix.conf`](../../layer2-perimeter/ssh/00-opsmatrix.conf). Se llama `00-` para que sshd lo lea antes que `50-cloud-init.conf`, que pone `PasswordAuthentication yes` (en sshd gana el primer valor que lee).
 
@@ -50,7 +50,7 @@ server@172.16.181.132: Permission denied (publickey).
 
 Salida completa de SSH, firewall y copia: [`fase5-ssh-firewall-backup.txt`](evidencias/fase5/fase5-ssh-firewall-backup.txt).
 
-**Firewall y redes viejas.** `rules.v4` no protegía nada. Al arrancar volvía a cargar reglas de Docker de bridges que ya no existen. Lo guardé en `~/backups/`, desactivé `netfilter-persistent` y borré las 4 redes `docker_*` del compose antiguo (0 contenedores). Tras reiniciar: `reglas viejas cargadas: 0`.
+**Firewall y redes viejas.** `rules.v4` no protegía nada. Al arrancar volvía a cargar reglas de Docker de redes antiguas. Lo guardé en `~/backups/`, desactivé `netfilter-persistent` y borré las 4 redes `docker_*` del compose antiguo (0 contenedores). Tras reiniciar: `reglas viejas cargadas: 0`.
 
 Lo que protege los puertos ahora es la propia arquitectura: solo se publican 22, 80 y 443, y Docker pone sus reglas para las redes internas. Un firewall de host propio (nftables solo con 22/80/443 de entrada) queda como mejora.
 
@@ -96,7 +96,7 @@ Pasos completos de recuperación y vuelta atrás en la [guía de despliegue](gui
 | Datos | 10 visitas, la primera del 19/10 ([`check-vm-final.txt`](evidencias/fase5/check-vm-final.txt) §11) |
 | Reglas viejas del firewall | 0 |
 
-Para montarlo en otra máquina: [guía de despliegue](guia-despliegue.md). No necesita ninguna clave mía, cada uno genera la suya.
+**¿Se monta desde cero?** Sí. Con la [guía](guia-despliegue.md), un clon limpio de GitHub y `deploy.sh`: `.env` y BBDD nuevos, todo `OK` ([`prueba-limpia-vm.txt`](evidencias/fase5/prueba-limpia-vm.txt), [`prueba-limpia-mac.txt`](evidencias/fase5/prueba-limpia-mac.txt)). No necesita ninguna clave mía: la PKI con claves nuevas está probada en [`replica-desde-cero.txt`](evidencias/fase5/replica-desde-cero.txt).
 
 ## 6. Qué hay publicado
 
@@ -134,14 +134,14 @@ Los cambios de configuración (compose, Nginx, app, reglas, SSH) se probaron pri
 |---|---|---|
 | Antes de desplegar (shift-left) | Nginx, la app y MariaDB montados en local: `nginx -t`, 301, TLS 1.3 y TLS 1.1 rechazado | [`prueba-local.txt`](evidencias/fase3/prueba-local.txt) |
 | Validar la regla del IDS sin tocar la VM | Captura hecha a mano con un SYN normal, uno con ECN y un SYN-ACK, pasada por Suricata con `flags:S` y con `flags:S,CE` | [`prueba-regla-pcap.txt`](evidencias/extras/prueba-regla-pcap.txt) |
-| Pruebas de humo | `check-vm.sh` y `check-mac.sh` al acabar la Fase 3, tras reiniciar en la Fase 5 y después de subir a GitHub | `evidencias/fase3/` y `fase5/` |
+| Pruebas de humo | `check-vm.sh` y `check-mac.sh` al acabar la Fase 3, tras reiniciar, con la versión de GitHub y desde cero | `evidencias/fase3/` y `fase5/` |
 | Pruebas negativas | Sin CA, nombre equivocado, TLS 1.1, puertos 3306/5000, proxy → BBDD, BBDD → internet, SSH con contraseña. Todas tienen que **fallar**, y cada una tiene al lado otra que sí funciona (con CA, nombre bueno, TLS 1.2/1.3, puertos 22/80/443, proxy → app, app → internet, SSH con clave) para que el fallo no sea del comando | Fases 3, 4 y 5 |
 | Persistencia y recuperación | `down` / `up`, reinicio de la VM y copia restaurada en una base aparte | Fases 3 y 5 |
 | Búsqueda de secretos | `git ls-files` y `git log --all` buscando `.key`, `.env`, `.pem` | Fase 5 |
 | Coherencia docs = código | Cada directiva que nombran los docs, buscada en el código, más AKI/SKI y hash de la clave pública: 44 OK, 0 fallos | [`coherencia-docs-codigo.txt`](evidencias/fase5/coherencia-docs-codigo.txt) |
 | Validación con herramientas | `shellcheck` (scripts), `pyflakes` (app), `docker compose config`, `nginx -t`, `suricata -T`, `sshd -T` y `openssl verify` con la CRL. Sin errores | [`validacion-herramientas.txt`](evidencias/fase5/validacion-herramientas.txt) |
 | Revocación | Certificado de prueba revocado → `error 23`. El real sigue `OK` | [Extra](extras.md) |
-| Automatizadas (CI) | `shellcheck`, `docker compose config`, `pip-audit` y `detect-secrets` en cada push | [`checks.yml`](../../.github/workflows/checks.yml) |
+| Automatizadas (CI) | `shellcheck`, `docker compose config`, `py_compile`, `pip-audit` y `detect-secrets` en cada push ([`ci.txt`](evidencias/fase5/ci.txt)) | [`checks.yml`](../../.github/workflows/checks.yml) |
 
 ## 8. Dificultades de esta fase
 
@@ -162,8 +162,7 @@ Los cambios de configuración (compose, Nginx, app, reglas, SSH) se probaron pri
 | Aplicar las 68 actualizaciones de Ubuntu (4 de seguridad, aviso al entrar por SSH el 20/10) | ISO 27001 A.8.8, gestión de vulnerabilidades |
 | Renovar `servidor.crt` antes del 19/10/2027 | Caduca en un año |
 | Cabecera HSTS en Nginx | Que el navegador no vuelva a intentar HTTP. No la puse porque con una CA de laboratorio puede dejar el dominio bloqueado en el navegador si algo falla |
-| Revisar el proyecto `infra-lab` (WordPress, ver [`fase5-ssh-firewall-backup.txt`](evidencias/fase5/fase5-ssh-firewall-backup.txt)) antes de exportar la OVA | No es de OpsMatrix, pero estará en la VM del CTF |
-| Decidir si `db-primaria-datos` y `db-replica-datos` (de `infra-lab`) van en la OVA | Los 8 volúmenes anónimos del MF0488 ya están borrados (1,2 GB, [`volumenes-limpieza.txt`](evidencias/fase5/volumenes-limpieza.txt)). Quedan estos 2, sin usar, que pueden guardar datos y contraseñas viejas |
+| Decidir si `infra-lab` (WordPress) y sus volúmenes `db-primaria-datos` / `db-replica-datos` van en la OVA | No son de OpsMatrix y pueden guardar datos viejos. Los 8 volúmenes anónimos del MF0488 ya están borrados ([`volumenes-limpieza.txt`](evidencias/fase5/volumenes-limpieza.txt)) |
 
 ## Normativa
 

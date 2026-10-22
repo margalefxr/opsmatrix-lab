@@ -85,8 +85,8 @@ $ sudo ss -tulnp | grep -E ':(22|80|443|3306|5000)\b'      # recortado, completo
 ```
 
 ```
-$ docker compose config --quiet && echo "compose OK"
-compose OK
+$ docker compose config --quiet && echo "OK: compose válido"      # check-vm.txt §7
+OK: compose válido
 $ docker compose ps                     # columnas recortadas (persistencia.txt)
 NAME              IMAGE               SERVICE         STATUS          PORTS
 opsmatrix-app     opsmatrix-lab-app   app             Up 15 seconds   5000/tcp
@@ -124,7 +124,7 @@ Pesa 131 bytes porque el volumen estaba vacío: la BBDD nunca llegó a arrancar,
 | La app corre como `nobody` | Si la explotan, no es root dentro del contenedor |
 | Imágenes por rama (`nginx:1.28-alpine`, `mariadb:10.11`) | Que no entre una versión mayor nueva sin querer, como pasaría con `latest`. Los parches sí entran. Fijarlas por digest (`@sha256:…`) sería lo exacto, pero habría que actualizarlas a mano |
 | Un solo `docker-compose.yml` | Había dos y uno no se usaba. Borré el que sobraba |
-| La app usa el servidor de pruebas de Flask | Basta para un laboratorio con una visita cada vez. En producción iría detrás de un servidor WSGI como gunicorn (Flask avisa de ello en el log) |
+| La app usa el servidor de pruebas de Flask | Basta para un laboratorio con una visita cada vez. En producción iría detrás de un servidor WSGI como gunicorn (Flask avisa de ello en el log: [`incidencias.txt`](evidencias/fase3/incidencias.txt) §6) |
 
 ### Preguntas de la Actividad 10
 
@@ -239,7 +239,7 @@ Después de reiniciar, la siguiente visita sumó sobre las anteriores en vez de 
 | Los datos sobreviven a `down` / `up` | Se guardan en el volumen `mariadb_data`. La primera visita (19/10 11:14:06) sigue ahí el 21/10, después de reiniciar la VM ([`check-vm-github.txt`](evidencias/fase5/check-vm-github.txt) §11) |
 | La IP guardada es la del Mac (`172.16.181.1`) | La cabecera `X-Real-IP` llega bien |
 
-**Aislamiento** (con [`scripts/check-vm.sh`](../../scripts/check-vm.sh), salida en [`evidencias/fase3/check-vm.txt`](evidencias/fase3/check-vm.txt)):
+**Aislamiento** (con [`scripts/check-vm.sh`](../../scripts/check-vm.sh)):
 
 | Prueba | Control (demuestra que la prueba funciona) | Resultado |
 |---|---|---|
@@ -261,11 +261,11 @@ Sin el control, un "OK" también saldría si fallara el comando. Salida: [`check
 | El puerto 80 enseñaba `Server: nginx/1.28.3` | `curl -I` | `server_tokens off` solo estaba en el bloque del 443 | Lo puse también en el 80 |
 | Había un `ca.key` en la VM | La revisión final avisó. Comparé el hash del archivo con el de la CA del Mac y eran distintos | Era la CA antigua del MF0488, en `layer2-perimeter/pki/`, junto con un `server.key` viejo en `nginx/ssl/`. Nunca llegaron a git | Borrados con `shred -u`. Ahora `find` no encuentra ningún `ca.key` y la única clave es `/etc/ssl/private/servidor.key` |
 
-Salidas reales de estas incidencias: [`incidencias.txt`](evidencias/fase3/incidencias.txt) y [`actividad8.txt`](evidencias/fase3/actividad8.txt) (BBDD sin `.env`). El `ca.key` viejo sale como `ALERTA` en [`check-vm.txt`](evidencias/fase3/check-vm.txt) §5 y ya no en [`check-vm-final.txt`](evidencias/fase5/check-vm-final.txt).
+Salidas reales de estas incidencias: [`incidencias.txt`](evidencias/fase3/incidencias.txt) (§7: los hashes del `ca.key`) y [`actividad8.txt`](evidencias/fase3/actividad8.txt) (BBDD sin `.env`). El `ca.key` viejo sale como `ALERTA` en [`check-vm.txt`](evidencias/fase3/check-vm.txt) §5 y ya no en [`check-vm-final.txt`](evidencias/fase5/check-vm-final.txt).
 
 **Contraseñas en el historial de git:** el compose que borré tenía contraseñas de laboratorio y siguen en commits antiguos. No dan acceso a la BBDD actual: se creó por primera vez con las nuevas del `.env`. Poner algo en `.gitignore` después no lo quita del historial.
 
-**Para la Fase 5:** SSH sigue aceptando contraseña, `/etc/iptables/rules.v4` carga 22 reglas de bridges de Docker que ya no existen y quedan 4 redes `docker_*` vacías. Resuelto en la [Fase 5](fase5-entrega-final.md#2-qué-corre-de-verdad).
+**Para la Fase 5:** SSH sigue aceptando contraseña, `/etc/iptables/rules.v4` carga 22 reglas de redes Docker antiguas y quedan 4 redes `docker_*` vacías. Resuelto en la [Fase 5](fase5-entrega-final.md#2-qué-corre-de-verdad).
 
 ## 9. Cómo desplegarlo
 

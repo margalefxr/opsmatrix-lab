@@ -1,6 +1,6 @@
 # WORKLOG — ExP 89 (MF0489)
 
-Rama `mf0489-https`, ya unida a `main`. Trabajo hecho del 19 al 21/10/2026 entre el Mac (CA y cliente) y la VM Ubuntu (servidor).
+Rama `mf0489-https`, ya unida a `main`. Trabajo hecho del 19 al 22/10/2026 entre el Mac (CA y cliente) y la VM Ubuntu (servidor).
 
 | # | Paso | Resultado |
 |---|---|---|
@@ -18,7 +18,7 @@ Rama `mf0489-https`, ya unida a `main`. Trabajo hecho del 19 al 21/10/2026 entre
 | 12 | Reinicio de la VM y revisión final con `check-vm.sh` y `check-mac.sh` | Todo vuelve solo. [fase5-entrega-final.md](fase5-entrega-final.md) |
 | 13 | Extra: `pip-audit`, SBOM y `detect-secrets` | CVE en Flask 3.0.3: no explotable aquí, actualizado igual a 3.1.3 y dependencias fijadas. [extras.md](extras.md#1-software-de-terceros-cve-de-flask) |
 | 14 | Extra: revocación con CRL e inventario criptográfico | Revocado → `error 23`, real → `OK`. SSH aún sin post-cuántica. [extras.md](extras.md) |
-| 15 | Revisión final con herramientas: `shellcheck`, `pyflakes`, `docker compose config`, `nginx -t`, `suricata -T`, `sshd -t`, OpenSSL y enlaces | Sin errores. [validacion-herramientas.txt](evidencias/fase5/validacion-herramientas.txt) |
+| 15 | Revisión final con herramientas: `shellcheck`, `pyflakes`, `docker compose config`, `nginx -t`, `suricata -T`, `sshd -T`, OpenSSL y enlaces | Sin errores. [validacion-herramientas.txt](evidencias/fase5/validacion-herramientas.txt) |
 | 16 | CI con GitHub Actions y justificación HTTP/HTTPS en la Fase 1 | Las comprobaciones de la Fase 5 se repiten solas en cada push |
 | 17 | Evidencias pedidas en el feedback del MF0488: ping, SID 1000001, `suricata -T`, `HOME_NET` y línea base de actividad | Todo real. [Fase 4](fase4-auditoria-tls-monitorizacion.md#evidencias-pedidas-en-el-feedback-del-mf0488) |
 | 18 | Subida a GitHub y comprobación desde un clon limpio: `check-vm.sh` en la VM (en `main`) y `check-mac.sh` en el Mac | Igual que antes de subir. [`check-vm-github.txt`](evidencias/fase5/check-vm-github.txt) y [`check-mac-github.txt`](evidencias/fase5/check-mac-github.txt) |
@@ -30,6 +30,7 @@ Rama `mf0489-https`, ya unida a `main`. Trabajo hecho del 19 al 21/10/2026 entre
 | 24 | Borrados los 8 volúmenes anónimos del MF0488 (`docker volume prune`, sin `-a`) | Quedan la BBDD de OpsMatrix y los 2 de `infra-lab`. [`volumenes-limpieza.txt`](evidencias/fase5/volumenes-limpieza.txt) |
 | 25 | Réplica desde un clon limpio de GitHub, con una CA y claves nuevas, siguiendo solo la guía | PKI nueva OK, `deploy.sh` crea el `.env`, `check-mac.sh` todo bien. Sin Docker Hub en el entorno de pruebas: los contenedores se prueban en el paso 26. [`replica-desde-cero.txt`](evidencias/fase5/replica-desde-cero.txt) |
 | 26 | Despliegue desde cero en la VM: clon limpio, `deploy.sh`, `.env` y BBDD nuevos | Todo OK, visitas empiezan en 1. El real vuelve con sus datos (la primera visita sigue siendo del 19/10). [`prueba-limpia-vm.txt`](evidencias/fase5/prueba-limpia-vm.txt), [`prueba-limpia-mac.txt`](evidencias/fase5/prueba-limpia-mac.txt) |
+| 27 | Lectura completa del repo como si fuera otra persona | Guía: pasos de Suricata para una instalación nueva; evidencias que faltaban (aviso de Flask, hashes del `ca.key` viejo); frases sin prueba suavizadas. [`suricata-desde-cero.txt`](evidencias/fase5/suricata-desde-cero.txt) |
 
 ## Dificultades
 
@@ -61,6 +62,7 @@ Rama `mf0489-https`, ya unida a `main`. Trabajo hecho del 19 al 21/10/2026 entre
 | 24 | Entrega | En la revisión final vi que algunas salidas citadas en los docs (Fase 2, Actividad 8, tcpdump del 80, primer intento de la Fase 4) estaban en mi terminal pero no en el repo | Copiadas a `evidencias/`. Lo que no pude enseñar con una salida de la VM lo reproduje en local y lo digo (regla ICMP, montaje de `default.conf`) |
 | 25 | Entrega | Las pruebas que tienen que fallar (proxy → BBDD, BBDD → internet) daban "OK" también si fallaba el comando. Mi primer control también falló: `sh` en MariaDB es `dash` ([intento 1](evidencias/fase5/check-vm-controles-intento1.txt)) | Control positivo en cada una, código de salida real y tabla de rutas ([`check-vm-controles.txt`](evidencias/fase5/check-vm-controles.txt)) |
 | 26 | Entrega | La guía decía "comandos en la Fase 2", pero ahí faltaban los `mkdir` de la CA y de `/etc/ssl/mf0489`, los `scp` y de dónde sale `servidor.ext`. Otra persona se habría atascado en el primer comando | Procedimiento completo en la guía §2, probado tal cual desde un clon limpio |
+| 27 | Entrega | Con el `suricata.yaml` de Ubuntu sin tocar (escucha en `eth0` y no carga `local.rules`), nuestras reglas no se cargan y `suricata -T` da OK igualmente. En mi VM no pasaba porque lo cambié en el MF0488 | Guía §3: cambiar la interfaz, añadir `- local.rules` y comprobarlo con un ping que tiene que dar alerta |
 
 ## Pendiente (mejoras)
 

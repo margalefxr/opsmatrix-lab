@@ -62,3 +62,36 @@ Arreglo: RUN chmod 644 en el Dockerfile (commit 573f621)
 HTTP/1.1 301 Moved Permanently
 Server: nginx/1.28.3            <- antes
 Server: nginx                   <- después de server_tokens off en el bloque 80
+
+## 6. Aviso de Flask en el log de la app (19/10, primer arranque)
+opsmatrix-app  | WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+
+## 7. El ca.key viejo de la VM no es el de la CA nueva (19/10)
+-- VM
+server@ubuntuserver:~/opsmatrix-lab$ sudo find / -xdev -name "ca.key" -exec ls -l {} \; 2>/dev/null
+ls -la ~/opsmatrix-lab/layer2-perimeter/nginx/ssl/
+for k in $(sudo find / -xdev -name "ca.key" 2>/dev/null); do sudo sha256sum "$k"; done
+-rw------- 1 server server 3272 Sep 16 11:46 /home/server/opsmatrix-lab/layer2-perimeter/pki/ca.key
+total 16
+drwxrwxr-x 2 server server 4096 Oct 19 10:52 .
+drwxrwxr-x 3 server server 4096 Oct 19 11:16 ..
+-rw-r--r-- 1 server server 1326 Sep 16 11:52 server.crt
+-rw------- 1 server server 1704 Sep 16 11:52 server.key
+c6e7e5b67a591ae20cc685833a10e6826c7c701348e99456e12b048ad0894209  /home/server/opsmatrix-lab/layer2-perimeter/pki/ca.key
+-- Mac
+> shasum -a 256 ~/ca_root-pki/ca/private/ca.key
+f191ee16693713e4ac71832a19673c1d361a9e510c1ccf51c310450c0179f649  /Users/xaviermargalef/ca_root-pki/ca/private/ca.key
+-> hash, tamaño (3272 frente a 3446) y fecha (16/09 frente a 19/10) distintos: era la CA del MF0488. Borrada con shred -u
+   (el hash de un archivo no permite sacar la clave: solo sirve para comparar)
+
+-- después de borrarlo (19/10), ¿qué claves quedan en la VM?
+$ shred -u layer2-perimeter/pki/ca.key layer2-perimeter/nginx/ssl/server.key
+$ sudo find / -xdev -name "ca.key" 2>/dev/null | grep -q . && echo "ALERTA: sigue habiendo ca.key" || echo "OK: ningún ca.key en la VM"
+OK: ningún ca.key en la VM
+$ sudo find /home /root /opt /srv /etc -xdev \( -name "*.key" -o -name "*.pem" -o -name "*.p12" \) 2>/dev/null | grep -vE "^/etc/ssl/certs/|snakeoil"
+/etc/pki/fwupd/LVFS-CA.pem
+/etc/pki/fwupd/LVFS-CA-2025PQ.pem
+/etc/pki/fwupd-metadata/LVFS-CA.pem
+/etc/pki/fwupd-metadata/LVFS-CA-2025PQ.pem
+/etc/ssl/private/servidor.key
+-> la única clave privada es servidor.key. Los .pem de fwupd son certificados públicos del sistema (actualizaciones de firmware)
