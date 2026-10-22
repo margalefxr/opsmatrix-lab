@@ -150,8 +150,8 @@ Los cambios de configuración (compose, Nginx, app, reglas, SSH) los probaba pri
 | El README decía "solo claves Ed25519" pero `authorized_keys` estaba vacío | Autorizar la clave antes de quitar la contraseña, para no quedarme fuera |
 | Un `00-opsmatrix.conf` con `PasswordAuthentication no` podía no aplicarse | `50-cloud-init.conf` lo pone a `yes`. Con el prefijo `00-` se lee antes. Lo comprobé con `sshd -T` |
 | `rules.v4` cargaba reglas de Docker viejas al arrancar | Copia en `~/backups/`, `netfilter-persistent` desactivado y reinicio |
-| `deploy.sh` apuntaba al compose borrado | Reescrito: comprueba los certificados, crea el `.env` y levanta el compose de la raíz |
-| README con cosas que ya no eran ciertas ("solo TLS 1.3", "WAF") | Reescrito. Los documentos del MF0488 se quedan como historia y el README avisa de qué manda |
+| `deploy.sh` apuntaba al compose que había borrado | Lo reescribí: comprueba los certificados, crea el `.env` y levanta el compose de la raíz |
+| README con cosas que ya no eran ciertas ("solo TLS 1.3", "WAF") | Lo reescribí. Los documentos del MF0488 los dejo como historia y el README avisa de qué manda |
 
 ## 9. Pendiente (fuera de esta entrega)
 
