@@ -11,7 +11,7 @@ volúmenes: opsmatrix-lab_mariadb_data (+ anónimos, db-primaria-datos, db-repli
 ss: 22 sshd, 80 docker-proxy, 443 docker-proxy (3306 no publicado)
 curl http://localhost/ -> curl: (56) Recv failure: Connection reset by peer
 mounts db: volume opsmatrix-lab_mariadb_data -> /var/lib/mysql
-git VM: 604c5b2 (main) — 3 commits por detrás de GitHub (e116e54)
+git VM: 2944014 (main) — 3 commits por detrás de GitHub (edae6a6)
 .env: NO HAY .env
 docker logs opsmatrix-db: [ERROR] Database is uninitialized and password option is not specified (bucle cada 60 s)
 docker logs opsmatrix-web: última petición 21/Sep/2026 19:22 (HEAD / 200, /no-existe 404) -> config por defecto de nginx (/usr/share/nginx/html)
@@ -19,7 +19,7 @@ conf.d: default.conf (el de la imagen, sin montar el del repo)
 
 == Fase 3 despliegue real (19/10 13:03-13:14) ==
 - build fallo: pip sin DNS. docker0 sin IP (DOWN, sin ruta 172.17). systemctl restart docker -> 172.17.0.1/16, resuelve pypi. netplan solo enp2s0, networkd unmanaged. Restos: rules.v4 con reglas docker antiguas (br-e2efeb52c253, 10.0.x), redes docker_* sin contenedores -> Fase 5
-- app Permission denied /app/app.py: umask 077 en VM -> ficheros 600, USER nobody. Fix RUN chmod 644 (573f621)
+- app Permission denied /app/app.py: umask 077 en VM -> ficheros 600, USER nobody. Fix RUN chmod 644 (0a0e097)
 - nginx host not found upstream app (consecuencia)
 - ps: app Up 5000/tcp, db Up 3306/tcp, proxy 0.0.0.0:80,443. nginx -t ok. ss: 22,80,443
 - Mac: 301 (Server: nginx/1.28.3 -> server_tokens off en 80, commit siguiente); visitas 1,2 https; 404; sin CA exit 60; s_client TLSv1.3 TLS_AES_256_GCM_SHA384 CN=portal Verification OK peername ok, grupo X25519MLKEM768, rsa_pss_rsae_sha256; nc 3306/5000 refused

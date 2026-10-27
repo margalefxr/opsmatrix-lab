@@ -1,4 +1,4 @@
-# check-vm.sh con los controles corregidos (21/10/2026 10:43 UTC, commit 7b7e4c3). Salida real, sin recortar
+# check-vm.sh con los controles corregidos (21/10/2026 10:43 UTC, commit d016082). Salida real, sin recortar
 # Ojo: uptime se queda corto en esta VM (probablemente por las pausas de la VM). El arranque real es el 20/10 a las 09:40:25 UTC: ver arranques.txt
 # §10: cada prueba negativa lleva su control positivo. Ruta 000016AC = 172.22.0.0 (backend_net, se lee al revés).
 # No hay ninguna línea con destino 00000000: la BBDD no tiene ruta por defecto, así que no puede salir.
@@ -40,7 +40,7 @@ OK: ningún ca.key en la VM
 
 ===== 6. REPO Y SECRETOS =====
 main
-7b7e4c3 check-vm.sh: controles de salida a internet con el código de salida real y tabla de rutas de la BBDD
+d016082 check-vm.sh: controles de salida a internet con el código de salida real y tabla de rutas de la BBDD
 -rw------- 1 server server 304 Oct 19 10:52 .env
 OK: .env ignorado por git
 OK: ninguna clave ni .env en git

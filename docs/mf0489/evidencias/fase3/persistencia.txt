@@ -20,11 +20,11 @@ Receiving objects: 100% (404/404), 252.38 KiB | 19.41 MiB/s, done.
 Resolving deltas: 100% (208/208), done.
 From /home/server/opsmatrix-mf0489.bundle
  * branch            mf0489-https -> FETCH_HEAD
-Updating 573f621..994b198
+Updating 0a0e097..6c15775
 Fast-forward
  layer2-perimeter/nginx/default.conf | 1 +
  1 file changed, 1 insertion(+)
-994b198 (HEAD -> mf0489-https) MF0489 Fase 3: server_tokens off también en el bloque HTTP
+6c15775 (HEAD -> mf0489-https) MF0489 Fase 3: server_tokens off también en el bloque HTTP
 [+] Running 5/5
  ✔ Container opsmatrix-proxy           Remo...                             0.1s
  ✔ Container opsmatrix-app             Remove...                          10.1s

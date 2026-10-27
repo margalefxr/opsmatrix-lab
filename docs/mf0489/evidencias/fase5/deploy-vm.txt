@@ -1,4 +1,4 @@
-# deploy.sh en la VM (21/10/2026 11:26 UTC, commit c947846). Salida real, sin recortar
+# deploy.sh en la VM (21/10/2026 11:26 UTC, commit 00629fa). Salida real, sin recortar
 # Camino "ya hay .env": no toca el .env, valida el compose, reconstruye la app y la BBDD sigue igual (Running, no se recrea).
 # El camino que crea el .env está probado en replica-desde-cero.txt. Los "Authentication failed" son de sudo (contraseña mal tecleada).
 
@@ -10,9 +10,9 @@ remote: Compressing objects: 100% (2/2), done.
 remote: Total 20 (delta 18), reused 20 (delta 18), pack-reused 0 (from 0)
 Unpacking objects: 100% (20/20), 4.13 KiB | 302.00 KiB/s, done.
 From https://github.com/margalefxr/opsmatrix-lab
-   573649a..c947846  main         -> origin/main
-   573649a..c947846  mf0489-https -> origin/mf0489-https
-Updating 573649a..c947846
+   022d4c6..00629fa  main         -> origin/main
+   022d4c6..00629fa  mf0489-https -> origin/mf0489-https
+Updating 022d4c6..00629fa
 Fast-forward
  README.md                                         |  8 ++++----
  docs/correcciones-mf0488.md                       |  6 +++---
@@ -28,7 +28,7 @@ Fast-forward
  scripts/check-vm.sh                               |  2 +-
  12 files changed, 41 insertions(+), 14 deletions(-)
  create mode 100644 docs/mf0489/evidencias/fase5/deploy-env-local.txt
-c947846 (HEAD -> main, origin/mf0489-https, origin/main, origin/HEAD) Quinta revisión: quién ejecutó qué, horas, procedimientos no probados y deploy.sh
+00629fa (HEAD -> main, origin/mf0489-https, origin/main, origin/HEAD) Quinta revisión: quién ejecutó qué, horas, procedimientos no probados y deploy.sh
 [sudo: authenticate] Password:                                                * sudo: Authentication failed, try again.
 [sudo: authenticate] Password:                                                * sudo: Authentication failed, try again.
 [sudo: authenticate] Password:

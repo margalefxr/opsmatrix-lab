@@ -1,4 +1,4 @@
-# Salida real de scripts/check-vm.sh en la VM ya en main = 71887bf, igual que GitHub (21/10/2026 08:45 UTC)
+# Salida real de scripts/check-vm.sh en la VM ya en main = 6a0a8e5, igual que GitHub (21/10/2026 08:45 UTC)
 # Ojo: uptime se queda corto en esta VM (probablemente por las pausas de la VM). El arranque real es el 20/10 a las 09:40:25 UTC: ver arranques.txt
 
 ===== 1. SISTEMA =====
@@ -38,7 +38,7 @@ OK: ningún ca.key en la VM
 
 ===== 6. REPO Y SECRETOS =====
 main
-71887bf Borra carpetas vacías del MF0488 en la raíz (config, docker, suricata)
+6a0a8e5 Borra carpetas vacías del MF0488 en la raíz (config, docker, suricata)
 -rw------- 1 server server 304 Oct 19 10:52 .env
 OK: .env ignorado por git
 OK: ninguna clave ni .env en git

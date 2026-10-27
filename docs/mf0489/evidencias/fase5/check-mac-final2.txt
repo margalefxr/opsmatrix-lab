@@ -1,5 +1,5 @@
 # check-mac.sh en el Mac (21/10/2026 13:40 CEST = 11:40 UTC), desde ~/Downloads/opsmatrix-lab-github. Salida real
-# Es la versión del script de 25302cc: es la primera que compara la huella del certificado que entrega Nginx con el que firmó la CA (§7)
+# Es la versión del script de 4c88bf0: es la primera que compara la huella del certificado que entrega Nginx con el que firmó la CA (§7)
 
 ===== 1. CA (Entorno A) =====
 miércoles, 21 de octubre de 2026, 13:40:45 CEST

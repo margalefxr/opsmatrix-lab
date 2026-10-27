@@ -1,4 +1,4 @@
-# check-vm.sh con los primeros controles (21/10/2026 10:37 UTC, commit 6da50d3). Salida real
+# check-vm.sh con los primeros controles (21/10/2026 10:37 UTC, commit 4f8681d). Salida real
 # Ojo: uptime se queda corto en esta VM (probablemente por las pausas de la VM). El arranque real es el 20/10 a las 09:40:25 UTC: ver arranques.txt
 # Fallo del propio control: 'sh -c "command -v bash timeout"' en la imagen de MariaDB usa dash, que solo mira el primer nombre.
 # Por eso sale solo /usr/bin/bash y NO demuestra que exista timeout. Corregido en el commit siguiente (ver check-vm-controles.txt)
@@ -40,7 +40,7 @@ OK: ningún ca.key en la VM
 
 ===== 6. REPO Y SECRETOS =====
 main
-6da50d3 Tercera revisión: controles positivos y evidencias resumidas sustituidas por las reales
+4f8681d Tercera revisión: controles positivos y evidencias resumidas sustituidas por las reales
 -rw------- 1 server server 304 Oct 19 10:52 .env
 OK: .env ignorado por git
 OK: ninguna clave ni .env en git

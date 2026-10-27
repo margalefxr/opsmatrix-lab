@@ -37,7 +37,7 @@ OK: ningún ca.key en la VM
 
 ===== 6. REPO Y SECRETOS =====
 mf0489-https
-4baeccd MF0489 Fase 5: deploy.sh actualizado, backup-db.sh y SSH solo con clave
+d931885 MF0489 Fase 5: deploy.sh actualizado, backup-db.sh y SSH solo con clave
 -rw------- 1 server server 304 Oct 19 10:52 .env
 OK: .env ignorado por git
 OK: ninguna clave ni .env en git

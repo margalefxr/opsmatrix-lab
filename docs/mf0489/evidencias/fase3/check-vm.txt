@@ -42,7 +42,7 @@ ALERTA: hay un ca.key en la VM
 
 ===== 6. REPO Y SECRETOS =====
 mf0489-https
-994b198 MF0489 Fase 3: server_tokens off también en el bloque HTTP
+6c15775 MF0489 Fase 3: server_tokens off también en el bloque HTTP
 ?? layer2-perimeter/nginx/ssl/
 -rw------- 1 server server 304 Oct 19 10:52 .env
 OK: .env ignorado por git

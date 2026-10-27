@@ -56,7 +56,7 @@ total 12
 -rw------- 1 server server  467 Oct 19 11:10 Dockerfile
 -rw------- 1 server server 1629 Oct 19 10:52 app.py
 -rw------- 1 server server   28 Oct 19 10:52 requirements.txt
-Arreglo: RUN chmod 644 en el Dockerfile (commit 573f621)
+Arreglo: RUN chmod 644 en el Dockerfile (commit 0a0e097)
 
 ## 5. Versión de Nginx en el puerto 80
 HTTP/1.1 301 Moved Permanently

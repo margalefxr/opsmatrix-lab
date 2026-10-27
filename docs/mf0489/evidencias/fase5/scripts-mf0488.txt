@@ -12,10 +12,10 @@ $ shellcheck -S warning $(git ls-files "*.sh")   (todos los scripts del repo, co
 
 ## ¿Hubo hook pre-commit? (ADR-0005)
 $ git log --all --format="%h %ad %s" --date=short -- test_hook.txt
-f56b31f 2026-09-15 refactor(hook): eliminar archivo de test de trazabilidad
-1e19d5f 2026-09-15 test(hook): verificar trazabilidad automatica en pre-commit
-e1d76a0 2026-09-15 test(hook): verificar trazabilidad automática en pre-commit
-$ git show e1d76a0 --stat
+f6f48e5 2026-09-15 refactor(hook): eliminar archivo de test de trazabilidad
+fc6c42e 2026-09-15 test(hook): verificar trazabilidad automatica en pre-commit
+48a7879 2026-09-15 test(hook): verificar trazabilidad automática en pre-commit
+$ git show 48a7879 --stat
  docs/WORKLOG.md | 4 ++++
  test_hook.txt   | 1 +
  2 files changed, 5 insertions(+)
@@ -23,7 +23,7 @@ $ git clone . clon && ls clon/.git/hooks | grep -vc sample
 0      <- en un clon nuevo solo están los *.sample de git: los hooks no viajan con el repo
 
 ## Carpetas vacías borradas
-$ git ls-tree -r --name-only bdf9dce layer2-perimeter/diffie-hellman layer3-services/nginx   (antes de borrarlas)
+$ git ls-tree -r --name-only bfd363a layer2-perimeter/diffie-hellman layer3-services/nginx   (antes de borrarlas)
 layer2-perimeter/diffie-hellman/.gitkeep
 layer3-services/nginx/conf.d/.gitkeep
 $ grep -c ssl_dhparam layer2-perimeter/nginx/default.conf

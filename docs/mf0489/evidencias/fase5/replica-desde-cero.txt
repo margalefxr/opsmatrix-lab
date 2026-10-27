@@ -1,5 +1,5 @@
 # ¿Puede otra persona montarlo desde GitHub con sus propias claves? (22/10/2026, entorno de pruebas)
-# Clon limpio de https://github.com/margalefxr/opsmatrix-lab (6602a7d) y solo los comandos de la guía (§2 y §3).
+# Clon limpio de https://github.com/margalefxr/opsmatrix-lab (8a129b1) y solo los comandos de la guía (§2 y §3).
 # Dos carpetas hacen de máquinas: 'mac' (CA y cliente) y 'vm' (servidor). Los scp son cp. La contraseña de la CA va
 # con -pass solo para poder automatizar la prueba; en la guía se teclea.
 # Límite: aquí Docker Hub está bloqueado, así que 'docker compose up' no se puede lanzar. En su lugar Nginx (con el

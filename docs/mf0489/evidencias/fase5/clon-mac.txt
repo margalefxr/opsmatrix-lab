@@ -5,5 +5,5 @@ origin	https://github.com/margalefxr/opsmatrix-lab (fetch)
 origin	https://github.com/margalefxr/opsmatrix-lab (push)
 
 $ git -C ~/Downloads/opsmatrix-lab-github reflog | tail -1
-71887bf HEAD@{1}: clone: from https://github.com/margalefxr/opsmatrix-lab
--> la carpeta es un clon de GitHub hecho en 71887bf. Después se actualizó con git pull a 25302cc (check-mac-final2.txt)
+6a0a8e5 HEAD@{1}: clone: from https://github.com/margalefxr/opsmatrix-lab
+-> la carpeta es un clon de GitHub hecho en 6a0a8e5. Después se actualizó con git pull a 4c88bf0 (check-mac-final2.txt)

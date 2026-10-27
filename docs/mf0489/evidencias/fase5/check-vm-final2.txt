@@ -1,4 +1,4 @@
-# check-vm.sh en la VM (21/10/2026 11:36 UTC, commit 25302cc). Salida real, sin recortar
+# check-vm.sh en la VM (21/10/2026 11:36 UTC, commit 4c88bf0). Salida real, sin recortar
 # Ojo: uptime se queda corto en esta VM (probablemente por las pausas de la VM). El arranque real es el 20/10 a las 09:40:25 UTC: ver arranques.txt
 # Una segunda ejecución a las 11:40 se cortó con Ctrl+C y no se usa. §13: los volúmenes que no usa nadie, para decidir antes de la OVA
 
@@ -10,9 +10,9 @@ remote: Compressing objects: 100% (1/1), done.
 remote: Total 13 (delta 12), reused 13 (delta 12), pack-reused 0 (from 0)
 Unpacking objects: 100% (13/13), 2.11 KiB | 127.00 KiB/s, done.
 From https://github.com/margalefxr/opsmatrix-lab
-   35fce8a..25302cc  main         -> origin/main
-   35fce8a..25302cc  mf0489-https -> origin/mf0489-https
-Updating 35fce8a..25302cc
+   6de77d4..4c88bf0  main         -> origin/main
+   6de77d4..4c88bf0  mf0489-https -> origin/mf0489-https
+Updating 6de77d4..4c88bf0
 Fast-forward
  docs/mf0489/evidencias/fase5/secretos.txt | 2 +-
  docs/mf0489/extras.md                     | 2 +-
@@ -21,7 +21,7 @@ Fast-forward
  scripts/check-mac.sh                      | 3 +++
  scripts/check-vm.sh                       | 3 +++
  6 files changed, 10 insertions(+), 4 deletions(-)
-25302cc (HEAD -> main, origin/mf0489-https, origin/main, origin/HEAD) Repaso contra el enunciado y la rúbrica: huella del certificado, volúmenes y contraseñas del historial
+4c88bf0 (HEAD -> main, origin/mf0489-https, origin/main, origin/HEAD) Repaso contra el enunciado y la rúbrica: huella del certificado, volúmenes y contraseñas del historial
 ===== 1. SISTEMA =====
 Wed Oct 21 11:36:01 AM UTC 2026
 ubuntuserver
@@ -59,7 +59,7 @@ OK: ningún ca.key en la VM
 
 ===== 6. REPO Y SECRETOS =====
 main
-25302cc Repaso contra el enunciado y la rúbrica: huella del certificado, volúmenes y contraseñas del historial
+4c88bf0 Repaso contra el enunciado y la rúbrica: huella del certificado, volúmenes y contraseñas del historial
 -rw------- 1 server server 304 Oct 19 10:52 .env
 OK: .env ignorado por git
 OK: ninguna clave ni .env en git

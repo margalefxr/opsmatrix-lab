@@ -1,48 +1,48 @@
 # Ejecuciones de la CI en GitHub Actions (actualizado 22/10/2026)
 $ gh run list --limit 100   (fecha, commit, rama, resultado)
-2026-10-21T08:22:37Z 6f28989 mf0489-https failure
-2026-10-21T08:22:38Z 6f28989 main failure
-2026-10-21T08:23:44Z 8ffe6b4 mf0489-https success
-2026-10-21T08:23:45Z 8ffe6b4 main success
-2026-10-21T08:24:48Z 71887bf mf0489-https success
-2026-10-21T08:24:49Z 71887bf main success
-2026-10-21T09:02:25Z 6ba190d mf0489-https success
-2026-10-21T09:02:26Z 6ba190d main success
-2026-10-21T09:10:22Z bdf9dce mf0489-https success
-2026-10-21T09:10:24Z bdf9dce main success
-2026-10-21T09:45:40Z ab82117 mf0489-https success
-2026-10-21T09:45:41Z ab82117 main success
-2026-10-21T10:26:41Z 6da50d3 mf0489-https success
-2026-10-21T10:26:42Z 6da50d3 main success
-2026-10-21T10:40:24Z 7b7e4c3 mf0489-https success
-2026-10-21T10:40:26Z 7b7e4c3 main success
-2026-10-21T10:44:34Z 573649a mf0489-https success
-2026-10-21T10:44:36Z 573649a main success
-2026-10-21T10:52:14Z c947846 mf0489-https success
-2026-10-21T10:52:16Z c947846 main success
-2026-10-21T11:30:02Z 35fce8a mf0489-https success
-2026-10-21T11:30:04Z 35fce8a main success
-2026-10-21T11:34:05Z 25302cc mf0489-https success
-2026-10-21T11:34:07Z 25302cc main success
-2026-10-21T11:42:13Z 5bab346 mf0489-https success
-2026-10-21T11:42:15Z 5bab346 main success
-2026-10-21T12:03:14Z 6602a7d mf0489-https success
-2026-10-21T12:03:16Z 6602a7d main success
-2026-10-22T07:17:45Z 6c164b9 mf0489-https success
-2026-10-22T07:17:47Z 6c164b9 main success
-2026-10-22T07:48:49Z 0c1bf1e mf0489-https failure
-2026-10-22T07:48:51Z 0c1bf1e main failure
-2026-10-22T07:49:12Z 000782b mf0489-https success
-2026-10-22T07:49:14Z 000782b main success
-2026-10-22T07:49:26Z b43a926 mf0489-https success
-2026-10-22T07:49:28Z b43a926 main success
-2026-10-22T08:01:36Z 2d24bac mf0489-https success
-2026-10-22T08:01:39Z 2d24bac main success
-2026-10-22T08:11:28Z 0677f40 mf0489-https success
-2026-10-22T08:11:30Z 0677f40 main success
--> 2 fallos: 6f28989 (detect-secrets, abajo) y 0c1bf1e (shellcheck: variable sin usar en un script de prueba que luego quité). Los dos se arreglaron en el commit siguiente
+2026-10-21T08:22:37Z d452c39 mf0489-https failure
+2026-10-21T08:22:38Z d452c39 main failure
+2026-10-21T08:23:44Z 0c0edf9 mf0489-https success
+2026-10-21T08:23:45Z 0c0edf9 main success
+2026-10-21T08:24:48Z 6a0a8e5 mf0489-https success
+2026-10-21T08:24:49Z 6a0a8e5 main success
+2026-10-21T09:02:25Z 549a91f mf0489-https success
+2026-10-21T09:02:26Z 549a91f main success
+2026-10-21T09:10:22Z bfd363a mf0489-https success
+2026-10-21T09:10:24Z bfd363a main success
+2026-10-21T09:45:40Z 4825c73 mf0489-https success
+2026-10-21T09:45:41Z 4825c73 main success
+2026-10-21T10:26:41Z 4f8681d mf0489-https success
+2026-10-21T10:26:42Z 4f8681d main success
+2026-10-21T10:40:24Z d016082 mf0489-https success
+2026-10-21T10:40:26Z d016082 main success
+2026-10-21T10:44:34Z 022d4c6 mf0489-https success
+2026-10-21T10:44:36Z 022d4c6 main success
+2026-10-21T10:52:14Z 00629fa mf0489-https success
+2026-10-21T10:52:16Z 00629fa main success
+2026-10-21T11:30:02Z 6de77d4 mf0489-https success
+2026-10-21T11:30:04Z 6de77d4 main success
+2026-10-21T11:34:05Z 4c88bf0 mf0489-https success
+2026-10-21T11:34:07Z 4c88bf0 main success
+2026-10-21T11:42:13Z 37917a7 mf0489-https success
+2026-10-21T11:42:15Z 37917a7 main success
+2026-10-21T12:03:14Z 8a129b1 mf0489-https success
+2026-10-21T12:03:16Z 8a129b1 main success
+2026-10-22T07:17:45Z b34d48e mf0489-https success
+2026-10-22T07:17:47Z b34d48e main success
+2026-10-22T07:48:49Z 46457f2 mf0489-https failure
+2026-10-22T07:48:51Z 46457f2 main failure
+2026-10-22T07:49:12Z cf6678c mf0489-https success
+2026-10-22T07:49:14Z cf6678c main success
+2026-10-22T07:49:26Z 5934773 mf0489-https success
+2026-10-22T07:49:28Z 5934773 main success
+2026-10-22T08:01:36Z c75e5c7 mf0489-https success
+2026-10-22T08:01:39Z c75e5c7 main success
+2026-10-22T08:11:28Z ab1ee97 mf0489-https success
+2026-10-22T08:11:30Z ab1ee97 main success
+-> 2 fallos: d452c39 (detect-secrets, abajo) y 46457f2 (shellcheck: variable sin usar en un script de prueba que luego quité). Los dos se arreglaron en el commit siguiente
 
-## El fallo (commit 6f28989), paso por paso
+## El fallo (commit d452c39), paso por paso
 Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683: success
 Scripts sin errores (shellcheck): success
 Compose válido: success
@@ -51,7 +51,7 @@ Dependencias sin CVE conocidos (pip-audit): success
 Sin secretos en el repo (detect-secrets): failure
 -> falla solo detect-secrets: con --all-files escaneaba el .env que crea el paso "Compose válido". Arreglado: solo archivos de git
 
-## Reproducido en local con el commit 6f28989 (el log de GitHub ya no se puede descargar)
+## Reproducido en local con el commit d452c39 (el log de GitHub ya no se puede descargar)
 $ cp .env.example .env && detect-secrets scan --all-files
 {'.env': ['Secret Keyword']}       <- la línea DB_PASSWORD=CAMBIAR del .env de prueba
 $ rm .env && detect-secrets scan --all-files

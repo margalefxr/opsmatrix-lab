@@ -1,4 +1,4 @@
-# Despliegue desde cero en la VM (22/10/2026 08:09 UTC, commit 2d24bac). Salida real, sin recortar
+# Despliegue desde cero en la VM (22/10/2026 08:09 UTC, commit c75e5c7). Salida real, sin recortar
 # Paro el despliegue real (down, sin -v), clono GitHub en ~/prueba-limpia y lanzo deploy.sh tal cual: .env nuevo y BBDD nueva
 # (volumen prueba-limpia_mariadb_data). check-vm.sh: todo OK, visitas=1. Después borro la prueba y vuelvo a levantar el real:
 # sigue con sus datos (22 visitas, la primera del 19/10). Usa los certificados de /etc/ssl; la PKI con claves nuevas está en replica-desde-cero.txt
@@ -13,9 +13,9 @@ remote: Compressing objects: 100% (1/1), done.
 remote: Total 15 (delta 14), reused 15 (delta 14), pack-reused 0 (from 0)
 Unpacking objects: 100% (15/15), 2.40 KiB | 188.00 KiB/s, done.
 From https://github.com/margalefxr/opsmatrix-lab
-   b43a926..2d24bac  main         -> origin/main
-   b43a926..2d24bac  mf0489-https -> origin/mf0489-https
-Updating b43a926..2d24bac
+   5934773..c75e5c7  main         -> origin/main
+   5934773..c75e5c7  mf0489-https -> origin/mf0489-https
+Updating 5934773..c75e5c7
 Fast-forward
  README.md                                         |  4 +-
  docs/mf0489/WORKLOG.md                            |  2 +-
@@ -157,7 +157,7 @@ OK: ningún ca.key en la VM
 
 ===== 6. REPO Y SECRETOS =====
 main
-2d24bac Más lean: fuera el script de réplica, frases más cortas y check-vm.sh sin nombre de proyecto fijo
+c75e5c7 Más lean: fuera el script de réplica, frases más cortas y check-vm.sh sin nombre de proyecto fijo
 -rw------- 1 server server 304 Oct 22 08:09 .env
 OK: .env ignorado por git
 OK: ninguna clave ni .env en git

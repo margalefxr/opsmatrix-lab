@@ -1,4 +1,4 @@
-# Lo que dicen los docs, buscado en el código (21/10/2026, sobre 71887bf. Lo que cambió después —docs, evidencias, scripts del MF0488 y CI— no toca nada de lo que se mira aquí)
+# Lo que dicen los docs, buscado en el código (21/10/2026, sobre 6a0a8e5. Lo que cambió después —docs, evidencias, scripts del MF0488 y CI— no toca nada de lo que se mira aquí)
 # Formato: OK/FALLA | qué dice el doc | archivo:línea donde está
 
 ## Nginx (Fase 3 §5, Fase 4 §6)

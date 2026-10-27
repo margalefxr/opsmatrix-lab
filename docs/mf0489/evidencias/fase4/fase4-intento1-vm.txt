@@ -19,7 +19,7 @@ Receiving objects: 100% (432/432), 273.75 KiB | 34.22 MiB/s, done.
 Resolving deltas: 100% (222/222), done.
 From /home/server/opsmatrix-mf0489.bundle
  * branch            mf0489-https -> FETCH_HEAD
-Updating 994b198..3173a7d
+Updating 6c15775..04d89a5
 Fast-forward
  docs/mf0489/WORKLOG.md                      |  42 +++++
  docs/mf0489/evidencias/check-mac.txt        |  60 +++++++
@@ -37,7 +37,7 @@ Fast-forward
  create mode 100644 docs/mf0489/fase3-https-docker.md
  create mode 100755 scripts/check-mac.sh
  create mode 100755 scripts/check-vm.sh
-3173a7d (HEAD -> mf0489-https) MF0489 Fase 4: log de Nginx con TLS y regla Suricata SID 1000003
+04d89a5 (HEAD -> mf0489-https) MF0489 Fase 4: log de Nginx con TLS y regla Suricata SID 1000003
 [+] Restarting 1/1
  ✔ Container opsmatrix-proxy  Started                                      0.3s
     log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
@@ -91,7 +91,7 @@ Receiving objects: 100% (441/441), 276.81 KiB | 27.68 MiB/s, done.
 Resolving deltas: 100% (227/227), done.
 From /home/server/opsmatrix-mf0489.bundle
  * branch            mf0489-https -> FETCH_HEAD
-Updating 3173a7d..6b5c9d0
+Updating 04d89a5..c90bf51
 Fast-forward
  layer1-telemetry/suricata/rules/local.rules | 15 ++++---
  scripts/fase4-mac.sh                        | 47 +++++++++++++++++++

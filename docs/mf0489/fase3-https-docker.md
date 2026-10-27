@@ -109,7 +109,7 @@ sudo tar czf ~/backups/mariadb_data-2026-10-19.tgz -C /var/lib/docker/volumes/op
 -rw------- 1 root root 131 Oct 19 10:51 mariadb_data-2026-10-19.tgz
 ```
 
-Pesa 131 bytes porque el volumen estaba vacío: la BBDD nunca llegó a arrancar, así que no había datos que perder. La config anterior está en git (commit `604c5b2`) por si hay que volver atrás.
+Pesa 131 bytes porque el volumen estaba vacío: la BBDD nunca llegó a arrancar, así que no había datos que perder. La config anterior está en git (commit `2944014`) por si hay que volver atrás.
 
 ## 3. Decisiones
 
