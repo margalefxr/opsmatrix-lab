@@ -4,7 +4,11 @@
 **Módulos:** MF0488 (despliegue y hardening) · MF0489 (PKI, HTTPS y monitorización)
 **Áreas:** Blue Team · Hardening · Segmentación de red · PKI · IDS · GRC
 
-Es un laboratorio que simula el portal de una gestoría. La web es mínima a propósito: lo que me interesaba era todo lo que hay alrededor. HTTPS con una CA mía, un proxy como única entrada, una base de datos sin salida a internet y un IDS mirando la red.
+## Contexto
+
+OpsMatrix es una gestoría ficticia: lleva la contabilidad, las nóminas y los trámites fiscales de autónomos y pequeñas empresas. Por su portal pasan datos personales y económicos de sus clientes (DNI, nóminas, modelos de Hacienda), así que lo que de verdad importa no es la web en sí —es mínima a propósito— sino todo lo que la protege: que los datos viajen cifrados, que haya una sola puerta de entrada, que la base de datos no se vea desde fuera y que quede rastro de quién toca la red.
+
+Eso es lo que monto y pruebo en este laboratorio: HTTPS con una CA mía, Nginx como único punto de entrada, una base de datos sin salida a internet y un IDS vigilando el tráfico.
 
 ![Arquitectura final](docs/mf0489/arquitectura-final.png)
 
