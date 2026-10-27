@@ -6,9 +6,9 @@
 
 ## Contexto
 
-OpsMatrix es una gestoría ficticia: lleva la contabilidad, las nóminas y los trámites fiscales de autónomos y pequeñas empresas. Por su portal pasan datos personales y económicos de sus clientes (DNI, nóminas, modelos de Hacienda), así que lo que de verdad importa no es la web en sí —es mínima a propósito— sino todo lo que la protege: que los datos viajen cifrados, que haya una sola puerta de entrada, que la base de datos no se vea desde fuera y que quede rastro de quién toca la red.
+OpsMatrix es un portal seguro de cara a cliente pensado para **gestorías y consultorías**: el sitio donde sus clientes —autónomos y pequeñas empresas— consultan su documentación (nóminas, modelos de Hacienda, contabilidad). Por él pasan datos personales y económicos, así que el valor no está en la web —es mínima a propósito— sino en lo que la protege: cifrado en tránsito, una única puerta de entrada, la base de datos aislada y trazabilidad de la red.
 
-Eso es lo que monto y pruebo en este laboratorio: HTTPS con una CA mía, Nginx como único punto de entrada, una base de datos sin salida a internet y un IDS vigilando el tráfico.
+Este laboratorio es un **despliegue de referencia de una instancia**: monto y pruebo esos controles (HTTPS con CA propia, Nginx como única entrada, BBDD sin salida a internet e IDS) sobre una VM, como base sobre la que una gestoría lo llevaría a producción.
 
 ![Arquitectura final](docs/mf0489/arquitectura-final.png)
 
