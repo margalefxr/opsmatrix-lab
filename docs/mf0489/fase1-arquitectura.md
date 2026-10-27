@@ -31,37 +31,9 @@ Actualizo el diagrama de OpsMatrix (MF0488) para añadir HTTPS. Nginx pasa a ser
 
 ## Diagrama
 
-```mermaid
-flowchart LR
-    subgraph MAC["Mac — Entorno A (fuera de la VM CTF)"]
-        CA["CA de laboratorio<br/>~/ca_root-pki/ca/private/ca.key (AES-256, 600)<br/>ca.crt"]
-        CLI["Cliente de pruebas<br/>curl / openssl s_client<br/>ca.crt + curl --resolve"]
-    end
+![Diagrama de arquitectura (Fase 1)](arquitectura-fase1.png)
 
-    subgraph VM["Ubuntu Server — Entorno B (futura VM CTF) · enp2s0"]
-        SSH["OpenSSH :22"]
-        SUR["Suricata IDS<br/>escucha enp2s0"]
-        PKI["/etc/ssl/private/servidor.key (600)<br/>/etc/ssl/certs/servidor.crt (644)<br/>/etc/ssl/mf0489/ca.crt (644)"]
-
-        subgraph DOCKER["Docker Compose"]
-            subgraph FRONT["frontend_net"]
-                RP["reverse-proxy<br/>nginx:1.28-alpine<br/>:80 → 301 · :443 TLS 1.2/1.3"]
-            end
-            APP["app<br/>Python (Flask) :5000<br/>sin puertos publicados"]
-            subgraph BACK["backend_net · internal: true"]
-                DB[("db<br/>MariaDB :3306<br/>sin puertos publicados")]
-            end
-        end
-    end
-
-    CA -. "firma la CSR<br/>(solo .csr y .crt viajan)" .-> PKI
-    CLI == "HTTPS :443 (TLS)" ==> RP
-    CLI -- "HTTP :80 → 301 a HTTPS" --> RP
-    PKI -. "montados :ro" .-> RP
-    RP -- "HTTP interno :5000" --> APP
-    APP -- "SQL :3306" --> DB
-    SUR -. "ve tráfico de enp2s0" .- RP
-```
+Fuente editable: [arquitectura-fase1.excalidraw](arquitectura-fase1.excalidraw).
 
 `app` está conectada a las dos redes (`frontend_net` y `backend_net`). Nginx solo a `frontend_net`: no necesita llegar a la base de datos.
 

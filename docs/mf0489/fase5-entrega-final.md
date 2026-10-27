@@ -20,7 +20,7 @@ Aquí hago el último repaso de principio a fin: que lo que pongo en los documen
 
 ![Arquitectura final](arquitectura-final.png)
 
-Fuente editable: [arquitectura-final.mmd](arquitectura-final.mmd). Explicación de cada pieza en la [Fase 1](fase1-arquitectura.md) y la [guía](guia-despliegue.md).
+Fuente editable: [arquitectura-final.excalidraw](arquitectura-final.excalidraw). Explicación de cada pieza en la [Fase 1](fase1-arquitectura.md) y la [guía](guia-despliegue.md).
 
 ## 2. Qué hay de verdad en la VM
 

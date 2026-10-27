@@ -24,7 +24,7 @@ Los documentos del MF0488 (`ARCHITECTURE.md`, `docs/adr/`, `docs/WORKLOG.md`, `d
 | `docs/architecture/00-documentation-framework.md` | El `.gitignore` bloquea los `.crt` | Los certificados son públicos y los he subido a `layer2-perimeter/pki/`. Lo que bloqueo son claves, `.env` y copias | [`.gitignore`](../.gitignore) |
 | `docs/architecture/00-documentation-framework.md` | Conventional Commits y entregables en HTML5 | Mis commits del MF0489 no siguen Conventional Commits (casi todos empiezan por `MF0489`). Y entregables en HTML no hay | `git log` |
 | `docs/assets/README.md` | Los diagramas se ven en `ARCHITECTURE.md` | `ARCHITECTURE.md` no tiene imágenes. El diagrama de ahora es [`arquitectura-final.png`](mf0489/arquitectura-final.png) | — |
-| `architecture.excalidraw`, `architecture-master.excalidraw`, `assets/architecture-schema.png` | Los diagramas del MF0488 | Los he sustituido por [`arquitectura-final.mmd`](mf0489/arquitectura-final.mmd) | — |
+| `architecture.excalidraw`, `architecture-master.excalidraw`, `assets/architecture-schema.png` | Los diagramas del MF0488 | Los he sustituido por [`arquitectura-final.excalidraw`](mf0489/arquitectura-final.excalidraw) | — |
 
 ## Scripts y carpetas
 
