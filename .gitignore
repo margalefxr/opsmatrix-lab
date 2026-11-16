@@ -18,3 +18,14 @@ __pycache__/
 *.ova
 *.vmdk
 *.iso
+
+# CTF MF0490: banderas, secretos y solución fuera de GitHub
+user.txt
+root.txt
+**/ctf-secretos.txt
+docker-compose.override.yml
+*.bak
+*.ovf
+*.vmx
+*.vmsn
+*.vmsd
